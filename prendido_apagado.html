@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation: Disponibilidad de Catálogo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Source+Code+Pro:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #f7f8fa;
+            color: #333;
+            margin: 0;
+            padding: 2em;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 2em 3em;
+        }
+
+        h1, h2, h3 {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #2c3e50;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-top: 2em;
+            color: #34495e;
+        }
+        
+        h3 {
+            font-size: 1.2em;
+            margin-top: 2em;
+            color: #34495e;
+            border-bottom-style: dashed;
+        }
+        
+        h3 small {
+            font-weight: 400;
+            color: #7f8c8d;
+            font-size: 0.8em;
+        }
+
+        code {
+            font-family: 'Source Code Pro', monospace;
+            background-color: #ecf0f1;
+            color: #e74c3c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 1.5em;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>API: Disponibilidad de Catálogo por Lote</h1>
+
+        <h2>1. Especificación del Endpoint</h2>
+        <ul>
+            <li><strong>Método:</strong> <code>POST</code></li>
+            <li><strong>Endpoint:</strong> <code>/api/catalog/itemAvailability</code></li>
+            <li><strong>Content-Type:</strong> <code>application/json</code></li>
+            <li><strong>Autenticación:</strong> <code>Authorization: Bearer <token></code></li>
+        </ul>
+
+        <h2>2. Formato del Request Body</h2>
+        <p>El cuerpo de la petición debe ser un objeto JSON con tres claves principales: <code>branches</code>, <code>itemsOn</code>, y <code>itemsOff</code>.</p>
+        <pre><code>{
+  "branches": [
+    { "branchId": 4390 }
+  ],
+  "itemsOn": [
+    { "sku": "2001", "platformId": 2 }
+  ],
+  "itemsOff": [
+    { "sku": "127", "platformId": 1 }
+  ]
+}</code></pre>
+
+        <h2>3. Formato del Response Body (Siempre HTTP 200 OK)</h2>
+        <p>Si la petición es sintácticamente válida, el servidor siempre responderá con un <strong>HTTP 200 OK</strong>. El resultado de la operación se detalla dentro del cuerpo JSON.</p>
+        <ul>
+            <li><code>status</code>: Indica el resultado global: "SUCCESS", "PARTIAL_FAILURE", o "FAILURE".</li>
+            <li><code>results</code>: Array con los detalles de cada operación exitosa.</li>
+            <li><code>errors</code>: Array con los detalles de cada operación fallida. Solo aparece si <code>status</code> no es "SUCCESS".</li>
+            <li><code>timestamp</code>: Fecha y hora en formato ISO 8601 para trazabilidad.</li>
+        </ul>
+        <pre><code>{
+  "status": "SUCCESS" | "PARTIAL_FAILURE" | "FAILURE",
+  "results": [
+    {
+      "branchId":   4390,
+      "platformId": 1,
+      "sku":        "127",
+      "action":     "OFF",
+      "status":     "SUCCESS"
+    }
+  ],
+  "errors": [
+    {
+      "branchId":   4390,
+      "platformId": 3,
+      "sku":        "145",
+      "action":     "OFF",
+      "status":     "FAILURE",
+      "message":    "Invalid credentials for platformId 3"
+    }
+  ],
+  "timestamp": "2025-06-30T12:34:56Z"
+}</code></pre>
+
+        <h2>4. Ejemplos Completos de Respuestas</h2>
+
+        <h3>4.1. status: "SUCCESS" <small>(todas las operaciones correctas)</small></h3>
+        <pre><code>{
+  "status": "SUCCESS",
+  "results": [
+    { "branchId": 4390, "platformId": 1, "sku": "127", "action": "OFF", "status": "SUCCESS" },
+    { "branchId": 4390, "platformId": 2, "sku": "127", "action": "OFF", "status": "SUCCESS" },
+    { "branchId": 4390, "platformId": 3, "sku": "127", "action": "OFF", "status": "SUCCESS" },
+    { "branchId": 4390, "platformId": 4, "sku": "127", "action": "OFF", "status": "SUCCESS" }
+  ],
+  "timestamp": "2025-06-30T12:34:56Z"
+}</code></pre>
+
+        <h3>4.2. status: "PARTIAL_FAILURE" <small>(algunas operaciones fallan)</small></h3>
+        <pre><code>{
+  "status": "PARTIAL_FAILURE",
+  "results": [
+    { "branchId": 4390, "platformId": 1, "sku": "127", "action": "OFF", "status": "SUCCESS" },
+    { "branchId": 4390, "platformId": 2, "sku": "127", "action": "OFF", "status": "SUCCESS" }
+  ],
+  "errors": [
+    {
+      "branchId":   4390,
+      "platformId": 3,
+      "sku":        "127",
+      "action":     "OFF",
+      "status":     "FAILURE",
+      "message":    "Invalid credentials for platformId 3"
+    },
+    {
+      "branchId":   4390,
+      "platformId": 4,
+      "sku":        "127",
+      "action":     "OFF",
+      "status":     "FAILURE",
+      "message":    "Timeout contacting external API"
+    }
+  ],
+  "timestamp": "2025-06-30T12:35:22Z"
+}</code></pre>
+
+        <h3>4.3. status: "FAILURE" <small>(ninguna operación tiene éxito)</small></h3>
+        <pre><code>{
+  "status": "FAILURE",
+  "errors": [
+    {
+      "branchId":   4391,
+      "platformId": 1,
+      "sku":        "127",
+      "action":     "OFF",
+      "status":     "FAILURE",
+      "message":    "BranchId 4391 not found"
+    },
+    {
+      "branchId":   4391,
+      "platformId": 4,
+      "sku":        "145",
+      "action":     "OFF",
+      "status":     "FAILURE",
+      "message":    "BranchId 4391 not found"
+    }
+  ],
+  "timestamp": "2025-06-30T12:36:10Z"
+}</code></pre>
+
+        <h2>5. Errores de Capa de Transporte (HTTP Status != 200)</h2>
+        <p>Estos errores se usan solo cuando la petición global es inválida o hay un fallo interno irrecuperable.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Código HTTP</th>
+                    <th>Uso</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>400</code></td>
+                    <td>JSON mal formado, campos faltantes o tipos de datos erróneos.</td>
+                </tr>
+                <tr>
+                    <td><code>401</code> / <code>403</code></td>
+                    <td>Autenticación inválida o sin los permisos necesarios.</td>
+                </tr>
+                <tr>
+                    <td><code>429</code></td>
+                    <td>Límite de peticiones (rate limit) excedido.</td>
+                </tr>
+                <tr>
+                    <td><code>500</code></td>
+                    <td>Error inesperado en el servidor.</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Ejemplo de respuesta 400 Bad Request:</p>
+        <pre><code>{
+  "error": "itemsOff must be an array",
+  "timestamp": "2025-06-30T12:37:05Z"
+}</code></pre>
+
+        <h2>6. Resumen de Reglas</h2>
+        <ul>
+            <li>Se usan exclusivamente <code>branchId</code> y <code>platformId</code> como identificadores.</li>
+            <li>La respuesta es siempre <strong>HTTP 200 OK</strong> si el request es sintácticamente válido.</li>
+            <li>El campo <code>status</code> indica el resultado de la lógica de negocio: SUCCESS, PARTIAL_FAILURE, o FAILURE.</li>
+            <li>El cliente debe inspeccionar el array <code>errors</code> solo cuando el <code>status</code> no es "SUCCESS".</li>
+            <li>Los códigos de error HTTP (4xx, 5xx) se reservan para fallos de transporte o validación.</li>
+        </ul>
+
+    </div>
+
+</body>
+</html>
