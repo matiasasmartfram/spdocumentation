@@ -4,18 +4,31 @@
   <meta charset="utf-8" />
   <title>Redoc Test – Item Availability API</title>
 
-  <!-- Redoc standalone (cargado desde CDN) -->
-  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+  <!-- Versión concreta de Redoc en jsDelivr -->
+  <script src="https://cdn.jsdelivr.net/npm/redoc@2.0.0-rc.87/bundles/redoc.standalone.min.js"></script>
 
   <style>
-    /* opcional: elimina márgenes para usar todo el alto */
-    html,body { margin:0; height:100%; }
-    redoc { height:100%; }
+    html,body{margin:0;height:100%}
+    #redoc{height:100%}
   </style>
 </head>
 <body>
-  <!-- Renderiza la documentación usando una spec pública de ejemplo -->
-  <redoc spec-url="https://redocly.github.io/redoc/openapi.yaml"></redoc>
+  <!-- Contenedor donde inyectaremos Redoc manualmente -->
+  <div id="redoc">Cargando documentación …</div>
+
+  <script>
+    // Especificación de ejemplo (Pet Store) para probar
+    const SPEC_URL = 'https://redocly.github.io/redoc/openapi.yaml';
+
+    // Cuando el script de Redoc esté cargado, inicializa
+    if (window.Redoc) {
+      Redoc.init(SPEC_URL, {}, document.getElementById('redoc'));
+    } else {
+      document.getElementById('redoc').innerText =
+        'No se pudo cargar Redoc JS — revisa la consola.';
+    }
+  </script>
 </body>
 </html>
+
 
