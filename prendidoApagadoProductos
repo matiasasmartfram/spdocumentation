@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Item Availability API</title>
+  <style> body{margin:0;font-family:Arial} </style>
+  <!-- Redoc standalone (CDN) -->
+  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+</head>
+<body>
+  <!-- Aquí se renderizará la doc -->
+  <redoc spec-url="#spec"></redoc>
+
+  <!-- Especificación inline (OpenAPI 3.0) -->
+  <script id="spec" type="application/yaml">
+openapi: 3.0.3
+info:
+  title: Item Availability API
+  version: 1.0.0
+paths:
+  /api/catalog/itemAvailability:
+    post:
+      summary: Bulk availability update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+      responses:
+        '200':
+          description: Always 200 – status in body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+components:
+  schemas:
+    Branch:
+      type: object
+      properties:
+        branchId: { type: integer }
+      required: [branchId]
+    Item:
+      type: object
+      properties:
+        sku:        { type: string }
+        platformId: { type: integer }
+      required: [sku, platformId]
+    Request:
+      type: object
+      properties:
+        branches: { type: array, items: { $ref: '#/components/schemas/Branch' } }
+        itemsOn:  { type: array, items: { $ref: '#/components/schemas/Item' } }
+        itemsOff: { type: array, items: { $ref: '#/components/schemas/Item' } }
+      required: [branches, itemsOn, itemsOff]
+    Result:
+      allOf:
+        - $ref: '#/components/schemas/Item'
+        - type: object
+          properties:
+            action:  { type: string, enum: [ON, OFF] }
+            status:  { type: string, enum: [SUCCESS, FAILURE] }
+            message: { type: string }
+    Response:
+      type: object
+      properties:
+        status:  { type: string, enum: [SUCCESS, PARTIAL_FAILURE, FAILURE] }
+        results: { type: array, items: { $ref: '#/components/schemas/Result' } }
+        errors:  { type: array, items: { $ref: '#/components/schemas/Result' } }
+        timestamp:
+          type: string
+          format: date-time
+  </script>
+</body>
+</html>
