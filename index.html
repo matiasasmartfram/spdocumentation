@@ -1,11 +1,95 @@
 <!doctype html>
-<html>
+<html lang="es">
 <head>
   <meta charset="utf-8"/>
-  <title>Prueba simple</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Índice de Documentación de APIs</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 2rem 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    h1 {
+      font-size: 2em;
+      color: #2c3e50;
+      border-bottom: 2px solid #e0e4e8;
+      padding-bottom: 0.5em;
+      margin-bottom: 1em;
+    }
+    p {
+        color: #555;
+        font-size: 1.1em;
+    }
+    .doc-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 2em;
+    }
+    .doc-list a {
+      display: block;
+      padding: 1em 1.5em;
+      margin-bottom: 1em;
+      border: 1px solid #d1d9e2;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+      transition: all 0.2s ease-in-out;
+    }
+    .doc-list a:hover {
+      border-color: #007bff;
+      background-color: #f8faff;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
+    }
+    .doc-list strong {
+      display: block;
+      font-size: 1.2em;
+      color: #0056b3;
+      margin-bottom: 0.25em;
+    }
+    .doc-list span {
+      font-size: 0.95em;
+      color: #667;
+    }
+  </style>
 </head>
-<body style="font-family:Arial; padding:2rem">
-  <h1>¡HOLIS!</h1>
+<body>
+  <div class="container">
+    <h1>Portal de Documentación de APIs</h1>
+    <p>Seleccione una especificación para ver los detalles completos.</p>
+    
+    <ul class="doc-list">
+      <!-- Endpoint 1: Sustitutos -->
+      <li>
+        <a href="https://matiasasmartfram.github.io/spdocumentation/sustitutos">
+          <strong>Gestión de Sabores Sustitutos</strong>
+          <span>Manejo de sabores de respaldo en potes de helado desde Rappi.</span>
+        </a>
+      </li>
+      
+      <!-- Endpoint 2: Prendido y Apagado -->
+      <li>
+        <a href="https://matiasasmartfram.github.io/spdocumentation/prendido_apagado">
+          <strong>Disponibilidad de Catálogo (Bulk)</strong>
+          <span>Activación y desactivación masiva de productos en plataformas.</span>
+        </a>
+      </li>
+      
+      <!-- Aquí puedes agregar más enlaces en el futuro -->
+
+    </ul>
+  </div>
 </body>
 </html>
 
