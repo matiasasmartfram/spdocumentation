@@ -173,7 +173,7 @@
   }
 ]</code></pre>
 
-        <h2>6. Descripción de Campos</h2>
+        <h2>6. Descripción de Campos <code>details</code></h2>
         <table>
             <thead>
                 <tr><th>Campo</th><th>Tipo</th><th>Obligatorio</th><th>Descripción</th></tr>
@@ -241,11 +241,10 @@
                 <tr><th>Código de Error</th><th>Descripción</th><th>Ejemplo</th></tr>
             </thead>
             <tbody>
-                <tr><td><code>PROMO-001</code></td><td>Falta <code>promotion=true</code> en una línea que debería ser promocional.</td><td>-</td></tr>
-                <tr><td><code>PROMO-002</code></td><td>El array <code>optionGroups</code> está vacío o no fue enviado en una promoción.</td><td>-</td></tr>
-                <tr><td><code>PROMO-003</code></td><td>El <code>sku</code> dentro de un <code>optionGroup</code> es inexistente o está inactivo.</td><td>SKU "999" no existe.</td></tr>
-                <tr><td><code>PROMO-004</code></td><td>El número de <code>optionGroups</code> es inconsistente con la <code>quantity</code>.</td><td>2 promos × 2 cuartos = 4 líneas; se enviaron 3.</td></tr>
-            </tbody>
+                <tr><td><code>1</code></td><td>Falta <code>promotion=true</code> en una línea que debería ser promocional.</td><td>-</td></tr>
+                <tr><td><code>2</code></td><td>El array <code>optionGroups</code> está vacío o no fue enviado en una promoción.</td><td>-</td></tr>
+                <tr><td><code>3</code></td><td>El <code>sku</code> dentro de un <code>optionGroup</code> es inexistente o está inactivo.</td><td>SKU "999" no existe.</td></tr>
+          </tbody>
         </table>
 
     </div>
