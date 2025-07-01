@@ -191,7 +191,7 @@ class PedidosYa extends Platform {
                     <td>ThirdParty (incl. Pedigrido)</td>
                     <td><code>thirdParty.js</code></td>
                     <td>✅ Sí</td>
-                    <td><strong>❌ No</strong> (El método <code>confirmOrder</code> está vacío)</td>
+                    <td>✅ Sí</td>
                 </tr>
                 <tr>
                     <td>Glovo</td>
@@ -208,14 +208,7 @@ class PedidosYa extends Platform {
             </tbody>
         </table>
 
-        <h2>5. Consecuencias y Puntos Importantes</h2>
-        
-        <div class="warning">
-            <h3>⚠️ ¡Importante! Falta de Feedback Loop en ThirdParty</h3>
-            <p>La consecuencia más crítica de esta funcionalidad se encuentra en la implementación de <strong><code>ThirdParty</code></strong>. Aunque los pedidos de plataformas gestionadas por esta clase (como "Pedigrido") se marcan como <strong>CONFIRMED</strong> en la base de datos de PLATFORM, <strong>no se envía ninguna notificación de vuelta a la API de la plataforma de origen</strong>.</p>
-            <p>El método <code>confirmOrder</code> en <code>thirdParty.js</code> está vacío. Esto puede causar discrepancias de estado entre PLATFORM y el sistema externo, potencialmente llevando a que la plataforma externa considere la orden como "no aceptada" o "expirada" si no recibe una confirmación dentro de su tiempo límite.</p>
-        </div>
-
+    
         <div class="note">
             <h3>Flujo de Estados y Trazabilidad</h3>
             <p>Con <code>autoConfirm</code> activo, el documento <code>news</code> de una orden contendrá casi simultáneamente dos trazas iniciales:</p>
