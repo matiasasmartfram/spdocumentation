@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Documentation: Prendido Apagado de Producttos</title>
+    <title>API Documentation: Disponibilidad de Productos v2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Source+Code+Pro:wght@400;600&display=swap');
 
@@ -36,6 +36,14 @@
             font-size: 2em;
             color: #2c3e50;
         }
+        
+        h1 small {
+            display: block;
+            font-size: 0.5em;
+            font-weight: 400;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
 
         h2 {
             font-size: 1.5em;
@@ -49,17 +57,11 @@
             color: #34495e;
             border-bottom-style: dashed;
         }
-        
-        h3 small {
-            font-weight: 400;
-            color: #7f8c8d;
-            font-size: 0.8em;
-        }
 
         code {
             font-family: 'Source Code Pro', monospace;
             background-color: #ecf0f1;
-            color: #e74c3c;
+            color: #c0392b;
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 0.9em;
@@ -113,172 +115,119 @@
 <body>
 
     <div class="container">
-        <h1>>API Documentation: Prendido Apagado de Producttos</h1>
+        <h1>API: Disponibilidad de Productos
+            <small>(versión con branchId único y arrays skus[])</small>
+        </h1>
 
         <h2>1. Especificación del Endpoint</h2>
-        <ul>
-            <li><strong>Método:</strong> <code>POST</code></li>
-            <li><strong>Endpoint:</strong> <code>/api/catalog/itemAvailability</code></li>
-            <li><strong>Content-Type:</strong> <code>application/json</code></li>
-            <li><strong>Autenticación:</strong> <code>Authorization: Bearer <token></code></li>
-        </ul>
+        <table>
+            <tbody>
+                <tr><th>Propiedad</th><th>Valor</th></tr>
+                <tr><td><strong>Método</strong></td><td><code>POST</code></td></tr>
+                <tr><td><strong>Endpoint</strong></td><td><code>/api/catalog/itemAvailability</code></td></tr>
+                <tr><td><strong>Content-Type</strong></td><td><code>application/json</code></td></tr>
+                <tr><td><strong>Autenticación</strong></td><td><code>Authorization: Bearer <token></code></td></tr>
+            </tbody>
+        </table>
 
         <h2>2. Formato del Request Body</h2>
-        <p>El cuerpo de la petición debe ser un objeto JSON con tres claves principales: <code>branches</code>, <code>itemsOn</code>, y <code>itemsOff</code>.</p>
         <pre><code>{
-  "branches": [
-    { "branchId": 4390 }
-  ],
+  "branchId": 4390,
   "itemsOn": [
-    { "sku": "2001", "platformId": 2 }
+    { "skus": ["2001", "2002"], "platformId": 2 }
   ],
   "itemsOff": [
-    { "sku": "127", "platformId": 1 }
+    { "skus": ["127", "64"], "platformId": 1 }
   ]
 }</code></pre>
+        <table>
+            <thead><tr><th>Clave</th><th>Tipo</th><th>Reglas</th></tr></thead>
+            <tbody>
+                <tr><td><code>branchId</code></td><td>integer</td><td>Sucursal destino (un solo valor por request).</td></tr>
+                <tr><td><code>itemsOn[] / itemsOff[]</code></td><td>array</td><td>Cada elemento define: <code>platformId</code> y un array <code>skus[]</code>.</td></tr>
+                <tr><td><code>skus</code></td><td>array<string></td><td>Lista (≥ 1) de SKUs a afectar. Solo dígitos.</td></tr>
+            </tbody>
+        </table>
+        <p><strong>Nota:</strong> Si necesitas afectar varias sucursales, envía varias peticiones independientes, una por <code>branchId</code>.</p>
 
-        <h2>3. Formato del Response Body (Siempre HTTP 200 OK)</h2>
-        <p>Si la petición es sintácticamente válida, el servidor siempre responderá con un <strong>HTTP 200 OK</strong>. El resultado de la operación se detalla dentro del cuerpo JSON.</p>
-        <ul>
-            <li><code>status</code>: Indica el resultado global: "SUCCESS", "PARTIAL_FAILURE", o "FAILURE".</li>
-            <li><code>results</code>: Array con los detalles de cada operación exitosa.</li>
-            <li><code>errors</code>: Array con los detalles de cada operación fallida. Solo aparece si <code>status</code> no es "SUCCESS".</li>
-            <li><code>timestamp</code>: Fecha y hora en formato ISO 8601 para trazabilidad.</li>
-        </ul>
-        <pre><code>{
-  "status": "SUCCESS" | "PARTIAL_FAILURE" | "FAILURE",
-  "results": [
-    {
-      "branchId":   4390,
-      "platformId": 1,
-      "sku":        "127",
-      "action":     "OFF",
-      "status":     "SUCCESS"
-    }
-  ],
-  "errors": [
-    {
-      "branchId":   4390,
-      "platformId": 3,
-      "sku":        "145",
-      "action":     "OFF",
-      "status":     "FAILURE",
-      "message":    "Invalid credentials for platformId 3"
-    }
-  ],
-  "timestamp": "2025-06-30T12:34:56Z"
-}</code></pre>
-
-        <h2>4. Ejemplos Completos de Respuestas</h2>
-
-        <h3>4.1. status: "SUCCESS" <small>(todas las operaciones correctas)</small></h3>
-        <pre><code>{
-  "status": "SUCCESS",
-  "results": [
-    { "branchId": 4390, "platformId": 1, "sku": "127", "action": "OFF", "status": "SUCCESS" },
-    { "branchId": 4390, "platformId": 2, "sku": "127", "action": "OFF", "status": "SUCCESS" },
-    { "branchId": 4390, "platformId": 3, "sku": "127", "action": "OFF", "status": "SUCCESS" },
-    { "branchId": 4390, "platformId": 4, "sku": "127", "action": "OFF", "status": "SUCCESS" }
-  ],
-  "timestamp": "2025-06-30T12:34:56Z"
-}</code></pre>
-
-        <h3>4.2. status: "PARTIAL_FAILURE" <small>(algunas operaciones fallan)</small></h3>
+        <h2>3. Formato del Response Body <small>(HTTP 200 OK siempre que el JSON sea válido)</small></h2>
+        <table>
+            <thead><tr><th>Campo</th><th>Descripción</th></tr></thead>
+            <tbody>
+                <tr><td><code>status</code></td><td>"SUCCESS", "PARTIAL_FAILURE" o "FAILURE".</td></tr>
+                <tr><td><code>results[]</code></td><td>Lotes exitosos (branchId, platformId, skus[], action, status).</td></tr>
+                <tr><td><code>errors[]</code></td><td>Lotes fallidos (mismo formato, añade <code>message</code>).</td></tr>
+                <tr><td><code>timestamp</code></td><td>Fecha-hora en formato ISO-8601 (UTC).</td></tr>
+            </tbody>
+        </table>
         <pre><code>{
   "status": "PARTIAL_FAILURE",
   "results": [
-    { "branchId": 4390, "platformId": 1, "sku": "127", "action": "OFF", "status": "SUCCESS" },
-    { "branchId": 4390, "platformId": 2, "sku": "127", "action": "OFF", "status": "SUCCESS" }
+    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON",  "status": "SUCCESS" }
   ],
   "errors": [
-    {
-      "branchId":   4390,
-      "platformId": 3,
-      "sku":        "127",
-      "action":     "OFF",
-      "status":     "FAILURE",
-      "message":    "Invalid credentials for platformId 3"
-    },
-    {
-      "branchId":   4390,
-      "platformId": 4,
-      "sku":        "127",
-      "action":     "OFF",
-      "status":     "FAILURE",
-      "message":    "Timeout contacting external API"
-    }
+    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "FAILURE", "message": "Invalid credentials for platformId 1" }
   ],
-  "timestamp": "2025-06-30T12:35:22Z"
+  "timestamp": "2025-07-01T14:05:00Z"
 }</code></pre>
 
-        <h3>4.3. status: "FAILURE" <small>(ninguna operación tiene éxito)</small></h3>
+        <h2>4. Ejemplos Completos</h2>
+        <h3>4.1. status: "SUCCESS"</h3>
+        <pre><code>{
+  "status": "SUCCESS",
+  "results": [
+    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "SUCCESS" },
+    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON", "status": "SUCCESS" }
+  ],
+  "timestamp": "2025-07-01T14:06:45Z"
+}</code></pre>
+        <h3>4.2. status: "PARTIAL_FAILURE"</h3>
+        <pre><code>{
+  "status": "PARTIAL_FAILURE",
+  "results": [
+    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON", "status": "SUCCESS" }
+  ],
+  "errors": [
+    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "FAILURE", "message": "Invalid credentials for platformId 1" }
+  ],
+  "timestamp": "2025-07-01T14:07:30Z"
+}</code></pre>
+        <h3>4.3. status: "FAILURE"</h3>
         <pre><code>{
   "status": "FAILURE",
   "errors": [
-    {
-      "branchId":   4391,
-      "platformId": 1,
-      "sku":        "127",
-      "action":     "OFF",
-      "status":     "FAILURE",
-      "message":    "BranchId 4391 not found"
-    },
-    {
-      "branchId":   4391,
-      "platformId": 4,
-      "sku":        "145",
-      "action":     "OFF",
-      "status":     "FAILURE",
-      "message":    "BranchId 4391 not found"
-    }
+    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "FAILURE", "message": "Branch suspended" },
+    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON",  "status": "FAILURE", "message": "Branch suspended" }
   ],
-  "timestamp": "2025-06-30T12:36:10Z"
+  "timestamp": "2025-07-01T14:08:12Z"
 }</code></pre>
 
-        <h2>5. Errores de Capa de Transporte (HTTP Status != 200)</h2>
-        <p>Estos errores se usan solo cuando la petición global es inválida o hay un fallo interno irrecuperable.</p>
+        <h2>5. Errores de Transporte (HTTP ≠ 200)</h2>
         <table>
-            <thead>
-                <tr>
-                    <th>Código HTTP</th>
-                    <th>Uso</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Código</th><th>Uso Típico</th></tr></thead>
             <tbody>
-                <tr>
-                    <td><code>400</code></td>
-                    <td>JSON mal formado, campos faltantes o tipos de datos erróneos.</td>
-                </tr>
-                <tr>
-                    <td><code>401</code> / <code>403</code></td>
-                    <td>Autenticación inválida o sin los permisos necesarios.</td>
-                </tr>
-                <tr>
-                    <td><code>429</code></td>
-                    <td>Límite de peticiones (rate limit) excedido.</td>
-                </tr>
-                <tr>
-                    <td><code>500</code></td>
-                    <td>Error inesperado en el servidor.</td>
-                </tr>
+                <tr><td><code>400</code></td><td>JSON mal formado, campos faltantes, <code>skus</code> vacío, etc.</td></tr>
+                <tr><td><code>401 / 403</code></td><td>Token inválido o sin permisos.</td></tr>
+                <tr><td><code>429</code></td><td>Rate-limit excedido.</td></tr>
+                <tr><td><code>500</code></td><td>Error interno inesperado.</td></tr>
             </tbody>
         </table>
-        <p>Ejemplo de respuesta 400 Bad Request:</p>
-        <pre><code>{
+        <p>Ejemplo (400 Bad Request):</p>
+        <pre><code>HTTP/1.1 400 Bad Request
+{
   "error": "itemsOff must be an array",
-  "timestamp": "2025-06-30T12:37:05Z"
+  "timestamp": "2025-07-01T14:09:05Z"
 }</code></pre>
 
-        <h2>6. Resumen de Reglas</h2>
+        <h2>6. Reglas Clave</h2>
         <ul>
-            <li>Se usan exclusivamente <code>branchId</code> y <code>platformId</code> como identificadores.</li>
-            <li>La respuesta es siempre <strong>HTTP 200 OK</strong> si el request es sintácticamente válido.</li>
-            <li>El campo <code>status</code> indica el resultado de la lógica de negocio: SUCCESS, PARTIAL_FAILURE, o FAILURE.</li>
-            <li>El cliente debe inspeccionar el array <code>errors</code> solo cuando el <code>status</code> no es "SUCCESS".</li>
-            <li>Los códigos de error HTTP (4xx, 5xx) se reservan para fallos de transporte o validación.</li>
+            <li>Identificadores únicos: <code>branchId</code> y <code>platformId</code>.</li>
+            <li><strong>Una sola sucursal por request</strong> (<code>branchId</code> numérico).</li>
+            <li><code>itemsOn</code> / <code>itemsOff</code> se procesan por fila (cada fila = plataforma + set de SKUs).</li>
+            <li>Si el JSON es válido → <strong>HTTP 200 OK</strong>; la lógica de negocio se indica en <code>status</code>.</li>
+            <li>El cliente inspecciona <code>errors[]</code> solo si <code>status</code> ≠ "SUCCESS".</li>
+            <li>Códigos 4xx/5xx reservados a problemas de transporte / validación global.</li>
         </ul>
-
     </div>
-
 </body>
 </html>
