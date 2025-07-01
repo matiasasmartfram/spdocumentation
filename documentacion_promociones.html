@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especificación Técnica – Formato de Promociones</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Source+Code+Pro:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #f7f8fa;
+            color: #333;
+            margin: 0;
+            padding: 2em;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 2em 3em;
+        }
+
+        .doc-header {
+            text-align: center;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 2em;
+            padding-bottom: 1em;
+        }
+
+        .doc-header h1 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .doc-header p {
+            margin: 0.5em 0 0 0;
+            color: #7f8c8d;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-top: 2em;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #34495e;
+        }
+        
+        h3 {
+            font-size: 1.2em;
+            margin-top: 2em;
+            color: #34495e;
+            border-bottom-style: dashed;
+            border-bottom-width: 1px;
+            padding-bottom: 5px;
+        }
+
+        code {
+            font-family: 'Source Code Pro', monospace;
+            background-color: #ecf0f1;
+            color: #c0392b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 1.5em;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h2>1. Introducción</h2>
+        <p>Este documento define la estructura y las reglas de negocio que deben seguir los terceros (ThirdParties) para enviar promociones a SmartPedidos. Su objetivo es garantizar que los datos lleguen en un formato uniforme y que puedan ser interpretados correctamente por los servicios de stock y facturación.</p>
+
+        <h2>2. Alcance</h2>
+        <ul>
+            <li>Describe únicamente el payload JSON del nodo <code>details</code> correspondiente a items promocionales.</li>
+            <li>Se centra en la deducción de stock basada en los <code>optionGroups</code>.</li>
+        </ul>
+
+        <h2>3. Audiencia</h2>
+        <p>Desarrolladores de terceros integradores, que definan catálogos y promociones.</p>
+
+        <h2>4. Glosario</h2>
+        <table>
+            <thead>
+                <tr><th>Término</th><th>Definición</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>SKU</code></td><td>Identificador único de un producto en el sistema de inventario.</td></tr>
+                <tr><td><code>Promotion</code></td><td>Flag booleano que indica que una línea del pedido corresponde a una promoción.</td></tr>
+                <tr><td><code>OptionGroup</code></td><td>Grupo de opciones que detalla los productos reales incluidos en la promo y sobre cuyos SKU se descontará el stock.</td></tr>
+            </tbody>
+        </table>
+
+        <h2>5. Estructura General</h2>
+        <pre><code>"details": [
+  {
+    "id": 0,
+    "unitPrice": 5000,
+    "quantity": 1,
+    "name": "2 Cuartos por $5000",
+    "sku": "12760",
+    "notes": null,
+    "promotion": true,
+    "optionGroups": [
+      {
+        "id": 91,
+        "name": "Sabores Helado 1/4 Kg",
+        "sku": "66",
+        "unitPrice": 0,
+        "notes": "Sambayón"
+      },
+      {
+        "id": 91,
+        "name": "Sabores Helado 1/4 Kg",
+        "sku": "66",
+        "unitPrice": 0,
+        "notes": "Dulce de Leche"
+      }
+    ]
+  }
+]</code></pre>
+
+        <h2>6. Descripción de Campos</h2>
+        <table>
+            <thead>
+                <tr><th>Campo</th><th>Tipo</th><th>Obligatorio</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>id</code></td><td>number</td><td>Sí</td><td>Identificador secuencial dentro de <code>details</code>. No afecta lógica de negocio.</td></tr>
+                <tr><td><code>unitPrice</code></td><td>number</td><td>Sí</td><td>Precio final por unidad promocional. Se expresa en la moneda configurada.</td></tr>
+                <tr><td><code>quantity</code></td><td>number</td><td>Sí</td><td>Cantidad de promociones solicitadas.</td></tr>
+                <tr><td><code>name</code></td><td>string</td><td>Sí</td><td>Descripción comercial visible al cliente.</td></tr>
+                <tr><td><code>sku</code></td><td>string</td><td>Sí</td><td>SKU lógico de la promoción. No se utiliza para stock, pero es requerido para trazabilidad.</td></tr>
+                <tr><td><code>notes</code></td><td>string/null</td><td>No</td><td>Observaciones generales. No confundir con sabores.</td></tr>
+                <tr><td><code>promotion</code></td><td>boolean</td><td>Sí</td><td>Debe ser <code>true</code> para que el backend trate la línea como promoción.</td></tr>
+                <tr><td><code>optionGroups</code></td><td>array</td><td>Sí</td><td>Lista de productos reales que componen la promo y descuentan stock.</td></tr>
+            </tbody>
+        </table>
+        
+        <h3>6.1. Estructura de OptionGroup</h3>
+        <table>
+            <thead>
+                <tr><th>Campo</th><th>Tipo</th><th>Obligatorio</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>id</code></td><td>number</td><td>Sí</td><td>ID del grupo de opciones (ej.: "Sabores Helado 1/4 Kg").</td></tr>
+                <tr><td><code>name</code></td><td>string</td><td>Sí</td><td>Nombre descriptivo del grupo.</td></tr>
+                <tr><td><code>sku</code></td><td>string</td><td>Sí</td><td>SKU real del producto que descuenta stock.</td></tr>
+                <tr><td><code>unitPrice</code></td><td>number</td><td>Sí</td><td>Debe ser <code>0</code> cuando el precio total se informa en la promo.</td></tr>
+                <tr><td><code>notes</code></td><td>string</td><td>Recomendado</td><td>Detalle específico (sabor, variante, etc.). Enviar una línea por cada unidad.</td></tr>
+            </tbody>
+        </table>
+
+        <h2>7. Reglas de Negocio</h2>
+        <ol>
+            <li><strong>Flag obligatorio:</strong> <code>promotion</code> debe enviarse con valor <code>true</code>.</li>
+            <li><strong>SKU de promo vs. SKU reales:</strong> El SKU “cabecera” (<code>details.sku</code>) no descuenta stock. Los SKU que descuentan son los de cada <code>optionGroups[i].sku</code>.</li>
+            <li><strong>Cantidad vs. OptionGroups:</strong> La suma de los productos en <code>optionGroups</code> debe ser coherente con <code>quantity</code>. Si <code>quantity = 2</code> y la promo es 2x1, deben venir 4 <code>optionGroups</code>.</li>
+            <li><strong>unitPrice en optionGroups:</strong> Siempre <code>0</code>, salvo promociones complejas que requieran prorrateo (consultar).</li>
+            <li><strong>Notas por unidad:</strong> Se recomienda enviar sabores/variantes por línea para facilitar el packing.</li>
+            <li><strong>Descuentos automáticos:</strong> La lógica de descuentos se aplica tras validar <code>promotion = true</code> y agrupar los SKU de <code>optionGroups</code>.</li>
+        </ol>
+
+        <h2>8. Ejemplos</h2>
+        <h3>8.1. Promo de 2 Cuartos por $5000 (1 unidad)</h3>
+        <pre><code>{
+  "id": 0, "unitPrice": 5000, "quantity": 1, "name": "2 Cuartos por $5000", "sku": "12760", "notes": null, "promotion": true,
+  "optionGroups": [
+    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Chocolate" },
+    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Frutilla" }
+  ]
+}</code></pre>
+        <h3>8.2. Promo de 2 Cuartos por $5000 (2 unidades)</h3>
+        <p>En este caso, <code>quantity = 2</code>, por lo que se esperan 4 líneas en <code>optionGroups</code>.</p>
+        <pre><code>{
+  "id": 0, "unitPrice": 5000, "quantity": 2, "name": "2 Cuartos por $5000", "sku": "12760", "notes": null, "promotion": true,
+  "optionGroups": [
+    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Chocolate" },
+    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Limón" },
+    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Menta Granizada" },
+    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Sambayón" }
+  ]
+}</code></pre>
+
+        <h2>9. Validaciones y Errores Comunes</h2>
+        <table>
+            <thead>
+                <tr><th>Código de Error</th><th>Descripción</th><th>Ejemplo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>PROMO-001</code></td><td>Falta <code>promotion=true</code> en una línea que debería ser promocional.</td><td>-</td></tr>
+                <tr><td><code>PROMO-002</code></td><td>El array <code>optionGroups</code> está vacío o no fue enviado en una promoción.</td><td>-</td></tr>
+                <tr><td><code>PROMO-003</code></td><td>El <code>sku</code> dentro de un <code>optionGroup</code> es inexistente o está inactivo.</td><td>SKU "999" no existe.</td></tr>
+                <tr><td><code>PROMO-004</code></td><td>El número de <code>optionGroups</code> es inconsistente con la <code>quantity</code>.</td><td>2 promos × 2 cuartos = 4 líneas; se enviaron 3.</td></tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>
