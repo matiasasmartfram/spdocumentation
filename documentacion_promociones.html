@@ -125,7 +125,6 @@
         <ul>
             <li>Describe únicamente el payload del nodo <code>details</code> correspondiente a ítems promocionales.</li>
             <li>Se centra en la deducción de stock basada en los <code>optionGroups</code>.</li>
-            <li>No cubre autenticación, transporte (REST/gRPC) ni callbacks de confirmación.</li>
         </ul>
 
         <h2>3. Audiencia</h2>
@@ -149,7 +148,7 @@
   {
     "id": 0,                  // Identificador interno de la línea
     "unitPrice": 5000,        // Precio final por unidad promocional
-    "quantity": 2,            // Cantidad de promociones solicitadas
+    "quantity": 1,            // Cantidad de promociones (VALOR SIEMPRE EN 1)
     "name": "2 Cuartos por $5000", // Descripción comercial
     "sku": "12760",           // SKU lógico de la promo (no descuenta stock)
     "notes": null,            // Observaciones generales
@@ -179,7 +178,7 @@
             <tbody>
                 <tr><td><code>id</code></td><td>number</td><td>Sí</td><td>Identificador secuencial dentro de <code>details</code>. No afecta lógica de negocio.</td></tr>
                 <tr><td><code>unitPrice</code></td><td>number</td><td>Sí</td><td>Precio final por unidad promocional. Moneda definida en la tienda.</td></tr>
-                <tr><td><code>quantity</code></td><td>number</td><td>Sí</td><td>Cantidad de promociones solicitadas.</td></tr>
+                <tr><td><code>quantity</code></td><td>number</td><td>Sí</td><td>Cantidad de promociones EL VALOR SIEMPRE ES 1.</td></tr>
                 <tr><td><code>name</code></td><td>string</td><td>Sí</td><td>Descripción comercial visible al cliente.</td></tr>
                 <tr><td><code>sku</code></td><td>string</td><td>Sí</td><td>SKU lógico de la promoción (no descuenta stock).</td></tr>
                 <tr><td><code>notes</code></td><td>string | null</td><td>No</td><td>Observaciones generales (no confundir con sabores).</td></tr>
@@ -196,7 +195,7 @@
                 <tr><td><code>name</code></td><td>string</td><td>Sí</td><td>Nombre descriptivo del grupo.</td></tr>
                 <tr><td><code>sku</code></td><td>string</td><td>Sí</td><td>SKU real del producto que descuenta stock.</td></tr>
                 <tr><td><code>unitPrice</code></td><td>number</td><td>Sí</td><td>Debe ser <code>0</code> cuando el precio total se informa en la promo.</td></tr>
-                <tr><td><code>notes</code></td><td>string</td><td>Recomendado</td><td>Detalle específico (sabor, variante, etc.). Puede incluir múltiples sabores separados por coma cuando <code>quantity > 1</code>.</td></tr>
+                <tr><td><code>notes</code></td><td>string</td><td>Recomendado</td><td>Detalle específico (sabor, variante, etc.).</code>.</td></tr>
             </tbody>
         </table>
 
@@ -204,8 +203,11 @@
         <ol>
             <li><strong>Flag obligatorio:</strong> <code>promotion</code> debe enviarse con valor <code>true</code>.</li>
             <li><strong>SKU cabecera vs. SKU reales:</strong> El SKU de cabecera (<code>details.sku</code>) no descuenta stock; solo los <code>optionGroups[*].sku</code>.</li>
-            <li><strong>Coherencia cantidad:</strong> El número de líneas en <code>optionGroups</code> representa los artículos distintos que integran <strong>una unidad</strong> de la promoción. El backend multiplicará internamente cada SKU por el valor de <code>quantity</code> para deducir stock.</li>
-            <li><strong>Precio en optionGroups:</strong> Siempre <code>0</code>, salvo promociones con prorrateo (coordinar).</li>
+          
+<li><strong><code>quantity</code>SIEMPRE va a ser 1:</strong> La promocion se va a enviar cuantas veces sea necesario, con <code>quantity = 1</code>. Es decir si el cliente selecciona 2 promociones, se enviaran dos productos promocion.</li>
+          
+            <li><strong>Coherencia cantidad:</strong> El número de líneas en <code>optionGroups</code> representa los artículos distintos que integran <strong>una unidad</strong> de la promoción.</li>
+            <li><strong>Precio en optionGroups:</strong> Siempre <code>0</code>.</li>
             <li><strong>Notas por unidad:</strong> Puede agregarse más de un sabor/variante en <code>notes</code> separando por coma cuando se soliciten múltiples unidades de promo.</li>
         </ol>
 
@@ -216,23 +218,56 @@
   "name": "2 Cuartos por $5000",
   "promotion": true,
   "optionGroups": [
-    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Chocolate" },
-    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Frutilla" }
-  ]
-}</code></pre>
+                  { "id": 91, 
+                    "name": "Sabores Helado 1/4 Kg", 
+                    "sku": "66", 
+                    "unitPrice": 0, 
+                    "notes": "Chocolate" },
+                  { "id": 91, 
+                    "name": "Sabores Helado 1/4 Kg", 
+                    "sku": "66", 
+                    "unitPrice": 0, 
+                    "notes": "Frutilla" }
+                  ]
+ }</code></pre>
 
         <h3>8.2. Promo de 2 Cuartos por $5000 – 2 unidades</h3>
-        <p>Se solicitan 2 promociones (4 cuartos en total). La estructura de <code>optionGroups</code> sigue representando <strong>una</strong> unidad de la promo, pero los <code>notes</code> pueden agrupar los sabores.</p>
-        <pre><code>{
-  "quantity": 2,
+        <p>Se solicitan 2 promociones (4 cuartos en total). La estructura de <code>optionGroups</code> sigue representando <strong>una</strong> unidad de la promo, pero se envian 2 productos promocion.</p>
+             <pre><code>{
+  "quantity": 1, // Se solicita 1 promo
   "name": "2 Cuartos por $5000",
   "promotion": true,
   "optionGroups": [
-    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Chocolate, Limón" },
-    { "id": 91, "name": "Sabores Helado 1/4 Kg", "sku": "66", "unitPrice": 0, "notes": "Menta Granizada, Sambayón" }
-  ]
-}</code></pre>
-        <p><strong>Interpretación interna:</strong> Se descuentan 4 cuartos de helado (2 ítems en <code>optionGroups</code> × <code>quantity</code> de 2) del SKU <code>66</code>.</p>
+                  { "id": 91, 
+                    "name": "Sabores Helado 1/4 Kg", 
+                    "sku": "66", 
+                    "unitPrice": 0, 
+                    "notes": "Chocolate" },
+                  { "id": 91, 
+                    "name": "Sabores Helado 1/4 Kg", 
+                    "sku": "66", 
+                    "unitPrice": 0, 
+                    "notes": "Frutilla" }
+                  ]
+ }</code></pre>
+      <pre><code>{
+  "quantity": 1, // Se solicita 1 promo
+  "name": "2 Cuartos por $5000",
+  "promotion": true,
+  "optionGroups": [
+                  { "id": 91, 
+                    "name": "Sabores Helado 1/4 Kg", 
+                    "sku": "66", 
+                    "unitPrice": 0, 
+                    "notes": "Limon" },
+                  { "id": 91, 
+                    "name": "Sabores Helado 1/4 Kg", 
+                    "sku": "66", 
+                    "unitPrice": 0, 
+                    "notes": "Durazno" }
+                  ]
+ }</code></pre>
+        <p><strong>Interpretación interna:</strong> Se descuentan 4 cuartos de helado (2 ítems en <code>optionGroups</code> en una promocion y 2 ítems en <code>optionGroups</code> de la otra promocion) y se enviaron 2 objetos promocion de promocion.</p>
 
         <h2>9. Validaciones y Errores Comunes</h2>
         <table>
@@ -242,8 +277,6 @@
                 <tr><td><code>PROMO-002</code></td><td><code>optionGroups</code> vacío o no enviado.</td><td>–</td></tr>
                 <tr><td><code>PROMO-003</code></td><td><code>optionGroups.sku</code> inexistente o inactivo.</td><td>SKU 999 no existe.</td></tr>
                 <tr><td><code>PROMO-004</code></td><td><code>unitPrice</code> distinto de 0 en un <code>optionGroup</code>.</td><td>–</td></tr>
-                <tr><td><code>PROMO-005</code></td><td>Falta o exceso de SKU en <code>optionGroups</code> respecto a la definición de una unidad de promo.</td><td>Se envía 1 solo SKU cuando se necesitan 2.</td></tr>
-                <tr><td><code>PROMO-010</code></td><td>Stock insuficiente para alguno de los SKU reales.</td><td>Solo 1 unidad en stock.</td></tr>
             </tbody>
         </table>
     </div>
