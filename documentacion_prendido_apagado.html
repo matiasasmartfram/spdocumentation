@@ -1,233 +1,454 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Documentation: Disponibilidad de Productos v2</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Source+Code+Pro:wght@400;600&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Documentation: Prendido / Apagado de Productos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap');
 
-        body {
-            font-family: 'Lato', sans-serif;
-            background-color: #f7f8fa;
-            color: #333;
-            margin: 0;
-            padding: 2em;
-            line-height: 1.6;
-        }
+    :root {
+      --primary-color: #007bff;
+      --success-color: #28a745;
+      --warning-color: #fd7e14;
+      --danger-color: #dc3545;
+      --bg-color: #f8f9fa;
+      --text-color: #212529;
+      --text-muted-color: #6c757d;
+      --border-color: #dee2e6;
+      --code-bg: #2b303b;
+      --code-text: #c0c5ce;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            padding: 2em 3em;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 2em;
+      line-height: 1.6;
+    }
 
-        h1, h2, h3 {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            font-weight: 700;
-        }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
 
-        h1 {
-            font-size: 2em;
-            color: #2c3e50;
-        }
-        
-        h1 small {
-            display: block;
-            font-size: 0.5em;
-            font-weight: 400;
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
+    header {
+      padding: 2em;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    header h1 { margin: 0 0 0.25em 0; font-size: 2em; }
+    header p { margin: 0; color: var(--text-muted-color); }
+    
+    main { padding: 2em; }
+    
+    section { margin-bottom: 3em; }
+    
+    h2 {
+      font-size: 1.5em;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0.5em;
+      margin-top: 0;
+      margin-bottom: 1em;
+    }
+    
+    h3 { font-size: 1.2em; margin-bottom: 0.5em; color: var(--primary-color); }
 
-        h2 {
-            font-size: 1.5em;
-            margin-top: 2em;
-            color: #34495e;
-        }
-        
-        h3 {
-            font-size: 1.2em;
-            margin-top: 2em;
-            color: #34495e;
-            border-bottom-style: dashed;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5em;
+    }
 
-        code {
-            font-family: 'Source Code Pro', monospace;
-            background-color: #ecf0f1;
-            color: #c0392b;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
+    th, td {
+      padding: 0.8em 1em;
+      text-align: left;
+      border: 1px solid var(--border-color);
+      vertical-align: top;
+    }
 
-        pre {
-            background-color: #2d3436;
-            color: #dfe6e9;
-            padding: 1.5em;
-            border-radius: 6px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
+    th { background-color: var(--bg-color); font-weight: 500; }
+    
+    td:first-child { font-weight: 500; width: 25%; }
+    
+    .http-method {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+    
+    .post { background-color: var(--success-color); }
+    
+    .http-status {
+      font-family: 'Fira Code', monospace;
+      font-weight: 500;
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+    }
+    
+    .ok { background-color: #e9f5ec; color: #20763d; }
+    .error { background-color: #fdecea; color: #a52828; }
 
-        pre code {
-            background-color: transparent;
-            color: inherit;
-            padding: 0;
-            border-radius: 0;
-            font-size: 0.9em;
-        }
+    .code-container {
+      position: relative;
+      background-color: var(--code-bg);
+      border-radius: 6px;
+      margin-bottom: 1em;
+    }
 
-        ul {
-            padding-left: 20px;
-        }
-        
-        li {
-            margin-bottom: 0.5em;
-        }
+    pre {
+      margin: 0;
+      padding: 1.5em;
+      color: var(--code-text);
+      white-space: pre-wrap;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+      overflow-x: auto;
+    }
+    
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #444c5d;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+      transition: background-color 0.2s;
+    }
+    
+    .copy-btn:hover { background-color: #555e71; }
+    .copy-btn.copied { background-color: var(--success-color); }
+    
+    ul { padding-left: 20px; }
+    ul li { margin-bottom: 0.5em; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1em;
-        }
-
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            font-weight: 700;
-        }
-
-    </style>
+    code {
+      font-family: 'Fira Code', monospace;
+      background-color: #e9ecef;
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
+
 <body>
 
-    <div class="container">
-        <h1>API: Disponibilidad de Productos
-            <small>(versión con branchId único y arrays skus[])</small>
-        </h1>
+  <div class="container">
+    <header>
+      <h1>Documentación de API</h1>
+      <p>Prendido / Apagado de Productos por Lotes</p>
+    </header>
 
+    <main>
+      <!-- SECTION 1: Endpoint Specification -->
+      <section id="endpoint">
         <h2>1. Especificación del Endpoint</h2>
         <table>
-            <tbody>
-                <tr><th>Propiedad</th><th>Valor</th></tr>
-                <tr><td><strong>Método</strong></td><td><code>POST</code></td></tr>
-                <tr><td><strong>Endpoint</strong></td><td><code>/api/catalog/itemAvailability</code></td></tr>
-                <tr><td><strong>Content-Type</strong></td><td><code>application/json</code></td></tr>
-                <tr><td><strong>Autenticación</strong></td><td><code>Authorization: Bearer <token></code></td></tr>
-            </tbody>
+          <tbody>
+            <tr>
+              <td>Método</td>
+              <td><span class="http-method post">POST</span></td>
+            </tr>
+            <tr>
+              <td>Endpoint</td>
+              <td><code>/api/catalog/itemAvailability</code></td>
+            </tr>
+            <tr>
+              <td>Content-Type</td>
+              <td><code>application/json</code></td>
+            </tr>
+            <tr>
+              <td>Autenticación</td>
+              <td><code>Authorization: Bearer <token></code></td>
+            </tr>
+          </tbody>
         </table>
+      </section>
 
+      <!-- SECTION 2: Request Body -->
+      <section id="request">
         <h2>2. Formato del Request Body</h2>
-        <pre><code>{
+        <p>El cuerpo de la petición agrupa SKUs por las plataformas que comparten la misma acción (encendido o apagado).</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Clave</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>branchId</code></td>
+              <td>integer</td>
+              <td>ID numérico de la sucursal. Se permite un único valor por petición.</td>
+            </tr>
+            <tr>
+              <td><code>itemsOn</code></td>
+              <td>array</td>
+              <td>Array de lotes de productos a <strong>encender</strong>.</td>
+            </tr>
+            <tr>
+              <td><code>itemsOff</code></td>
+              <td>array</td>
+              <td>Array de lotes de productos a <strong>apagar</strong>.</td>
+            </tr>
+             <tr>
+              <td>↳ <code>skus</code></td>
+              <td>array<string></td>
+              <td>Lista de SKUs (como strings) a los que se aplica la acción.</td>
+            </tr>
+            <tr>
+              <td>↳ <code>platformId</code></td>
+              <td>array<integer></td>
+              <td>Lista de IDs de plataforma para los SKUs mencionados.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="code-container">
+          <button class="copy-btn">Copiar</button>
+          <pre><code>{
   "branchId": 4390,
+
   "itemsOn": [
-    { "skus": ["2001", "2002"], "platformId": 2 }
+    {
+      "skus":       ["2001", "2002"],
+      "platformId": [2, 3]
+    }
   ],
+
   "itemsOff": [
-    { "skus": ["127", "64"], "platformId": 1 }
+    {
+      "skus":       ["127", "64"],
+      "platformId": [1]
+    }
   ]
 }</code></pre>
+        </div>
+      </section>
+      
+      <!-- SECTION 3: Response Body -->
+      <section id="response">
+        <h2>3. Formato del Response Body</h2>
+        <p>Si el JSON del request es sintácticamente válido, la API siempre responderá con un código de estado <span class="http-status ok">HTTP 200 OK</span>. El resultado de la operación se detalla en el cuerpo de la respuesta.</p>
         <table>
-            <thead><tr><th>Clave</th><th>Tipo</th><th>Reglas</th></tr></thead>
-            <tbody>
-                <tr><td><code>branchId</code></td><td>integer</td><td>Sucursal destino (un solo valor por request).</td></tr>
-                <tr><td><code>itemsOn[] / itemsOff[]</code></td><td>array</td><td>Cada elemento define: <code>platformId</code> y un array <code>skus[]</code>.</td></tr>
-                <tr><td><code>skus</code></td><td>array<string></td><td>Lista (≥ 1) de SKUs a afectar. Solo dígitos.</td></tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>status</code></td>
+              <td>string</td>
+              <td>Resultado global de la operación: <code>"SUCCESS"</code>, <code>"PARTIAL_FAILURE"</code>, o <code>"FAILURE"</code>.</td>
+            </tr>
+            <tr>
+              <td><code>results</code></td>
+              <td>array</td>
+              <td>Array con los detalles de cada lote que se procesó exitosamente.</td>
+            </tr>
+            <tr>
+              <td><code>errors</code></td>
+              <td>array</td>
+              <td>Array con los detalles y un mensaje de error para cada lote que falló. Se omite si <code>status</code> es <code>"SUCCESS"</code>.</td>
+            </tr>
+            <tr>
+              <td><code>timestamp</code></td>
+              <td>string</td>
+              <td>Fecha-hora de la operación en formato ISO-8601 (UTC) para trazabilidad.</td>
+            </tr>
+          </tbody>
         </table>
-        <p><strong>Nota:</strong> Si necesitas afectar varias sucursales, envía varias peticiones independientes, una por <code>branchId</code>.</p>
+      </section>
 
-        <h2>3. Formato del Response Body <small>(HTTP 200 OK siempre que el JSON sea válido)</small></h2>
-        <table>
-            <thead><tr><th>Campo</th><th>Descripción</th></tr></thead>
-            <tbody>
-                <tr><td><code>status</code></td><td>"SUCCESS", "PARTIAL_FAILURE" o "FAILURE".</td></tr>
-                <tr><td><code>results[]</code></td><td>Lotes exitosos (branchId, platformId, skus[], action, status).</td></tr>
-                <tr><td><code>errors[]</code></td><td>Lotes fallidos (mismo formato, añade <code>message</code>).</td></tr>
-                <tr><td><code>timestamp</code></td><td>Fecha-hora en formato ISO-8601 (UTC).</td></tr>
-            </tbody>
-        </table>
-        <pre><code>{
-  "status": "PARTIAL_FAILURE",
-  "results": [
-    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON",  "status": "SUCCESS" }
-  ],
-  "errors": [
-    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "FAILURE", "message": "Invalid credentials for platformId 1" }
-  ],
-  "timestamp": "2025-07-01T14:05:00Z"
-}</code></pre>
-
-        <h2>4. Ejemplos Completos</h2>
+      <!-- SECTION 4: Response Examples -->
+      <section id="examples">
+        <h2>4. Ejemplos Completos de Respuesta</h2>
+        
         <h3>4.1. status: "SUCCESS"</h3>
-        <pre><code>{
+        <p>Todas las operaciones solicitadas se completaron correctamente.</p>
+        <div class="code-container">
+          <button class="copy-btn">Copiar</button>
+          <pre><code>{
   "status": "SUCCESS",
   "results": [
-    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "SUCCESS" },
-    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON", "status": "SUCCESS" }
+    {
+      "branchId": 4390,
+      "platformId": [1],
+      "skus": ["127", "64"],
+      "action": "OFF",
+      "status": "SUCCESS"
+    },
+    {
+      "branchId": 4390,
+      "platformId": [2, 3],
+      "skus": ["2001", "2002"],
+      "action": "ON",
+      "status": "SUCCESS"
+    }
   ],
-  "timestamp": "2025-07-01T14:06:45Z"
+  "timestamp": "2025-07-01T15:46:30Z"
 }</code></pre>
+        </div>
+
         <h3>4.2. status: "PARTIAL_FAILURE"</h3>
-        <pre><code>{
+        <p>Algunas operaciones tuvieron éxito, mientras que otras fallaron. El cliente debe inspeccionar tanto <code>results</code> como <code>errors</code>.</p>
+        <div class="code-container">
+          <button class="copy-btn">Copiar</button>
+          <pre><code>{
   "status": "PARTIAL_FAILURE",
   "results": [
-    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON", "status": "SUCCESS" }
+    {
+      "branchId": 4390,
+      "platformId": [2, 3],
+      "skus": ["2001", "2002"],
+      "action": "ON",
+      "status": "SUCCESS"
+    }
   ],
   "errors": [
-    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "FAILURE", "message": "Invalid credentials for platformId 1" }
+    {
+      "branchId": 4390,
+      "platformId": [1],
+      "skus": ["127", "64"],
+      "action": "OFF",
+      "status": "FAILURE",
+      "message": "Invalid credentials for platformId 1"
+    }
   ],
-  "timestamp": "2025-07-01T14:07:30Z"
+  "timestamp": "2025-07-01T15:47:15Z"
 }</code></pre>
+        </div>
+
         <h3>4.3. status: "FAILURE"</h3>
-        <pre><code>{
+        <p>Ninguna de las operaciones solicitadas pudo completarse. El array <code>results</code> estará vacío.</p>
+        <div class="code-container">
+          <button class="copy-btn">Copiar</button>
+          <pre><code>{
   "status": "FAILURE",
   "errors": [
-    { "branchId": 4390, "platformId": 1, "skus": ["127","64"], "action": "OFF", "status": "FAILURE", "message": "Branch suspended" },
-    { "branchId": 4390, "platformId": 2, "skus": ["2001","2002"], "action": "ON",  "status": "FAILURE", "message": "Branch suspended" }
+    {
+      "branchId": 4390,
+      "platformId": [1],
+      "skus": ["127", "64"],
+      "action": "OFF",
+      "status": "FAILURE",
+      "message": "Branch suspended"
+    },
+    {
+      "branchId": 4390,
+      "platformId": [2, 3],
+      "skus": ["2001", "2002"],
+      "action": "ON",
+      "status": "FAILURE",
+      "message": "Branch suspended"
+    }
   ],
-  "timestamp": "2025-07-01T14:08:12Z"
+  "timestamp": "2025-07-01T15:48:00Z"
 }</code></pre>
-
+        </div>
+      </section>
+      
+      <!-- SECTION 5: Transport Errors -->
+      <section id="errors">
         <h2>5. Errores de Transporte (HTTP ≠ 200)</h2>
+        <p>Estos errores ocurren antes de que la lógica de negocio sea procesada, típicamente por un request malformado o problemas de autenticación.</p>
         <table>
-            <thead><tr><th>Código</th><th>Uso Típico</th></tr></thead>
-            <tbody>
-                <tr><td><code>400</code></td><td>JSON mal formado, campos faltantes, <code>skus</code> vacío, etc.</td></tr>
-                <tr><td><code>401 / 403</code></td><td>Token inválido o sin permisos.</td></tr>
-                <tr><td><code>429</code></td><td>Rate-limit excedido.</td></tr>
-                <tr><td><code>500</code></td><td>Error interno inesperado.</td></tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>Código HTTP</th>
+              <th>Uso Típico</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="http-status error">400 Bad Request</span></td>
+              <td>JSON mal formado, campos requeridos faltantes, arrays vacíos, o tipos de datos incorrectos.</td>
+            </tr>
+            <tr>
+              <td><span class="http-status error">401 Unauthorized / 403 Forbidden</span></td>
+              <td>El token de autenticación (Bearer Token) es inválido, ha expirado o no tiene los permisos necesarios.</td>
+            </tr>
+            <tr>
+              <td><span class="http-status error">429 Too Many Requests</span></td>
+              <td>Se ha excedido el límite de peticiones por minuto (rate-limit).</td>
+            </tr>
+            <tr>
+              <td><span class="http-status error">500 Internal Server Error</span></td>
+              <td>Un error inesperado ocurrió en el servidor.</td>
+            </tr>
+          </tbody>
         </table>
-        <p>Ejemplo (400 Bad Request):</p>
-        <pre><code>HTTP/1.1 400 Bad Request
-{
-  "error": "itemsOff must be an array",
-  "timestamp": "2025-07-01T14:09:05Z"
-}</code></pre>
+        
+        <h4>Ejemplo de 400 Bad Request</h4>
+        <div class="code-container">
+          <button class="copy-btn">Copiar</button>
+          <pre><code>HTTP/1.1 400 Bad Request
+Content-Type: application/json
 
-        <h2>6. Reglas Clave</h2>
+{
+  "error": "itemsOn and itemsOff cannot both be empty",
+  "timestamp": "2025-07-01T15:49:20Z"
+}</code></pre>
+        </div>
+      </section>
+      
+      <!-- SECTION 6: Key Rules -->
+      <section id="rules">
+        <h2>6. Reglas Clave y Comportamiento</h2>
         <ul>
-            <li>Identificadores únicos: <code>branchId</code> y <code>platformId</code>.</li>
-            <li><strong>Una sola sucursal por request</strong> (<code>branchId</code> numérico).</li>
-            <li><code>itemsOn</code> / <code>itemsOff</code> se procesan por fila (cada fila = plataforma + set de SKUs).</li>
-            <li>Si el JSON es válido → <strong>HTTP 200 OK</strong>; la lógica de negocio se indica en <code>status</code>.</li>
-            <li>El cliente inspecciona <code>errors[]</code> solo si <code>status</code> ≠ "SUCCESS".</li>
-            <li>Códigos 4xx/5xx reservados a problemas de transporte / validación global.</li>
+          <li><strong>Petición Atómica por Sucursal:</strong> Solo se puede especificar un <code>branchId</code> por llamada. Para afectar a múltiples sucursales, se deben realizar múltiples peticiones.</li>
+          <li><strong>Agrupación Eficiente:</strong> La API está diseñada para agrupar múltiples SKUs y múltiples Plataformas en un solo lote, minimizando el tamaño del payload.</li>
+          <li><strong>Estado Neutro Implícito:</strong> Cualquier combinación de SKU y plataforma que no se incluya explícitamente en <code>itemsOn</code> o <code>itemsOff</code> no será modificada y conservará su estado actual.</li>
+          <li><strong>Separación de Capas de Error:</strong> Los errores de validación de sintaxis o de transporte devuelven códigos HTTP 4xx/5xx. Los errores de lógica de negocio se gestionan con un HTTP 200 OK y se detallan en el campo <code>status</code> y el array <code>errors</code>.</li>
         </ul>
-    </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const pre = button.nextElementSibling;
+          const code = pre.querySelector('code');
+          const textToCopy = code.innerText;
+
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = button.innerText;
+            button.innerText = 'Copiado!';
+            button.classList.add('copied');
+            
+            setTimeout(() => {
+              button.innerText = originalText;
+              button.classList.remove('copied');
+            }, 2000);
+          }).catch(err => {
+            console.error('Error al copiar el texto: ', err);
+          });
+        });
+      });
+    });
+  </script>
+
 </body>
 </html>
