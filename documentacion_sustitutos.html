@@ -95,9 +95,10 @@
         <h1>Especificación de Mapeo de Sabores Sustitutos (Rappi)</h1>
 
         <h2>1. Alcance</h2>
+	    <p>Esta funcionalidad trata de evitar rechazos o cancelaciones cuando falte uno de los sabores elegidos para un pote de helado. El cliente elige un “SABOR SUSTITUTO” (Para reemplazar si falta alguno de los solicitados) y el sistema lo muestra de forma clara en la comanda.</p>
         <p>Esta lógica aplica exclusivamente a los pedidos de helado en pote que cumplen las siguientes condiciones:</p>
         <ul>
-            <li>El ítem principal corresponde a los SKUs de potes: <code>64</code> (1 kg), <code>65</code> (½ kg), o cualquier otro SKU de Pote Servido Manualmente.</li>
+            <li>El ítem principal corresponde a los SKUs de potes: <code>64</code> (1 kg), <code>65</code> (1/2 kg), <code>66</code> (1/4 kg) o cualquier otro SKU de Pote que incluya eleccion de Sabores</li>
             <li>Cada pote siempre debe incluir <strong>subitems</strong> que representan los sabores.</li>
             <li>Para estos SKUs, Rappi siempre envía los sabores como subitems con <code>sku: "99999"</code>.</li>
         </ul>
