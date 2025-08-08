@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documento Final - Diseño de Catálogo y Comandas Weiss</title>
+    
+    <style>
+        /* --- ESTILOS GENERALES DEL DOCUMENTO --- */
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --code-bg: #e9ecef;
+            --border-color: #dee2e6;
+            --kds-green: #28a745;
+            --kds-yellow: #ffc107;
+            --kds-red: #dc3545;
+            --kds-bg: #343a40;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            padding-top: 80px; /* Espacio para el nav fijo */
+        }
+
+        nav {
+            background-color: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: #e9ecef;
+        }
+
+        section {
+            background-color: #fff;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1, h2, h3 {
+            color: #343a40;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        
+        h1 { font-size: 2.5em; text-align: center; }
+        h2 { font-size: 2em; }
+        h3 { font-size: 1.5em; border-bottom-style: dashed; }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 14px;
+        }
+        
+        .explanation-box {
+            background-color: #fefde8;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .example-render {
+            border: 2px solid var(--primary-color);
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        /* --- Estilos Comanda Salón --- */
+        .salon-ticket-body { font-family: 'Courier New', monospace; width: 300px; background: white; }
+        .salon-ticket-container { border: 1px solid #000; padding: 15px; }
+        .salon-header { text-align: center; margin-bottom: 15px; }
+        .salon-header h2 { margin: 0; font-size: 20px; border:none; padding: 0; }
+        .salon-order-info p { margin: 2px 0; }
+        .salon-item { margin-top: 5px; }
+        .salon-item-name { font-weight: bold; }
+        .promo-title { font-weight: bold; text-transform: uppercase; border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin-top:15px; padding: 5px 0;}
+        .modificacion { padding-left: 15px; font-style: italic; }
+        .modificacion::before { content: '↳ SIN: '; }
+        .observacion { padding-left: 15px; font-style: italic; color: #555; }
+        .observacion::before { content: '↳ Obs: '; }
+
+        /* --- Estilos Comanda Cocina (AHORA CON FORMATO DE TICKET) --- */
+        .cocina-ticket-body { font-family: 'Courier New', monospace; width: 300px; background-color: #fff; border: 1px solid black; padding: 10px; }
+        .header-cocina { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+        .header-cocina h2 { margin: 0; font-size: 22px; border:none; padding: 0;}
+        .header-cocina p { margin: 2px 0; font-size: 16px; font-weight: bold;}
+        .sub-ticket { border: 2px dashed #000; padding: 10px; margin-bottom: 10px; background-color: #fff; }
+        .sub-ticket .item-name { font-size: 18px; font-weight: bold; text-transform: uppercase; text-align: center; margin: 0 0 8px 0; }
+        .sub-ticket p { margin: 4px 0; font-size: 14px; }
+        .sub-ticket .modificacion { font-weight: bold; }
+        .sub-ticket .observacion { border: 1px solid #000; padding: 5px; margin-top: 8px; background-color: #eee; }
+
+        /* --- Estilos para la Visualización del KDS --- */
+        .kds-screen {
+            background-color: var(--kds-bg);
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+        }
+        .kds-order-card {
+            background-color: #fff;
+            border-radius: 6px;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .kds-header {
+            padding: 10px 15px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kds-header.status-green { background-color: var(--kds-green); }
+        .kds-header.status-yellow { background-color: var(--kds-yellow); color: #000; }
+        .kds-header.status-red { background-color: var(--kds-red); }
+        .kds-header h4, .kds-header p { margin: 0; font-size: 20px; font-weight: bold; }
+        .kds-body { padding: 15px; flex-grow: 1; }
+        .kds-item { margin-bottom: 12px; }
+        .kds-item .item-name { font-size: 18px; font-weight: bold; }
+        .kds-item .modificacion { color: var(--kds-red); font-weight: bold; padding-left: 15px; }
+        .kds-item .observacion { font-style: italic; padding-left: 15px; }
+        .kds-footer { padding: 10px; }
+        .kds-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Diseño de Catálogo y Comandas</h1>
+        
+        <section id="catalog">
+            <h2>1. Estructura del Catálogo y Promociones</h2>
+            <div class="explanation-box">
+                <p>Teniendo en cuenta que existen productos compuestos (como una hamburguesa) y que es en realidad una <strong>receta</strong> compuesta por otros ítems de inventario (insumos). Proponemos clasificar los ítems en cuatro tipos:</p>
+                <ul>
+                    <li><strong>Item de Venta Final:</strong> El producto que el cliente ordena y paga. Su disponibilidad depende del stock de sus componentes.</li>
+                    <li><strong>Item de Insumo (Materia Prima):</strong> El ingrediente básico comprado a proveedores (carne, pan, queso).</li>
+                    <li><strong>Item de Packaging:</strong> Materiales no comestibles para la entrega (cajas, servilletas).</li>
+                </ul>
+            </div>
+            <h3>Jerarquía del Catálogo Propuesta</h3>
+            <pre><code>
+RUBRO: PRODUCTOS DE VENTA
+|-- Sub Rubro: Hamburguesas
+|   |-- Grupo: Signature Burgers (Ej: Burger Gulosa, Burger Roger)
+|   |-- Grupo: Veggie Burgers (Ej: Burger Caprichosa)
+|   `-- Grupo: Burgers Sin TACC (Ej: Burger Sin TACC)
+|-- Sub Rubro: Acompañamientos (Extras)
+|   |-- Grupo: Frituras (Ej: Papas Weiss, Onion Rings)
+|   `-- Grupo: Pollo (Ej: Chicken Tenders)
+|-- Sub Rubro: Bebidas
+|   |-- Grupo: Gaseosas
+|   `-- Grupo: Cervezas
+`-- Sub Rubro: Postres
+    `-- Grupo: Helados
+
+RUBRO: INSUMOS Y MATERIAS PRIMAS
+|-- Sub Rubro: Proteínas
+|   |-- Grupo: Carnes Vacunas (Ej: Medallón de Carne 120gr)
+|   `-- Grupo: Alternativas (Ej: Medallón NotCo)
+|-- Sub Rubro: Lácteos
+|   `-- Grupo: Quesos (Ej: Feta de Queso Cheddar)
+|-- Sub Rubro: Panificados
+|   `-- Grupo: Panes de Hamburguesa (Ej: Pan de Papa Clásico)
+|-- Sub Rubro: Vegetales y Frutas
+|-- Sub Rubro: Salsas y Aderezos
+|   |-- Grupo: Salsas Base (Compradas) (Ej: Ketchup)
+|   `-- Grupo: Salsas Especiales (Producción Propia) (Ej: Weiss BBQ)
+`-- Sub Rubro: Almacén y Secos
+
+RUBRO: PACKAGING Y DESCARTABLES
+|-- Sub Rubro: Contenedores Primarios
+|   `-- Grupo: Cajas y Envoltorios (Ej: Caja de Cartón para Hamburguesa)
+`-- Sub Rubro: Servicio y Entrega
+    `-- Grupo: Varios (Ej: Servilleta de Papel)
+</code></pre>
+        </section>
+
+        <section id="salon">
+            <h2>2. Comanda de Salón / Ticket de Venta</h2>
+            
+            <h3>Ejemplo Visual</h3>
+            <div class="example-render">
+                <div class="salon-ticket-body">
+                    <div class="salon-ticket-container">
+                        <div class="salon-header">
+                            <h2>WEISS BURGERS</h2>
+                            <p>Orden N°: 451</p>
+                        </div>
+                        <div class="salon-order-info">
+                            <p><strong>Beeper:</strong> #22</p>
+                            <p><strong>Cajero:</strong> Ana G.</p>
+                            <p><strong>Turno ID:</strong> T-180825-PM</p>
+                        </div>
+                        <div class="salon-item-list">
+                            <p class="promo-title">PROMO: COMBO 1</p>
+                            <div class="salon-item">
+                                <p class="salon-item-name">1x Burger Roger</p>
+                            </div>
+                            <div class="salon-item">
+                                <p class="salon-item-name">1x Papas Fritas</p>
+                            </div>
+                             <div class="salon-item">
+                                <p class="salon-item-name">1x Coca-Cola</p>
+                            </div>
+                             <p class="promo-title">PROMO: COMBO 2</p>
+                            <div class="salon-item">
+                                <p class="salon-item-name">1x Burger California</p>
+                                 <p class="modificacion">Tomate</p>           
+                            </div>
+                            <div class="salon-item">
+                                <p class="salon-item-name">1x Papas Fritas</p>
+                              <p class="observacion">Sin Sal Agregada</p>
+                            </div>
+                             <div class="salon-item">
+                                <p class="salon-item-name">1x Cerveza</p>
+                            </div>  
+
+                            <p class="promo-title">PRODUCTOS</p>
+                            <div class="salon-item">
+                                <p class="salon-item-name">1x Burger Fuegina</p>
+                                <p class="modificacion">Cebolla</p>
+                                <p class="observacion">Bien cocida la carne</p>
+                            </div>
+                            <div class="salon-item">
+                                <p class="salon-item-name">2x Helado Palito</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="explanation-box">
+                <h4>Explicación y Uso</h4>
+               <ul>
+                    <li><strong>Doble Funcionalidad:</strong> Este ticket tiene dos propósitos clave. Primero, sirve como recibo detallado para el <strong>cliente</strong>, permitiéndole verificar su compra. Segundo, funciona como una lista de chequeo (checklist) para el <strong>personal de entrega</strong>, que lo utiliza para ensamblar correctamente todos los productos del pedido final.</li>
+                    <li><strong>Organización Jerárquica:</strong> La información del ticket se estructura de forma intuitiva. Los productos se agrupan bajo dos posibles encabezados: "PROMO" para los artículos en promoción, y "PRODUCTOS" para cualquier artículo comprado de forma individual.</li>
+                    <li><strong>Contenido Exhaustivo:</strong> El ticket muestra la totalidad del pedido, incluyendo tanto los productos que se preparan en la cocina como los que no (bebidas, postres), garantizando que sea un comprobante completo y una guía precisa para la entrega.</li>
+                    <li><strong>Visualización de Modificaciones:</strong> Si un cliente solicita quitar un ingrediente estándar de un producto (por ejemplo, una hamburguesa "sin cebolla"), esta modificación se indica de forma clara y visible directamente debajo del nombre del producto afectado.</li>
+                    <li><strong>Registro de Observaciones:</strong> Cualquier solicitud especial del cliente que no sea la eliminación de un ingrediente (como "carne bien cocida") también se detalla debajo del producto correspondiente, asegurando que la cocina reciba todas las instrucciones.</li>
+                    <li><strong>Proceso de Impresión:</strong> El ticket se genera e imprime una única vez desde el Punto de Venta (POS) en el momento exacto en que se confirma y cierra la transacción.</li>
+                  <li><strong>Agrupación de Ítems Idénticos:</strong> Para optimizar la lectura y reducir errores, los productos idénticos se agruparán con un multiplicador de cantidad (ej: <code>2x Burger Roger</code>). Esta regla solo se aplica si los productos son exactamente iguales. Si uno de ellos tiene una modificación o una observación especial (ej: <code>sin cebolla</code>), deberá listarse siempre en una línea separada para garantizar que la personalización sea visible y se ejecute correctamente.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cocina">
+            <h2>3. Comanda de Cocina</h2>
+
+            <h3>Ejemplo Visual</h3>
+            <div class="example-render">
+                <div class="cocina-ticket-body">
+                    <div class="header-cocina">
+                        <h2>COCINA</h2>
+                        <p>Beeper: #22</p>
+                        <p>Orden N°: 451</p>
+                    </div>
+
+                    <div class="sub-ticket-container">
+                        <div class="sub-ticket">
+                            <p class="item-name">Burger Roger</p>
+                        </div>
+
+                        <div class="sub-ticket">
+                            <p class="item-name">Papas Fritas</p>
+                        </div>
+                        <div class="sub-ticket">
+                            <p class="item-name">Burger California</p>
+                            <p class="modificacion">TOMATE</p>
+                           
+                        </div>
+                        <div class="sub-ticket">
+                            <p class="item-name">Papas Fritas</p>
+                             <p class="observacion">OBS: Sin Sal Agregada</p>
+                        </div>
+
+                        <div class="sub-ticket">
+                            <p class="item-name">Burger Fuegina</p>
+                            <p class="modificacion">CEBOLLA</p>
+                            <p class="observacion">OBS: Bien cocida la carne</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="explanation-box">
+                <h4>Explicación y Uso</h4>
+                <ul>
+                    <li><strong>¿Para quién es?</strong> Exclusivamente para el <strong>personal de cocina</strong>.</li>
+                    <li><strong>Información Clave:</strong> El diseño modular con "sub-tickets" dentro de un ticket general.</li>
+                    <li><strong>Contenido:</strong> Se eliminan todas las distracciones: no hay precios, nombres de promociones ni ítems que no requieran preparación (bebidas, helados). El foco está 100% en lo que hay que cocinar.</li>
+                    <li><strong>Alta Visibilidad:</strong> Las modificaciones y observaciones se resaltan para que sean imposibles de ignorar.</li>
+              li><strong>Proceso de Impresión:</strong> El ticket se genera e imprime una única vez desde el Punto de Venta (POS) en el momento exacto en que se confirma y cierra la transacción.</li>
+  <li><strong>Agrupación de Ítems Idénticos:</strong> Para optimizar la lectura y reducir errores, los productos idénticos se agruparán con un multiplicador de cantidad (ej: <code>2x Burger Roger</code>). Esta regla solo se aplica si los productos son exactamente iguales. Si uno de ellos tiene una modificación o una observación especial (ej: <code>sin cebolla</code>), deberá listarse siempre en una línea separada para garantizar que la personalización sea visible y se ejecute correctamente.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="kds">
+            <h2>4. Visualización del KDS (Kitchen Display System)</h2>
+            <div class="explanation-box">
+                <h4>Explicación y Uso</h4>
+  <li><strong>Agrupación de Ítems Idénticos:</strong> Los productos idénticos se agruparán con un multiplicador de cantidad (ej: <code>2x Burger Roger</code>). Esta regla solo se aplica si los productos son exactamente iguales. Si uno de ellos tiene una modificación o una observación especial (ej: <code>sin cebolla</code>), deberá listarse siempre en una línea separada para garantizar que la personalización sea visible y se ejecute correctamente.</li>
+                <p>Esta es una maqueta de cómo se vería una orden en la pantalla del KDS. Cada orden es una "tarjeta" interactiva. El encabezado cambia de color según el tiempo transcurrido para una rápida identificación visual del estado del pedido.</p>
+                <ul>
+                    <li><strong style="color: var(--kds-green);">Verde (0-10 min):</strong> Pedido nuevo, dentro del tiempo esperado.</li>
+                    <li><strong style="color: var(--kds-yellow); background-color: #555; padding: 2px;">Amarillo (10-20 min):</strong>  El pedido se acerca al límite de tiempo.</li>
+                    <li><strong style="color: var(--kds-red);">Rojo (&gt;20 min):</strong>Pedido demorado.</li>
+                </ul>
+                <p>El botón "LISTO" en cada tarjeta permitiría al cocinero marcar la orden como completada, quitándola de la pantalla activa.</p>
+            </div>
+
+            <h3>Ejemplo Visual</h3>
+            <div class="example-render">
+                <div class="kds-order-card">
+                    <div class="kds-header status-green">
+                        <h4>Orden #451</h4>
+                        <p>04:15</p>
+                    </div>
+                    <div class="kds-body">
+                        <div class="kds-item">
+                            <p class="item-name">1x Burger Roger</p>
+                        </div>
+                         <div class="kds-item">
+                            <p class="item-name">1x Papas Fritas</p>
+                        </div>
+                         <div class="kds-item">
+                            <p class="item-name">1x Burger California</p>
+                            <p class="modificacion">SIN TOMATE</p>
+
+                        </div>
+                        <div class="kds-item">
+                            <p class="item-name">1x Papas Fritas</p>
+                                                          <p class="observacion">Obs: Sin Sal Agregada</p>
+                        </div>  
+                        <div class="kds-item">
+                            <p class="item-name">1x Burger Fuegina</p>
+                            <p class="modificacion">SIN CEBOLLA</p>
+                            <p class="observacion">Obs: Bien cocida la carne</p>
+                        </div>
+                    </div>
+                    <div class="kds-footer">
+                        <button class="kds-button">LISTO</button>
+                    </div>
+                </div>
+                <div class="kds-order-card">
+                    <div class="kds-header status-yellow">
+                        <h4>Orden #450</h4>
+                        <p>12:30</p>
+                    </div>
+                    <div class="kds-body">
+                        <div class="kds-item">
+                            <p class="item-name">2x Burger Smack</p>
+                        </div>
+                        <div class="kds-item">
+                            <p class="item-name">1x Burger Gulosa</p>
+                            <p class="modificacion">SIN AJO</p>
+                        </div>
+                                            <div class="kds-item">
+                            <p class="item-name">1x Burger Gulosa</p>
+                        </div>
+                      
+                    </div>
+                    <div class="kds-footer">
+                        <button class="kds-button">LISTO</button>
+                    </div>
+                </div>
+                <div class="kds-order-card">
+                    <div class="kds-header status-red">
+                        <h4>Orden #449</h4>
+                        <p>21:05</p>
+                    </div>
+                    <div class="kds-body">
+                        <div class="kds-item">
+                            <p class="item-name">2x Burger Gulosa</p>
+                        </div>
+                         <div class="kds-item">
+                            <p class="item-name">2x Papas Weiss</p>
+                        </div>
+                    </div>
+                    <div class="kds-footer">
+                        <button class="kds-button">LISTO</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- SCRIPT PARA NAVEGACIÓN SUAVE ---
+            const navLinks = document.querySelectorAll('nav a');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const navHeight = document.querySelector('nav').offsetHeight;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - navHeight - 10;
+
+                        window.scrollTo({
+                             top: offsetPosition,
+                             behavior: "smooth"
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
