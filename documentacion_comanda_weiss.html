@@ -260,9 +260,10 @@ RUBRO: PACKAGING Y DESCARTABLES
                             <p><strong>Beeper:</strong> #22</p>
                             <p><strong>Cajero:</strong> Ana G.</p>
                             <p><strong>Turno ID:</strong> T-180825-PM</p>
+                            <p><strong>Fecha:</strong> 2025-08-09 - 20:15</p>  
                         </div>
                         <div class="salon-item-list">
-                            <p class="promo-title">PROMO: COMBO 1</p>
+                            <p class="promo-title"> 2x PROMOCION: COMBO 1</p>
                             <div class="salon-item">
                                 <p class="salon-item-name">2x Burger Roger</p>
                             </div>
@@ -272,7 +273,7 @@ RUBRO: PACKAGING Y DESCARTABLES
                              <div class="salon-item">
                                 <p class="salon-item-name">2x Pepsi</p>
                             </div>
-                             <p class="promo-title">PROMO: COMBO 2</p>
+                             <p class="promo-title">2x PROMOCION: COMBO 2</p>
                             <div class="salon-item">
                                 <p class="salon-item-name">1x Burger California</p>
                                  <p class="modificacion">Tomate</p>           
@@ -315,15 +316,32 @@ RUBRO: PACKAGING Y DESCARTABLES
             <strong>2. Información de Cabecera:</strong>
             El ticket siempre debe comenzar con la información de la transacción, dividida en dos bloques:
             <ul>
-                <li><u>Encabezado Principal:</u> Muestra el nombre del local (WEISS BURGER) y el identificador único de la venta (Orden N°: 451).</li>
-                <li><u>Info de Operación:</u> Detalla los datos operativos: el <strong>Beeper</strong> para llamar al cliente, el <strong>Cajero</strong> que realizó la venta y el <strong>Turno ID</strong>.</li>
+                <li><u>Encabezado Principal:</u> Muestra el nombre del local (WEISS BURGER) y el <strong>Numero de Orden</strong> como identificador único de la venta (Orden N°: 451).</li>
+                <li><u>Info de Operación:</u> Detalla los datos operativos: el <strong>Beeper</strong> para llamar al cliente, el <strong>Cajero</strong> que realizó la venta, el <strong>Turno ID</strong> y <strong>Fecha y Hora</strong></li>
             </ul>
         </li>
         <li>
-            <strong>3. Organización Jerárquica del Contenido:</strong>
-            El cuerpo del ticket se estructura mediante títulos separadores ("promo"). La lógica es la siguiente:
+            <strong>3. Organización del Contenido:</strong>
+            El cuerpo del ticket se estructura mediante títulos separadores ("PROMOCION" y "PRODUCTOS"). La lógica es la siguiente:
              <ul>
-                <li>Si los productos pertenecen a una oferta, se agrupan bajo el título <strong>PROMO: [Nombre del Combo]</strong>. Si se solicitan 2 o mas promos el cuantificador ("2x ...") ira en los Productos que componen la PROMO (o COMBO") .</li>
+                <li>
+    <strong>Agrupación de Promociones:</strong>
+    <ul>
+        <li>
+            <strong>Condición para Agrupar:</strong> La agrupación solo ocurre si se piden dos o más unidades de la misma promoción (ej. "Combo 1") <strong>y las selecciones de productos dentro de ellas son exactamente iguales</strong> (es decir, misma hamburguesa, misma bebida, etc.).
+        </li>
+        <li>
+            <strong>Implementación:</strong>
+            <ul>
+                <li>El título de la promoción se renderiza con el multiplicador total. <strong>Ejemplo:</strong> <code>2x PROMOCION: COMBO 1</code>.</li>
+                <li>La cantidad de cada producto individual dentro de esa promoción también se multiplica por el mismo factor. <strong>Ejemplo:</strong> si el combo original contenía <code>1x Papas Fritas</code>, ahora se mostrará como <code>2x Papas Fritas</code>.</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Excepción:</strong> Si las selecciones internas son diferentes Ej. una PROMOCION con Pepsi y otra misma PROMOCION con Agua, el sistema deben renderizarla en la misma "2x PROMOCION:..." pero <strong>dentro del contendor de la PROMOCION</strong> contener "1x Pepsi" y "1xAgua".
+        </li>
+    </ul>
+</li>
                 <li>Todos los demás artículos comprados individualmente se listan bajo el título <strong>PRODUCTOS</strong>.</li>
             </ul>
         </li>
