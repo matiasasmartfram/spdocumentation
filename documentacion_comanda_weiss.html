@@ -221,7 +221,7 @@ RUBRO: PRODUCTOS DE VENTA
 `-- Sub Rubro: Postres
     `-- Grupo: Helados
 
-RUBRO: INSUMOS Y MATERIAS PRIMAS
+RUBRO: MATERIAS PRIMAS
 |-- Sub Rubro: Proteínas
 |   |-- Grupo: Carnes Vacunas (Ej: Medallón de Carne 120gr)
 |   `-- Grupo: Alternativas (Ej: Medallón NotCo)
@@ -238,8 +238,10 @@ RUBRO: INSUMOS Y MATERIAS PRIMAS
 RUBRO: PACKAGING Y DESCARTABLES
 |-- Sub Rubro: Contenedores Primarios
 |   `-- Grupo: Cajas y Envoltorios (Ej: Caja de Cartón para Hamburguesa)
-`-- Sub Rubro: Servicio y Entrega
-    `-- Grupo: Varios (Ej: Servilleta de Papel)
+|-- Sub Rubro: Servicio y Entrega
+|    `-- Grupo: Varios (Ej: Servilleta de Papel)
+|-- Sub Rubro: Limpieza
+|
 </code></pre>
         </section>
 
@@ -262,25 +264,31 @@ RUBRO: PACKAGING Y DESCARTABLES
                         <div class="salon-item-list">
                             <p class="promo-title">PROMO: COMBO 1</p>
                             <div class="salon-item">
-                                <p class="salon-item-name">1x Burger Roger</p>
+                                <p class="salon-item-name">2x Burger Roger</p>
                             </div>
                             <div class="salon-item">
-                                <p class="salon-item-name">1x Papas Fritas</p>
+                                <p class="salon-item-name">2x Papas Fritas</p>
                             </div>
                              <div class="salon-item">
-                                <p class="salon-item-name">1x Coca-Cola</p>
+                                <p class="salon-item-name">2x Pepsi</p>
                             </div>
                              <p class="promo-title">PROMO: COMBO 2</p>
                             <div class="salon-item">
                                 <p class="salon-item-name">1x Burger California</p>
                                  <p class="modificacion">Tomate</p>           
                             </div>
+                                                        <div class="salon-item">
+                                <p class="salon-item-name">1x Burger Roger</p>       
+                            </div>
                             <div class="salon-item">
                                 <p class="salon-item-name">1x Papas Fritas</p>
                               <p class="observacion">Sin Sal Agregada</p>
                             </div>
+                            <div class="salon-item">
+                                <p class="salon-item-name">1x Papas Fritas</p>
+                            </div>
                              <div class="salon-item">
-                                <p class="salon-item-name">1x Cerveza</p>
+                                <p class="salon-item-name">2x Cerveza</p>
                             </div>  
 
                             <p class="promo-title">PRODUCTOS</p>
@@ -301,39 +309,39 @@ RUBRO: PACKAGING Y DESCARTABLES
     <ul>
         <li>
             <strong>1. Propósito Dual (Cliente y Staff):</strong>
-            El ticket debe ser renderizado para cumplir dos funciones críticas. Para el <strong>cliente</strong>, es el recibo detallado de su compra. Para el <strong>personal de entrega</strong>, es la checklist final para ensamblar el pedido. El diseño debe ser claro para ambos usuarios.
+            El ticket debe ser renderizado para cumplir dos funciones. Para el <strong>cliente</strong> y para el <strong>personal de entrega</strong>, es la checklist final para ensamblar el pedido.
         </li>
         <li>
             <strong>2. Información de Cabecera:</strong>
-            El ticket siempre debe comenzar con la información esencial de la transacción, dividida en dos bloques lógicos:
+            El ticket siempre debe comenzar con la información de la transacción, dividida en dos bloques:
             <ul>
                 <li><u>Encabezado Principal:</u> Muestra el nombre del local (WEISS BURGER) y el identificador único de la venta (Orden N°: 451).</li>
-                <li><u>Info de Operación:</u> Detalla los metadatos operativos: el <code>Beeper</code> para llamar al cliente, el <code>Cajero</code> que realizó la venta y el <code>Turno ID</code>.</li>
+                <li><u>Info de Operación:</u> Detalla los datos operativos: el <strong>Beeper</strong> para llamar al cliente, el <strong>Cajero</strong> que realizó la venta y el <strong>Turno ID</strong>.</li>
             </ul>
         </li>
         <li>
             <strong>3. Organización Jerárquica del Contenido:</strong>
-            El cuerpo del ticket se estructura mediante títulos separadores ("promo" o "productos"). La lógica es la siguiente:
+            El cuerpo del ticket se estructura mediante títulos separadores ("promo"). La lógica es la siguiente:
              <ul>
-                <li>Si los productos pertenecen a una promocion o combo, se agrupan bajo el título <code>PROMO: [Nombre del Combo]</code>.</li>
-                <li>Todos los demás artículos comprados individualmente se listan bajo el título <code>PRODUCTOS</code>.</li>
+                <li>Si los productos pertenecen a una oferta, se agrupan bajo el título <strong>PROMO: [Nombre del Combo]</strong>. Si se solicitan 2 o mas promos el cuantificador ("2x ...") ira en los Productos que componen la PROMO (o COMBO") .</li>
+                <li>Todos los demás artículos comprados individualmente se listan bajo el título <strong>PRODUCTOS</strong>.</li>
             </ul>
         </li>
         <li>
-            <strong>4. Contenido Completo y Detallado:</strong>
-             El ticket debe tener <strong>todos</strong> los artículos de la venta sin excepción, incluyendo bebidas y postres. Cada ítem (ej: <code>1x Burger Roger</code>) se encapsula en su propio contenedor para mantener el orden visual.
+            <strong>4. Contenido Completo:</strong>
+             El ticket debe tener <strong>todos</strong> los artículos de la venta, incluyendo bebidas y postres. Cada ítem repetido se encapsula (ej: <code>2x Burger Roger</code>) siempre y cuanto pertenezcan a una misma CATEGORIA (PROMO o PRODUCTO).
         </li>
         <li>
             <strong>5. Personalización de Productos (Modificaciones y Observaciones):</strong>
             Cualquier personalización debe mostrarse directamente debajo del producto.
             <ul>
-                <li><strong>Modificación (Quitar Componente):</strong> Utilizar la clase <code>.modificacion</code> para indicar un ingrediente que el cliente NO desea (ej: 'Tomate', que se interpreta como 'SIN Tomate').</li>
-                <li><strong>Observación (Nota Especial):</strong> Utilizar la clase <code>.observacion</code> para instrucciones de preparación que no son estándar (ej: 'Sin Sal Agregada', 'Bien cocida la carne').</li>
+                <li><strong>Modificación (Quitar Componente):</strong> Utilizar los "Componentes" para indicar un ingrediente que el cliente NO desea (ej: 'SIN Tomate').</li>
+                <li><strong>Observación (Nota Especial):</strong> Utilizar un campo "Observacion" para instrucciones de preparación que no son estándar (ej: 'Sin Sal Agregada', 'Bien cocida la carne').</li>
             </ul>
         </li>
         <li>
             <strong>6. Regla de Agrupación por Cantidad:</strong>
-            Para optimizar el espacio y la lectura, si se ordenan múltiples unidades de un mismo producto <strong>y este no tiene ninguna personalización</strong>, el sistema debe agruparlas en una sola línea, prefijando la cantidad (ej: <code>2x Helado Palito</code>). Si uno de ellos tiene una modificación, deben listarse obligatoriamente como ítems separados.
+            Para optimizar el espacio y la lectura, si se ordenan múltiples unidades de un mismo producto <strong>y este no tiene ninguna personalización (Modificacion en "Componentes" u "Observacion"</strong>, el sistema debe agruparlas en una sola línea, prefijando la cantidad (ej: <code>2x Burger Roger</code>). Si uno de ellos tiene una modificación, deben listarse como ítems separados.
         </li>
          <li>
             <strong>7. Proceso de Impresión:</strong>
@@ -359,24 +367,24 @@ RUBRO: PACKAGING Y DESCARTABLES
 
                     <div class="sub-ticket-container">
                         <div class="sub-ticket">
-                            <p class="item-name">Burger Roger</p>
+                            <p class="item-name">3x Burger Roger</p>
                         </div>
 
                         <div class="sub-ticket">
-                            <p class="item-name">Papas Fritas</p>
+                            <p class="item-name">3x Papas Fritas</p>
                         </div>
                         <div class="sub-ticket">
-                            <p class="item-name">Burger California</p>
+                            <p class="item-name">1x Burger California</p>
                             <p class="modificacion">TOMATE</p>
                            
                         </div>
                         <div class="sub-ticket">
-                            <p class="item-name">Papas Fritas</p>
+                            <p class="item-name">1x Papas Fritas</p>
                              <p class="observacion">OBS: Sin Sal Agregada</p>
                         </div>
 
                         <div class="sub-ticket">
-                            <p class="item-name">Burger Fuegina</p>
+                            <p class="item-name">1x Burger Fuegina</p>
                             <p class="modificacion">CEBOLLA</p>
                             <p class="observacion">OBS: Bien cocida la carne</p>
                         </div>
@@ -389,31 +397,31 @@ RUBRO: PACKAGING Y DESCARTABLES
                 <ul>
                     <li>
                         <strong>1. Propósito y Contenido Filtrado:</strong>
-                        Esta comanda está diseñada <strong>exclusivamente para el personal de cocina</strong>. El sistema debe filtrar la orden de venta y renderizar <strong>únicamente</strong> los productos que requieren preparación. Se deben omitir por completo elementos como bebidas, postres, precios y nombres de promociones para eliminar distracciones.
+                        Esta comanda está diseñada <strong>para el personal de cocina</strong>. El sistema debe filtrar la orden de venta y renderizar <strong>únicamente</strong> los productos que requieren preparación.<strong> Se deben omitir items con "Categoria" bebidas, postres y nombres de promociones</strong>.
                     </li>
                     <li>
                         <strong>2. Estructura Modular (Ticket Principal y Sub-Tickets):</strong>
                         El diseño es modular para facilitar la división de tareas en la cocina.
                         <ul>
                             <li><u>Ticket Principal :</u> Contiene toda la orden y un encabezado con la información esencial para identificar el pedido: <code>Beeper</code> y <code>Orden N°</code>.</li>
-                            <li><u>Sub-Ticket :</u> Cada producto a preparar se renderiza como un "sub-ticket" individual y separable. Esto permite que un cocinero tome una tarea (ej. "Burger Roger") mientras otro se encarga de otra (ej. "Papas Fritas").</li>
+                            <li><u>Sub-Ticket :</u> Cada producto a preparar se renderiza como un "sub-ticket" individual y separable.</li>
                         </ul>
                     </li>
                     <li>
                         <strong>3. Visualización de Personalizaciones:</strong>
-                        Para minimizar errores, las personalizaciones deben ser muy notorias dentro de cada <code>.sub-ticket</code>.
+                        Las personalizaciones deben ser notorias dentro de cada <code>.sub-ticket</code>.
                         <ul>
-                            <li><strong>Modificación (Quitar Componente):</strong> La <code>.modificacion</code> se usa para nombrar el ingrediente que se debe <strong>omitir</strong> (ej: 'CEBOLLA' significa preparar sin cebolla).</li>
-                            <li><strong>Observación (Nota Especial):</strong> La <code>.observacion</code> se usa para instrucciones de preparación (ej: 'OBS: Bien cocida la carne'). Se recomienda prefijar con "OBS:" para mayor claridad.</li>
+                            <li><strong>Modificación (Quitar Componente):</strong> La <code>modificacion</code> se usa para nombrar el ingrediente que se debe <strong>omitir</strong> (ej: 'SIN: CEBOLLA').</li>
+                            <li><strong>Observación (Nota Especial):</strong> La <code>observacion</code> se usa para instrucciones de preparación (ej: 'OBS: Bien cocida la carne').</li>
                         </ul>
                     </li>
                     <li>
-                        <strong>4. Regla de No Agrupación:</strong>
-                        A diferencia del ticket de salón, en la comanda de cocina <strong>NO se agrupan los ítems con un multiplicador</strong> (como "2x"). Cada producto a preparar debe ser un <code>.sub-ticket</code> individual. Esto es importante porque incluso productos con el mismo nombre pueden tener observaciones diferentes, y cada uno representa una tarea distinta para el cocinero.
+                        <strong>4. Regla de Agrupación:</strong>
+                        En la comanda de cocina <strong>Se agrupan los ítems con un multiplicador a menos que contenga una "Modificacion u Observacion" cada producto a preparar que tenga "Modificacion u Observacion" debe ser un <code>sub-ticket</code> individual</strong>.
                     </li>
                     <li>
                         <strong>5. Impresión y Flujo de Trabajo:</strong>
-                        La comanda se imprime en la impresora designada para la cocina en el mismo momento en que se cierra la venta en el POS. El formato de "sub-tickets" está pensado para integrarse directamente en el flujo de trabajo de la cocina.
+                        La comanda se imprime en la impresora designada para la cocina en el mismo momento en que se cierra la venta en el POS.
                     </li>
                 </ul>
             </div>
@@ -432,10 +440,10 @@ RUBRO: PACKAGING Y DESCARTABLES
                     </div>
                     <div class="kds-body">
                         <div class="kds-item">
-                            <p class="item-name">1x Burger Roger</p>
+                            <p class="item-name">3x Burger Roger</p>
                         </div>
                          <div class="kds-item">
-                            <p class="item-name">1x Papas Fritas</p>
+                            <p class="item-name">3x Papas Fritas</p>
                         </div>
                          <div class="kds-item">
                             <p class="item-name">1x Burger California</p>
@@ -522,15 +530,11 @@ RUBRO: PACKAGING Y DESCARTABLES
         </li>
         <li>
             <strong>4. Cuerpo de la Orden :</strong>
-            Lista todos los productos a preparar. A diferencia de la comanda de papel, en la pantalla del KDS <strong>sí se aplica la regla de agrupación por cantidad</strong> (ej: <code>2x Burger Smack</code>) para mantener cada tarjeta compacta y legible. Las personalizaciones (<code>modificacion</code> y <code>observacion</code>) deben resaltarse visualmente (ej. con un color distintivo) para visibilidad.
+            Lista todos los productos a preparar al igual que la Comanda de Cocina.
         </li>
          <li>
-            <strong>5. Regla de Ítems Idénticos con Modificación:</strong>
-            El ejemplo de la "Burger Gulosa" en la Orden #450 es clave: aunque ambas son la misma hamburguesa, una tiene la modificación <code>SIN AJO</code>. Por lo tanto, el sistema debe listarlas como dos ítems separados en la tarjeta, nunca agrupadas como "2x", para asegurar que la personalización se aplique correctamente a solo una de ellas.
-        </li>
-        <li>
-            <strong>6. Interacción:</strong>
-            La parte inferior de la tarjeta contiene las acciones. El botón <code>LISTO</code> es el elemento interactivo principal. Al presionarlo, el sistema debería marcar la orden como completada y remover la tarjeta de la pantalla de pedidos activos.
+            <strong>5. Interacción:</strong>
+            El botón <code>LISTO</code> es el elemento interactivo principal. Al presionarlo, el sistema debería marcar la orden como completada y remover la tarjeta de la pantalla de pedidos activos.
         </li>
     </ul>
 </div>
