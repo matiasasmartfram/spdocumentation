@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documento Final - Diseño de Catálogo y Comandas Weiss</title>
@@ -556,6 +554,40 @@ RUBRO: DESCARTABLES
     </ul>
 </div>
         </section>
+<section id="kitchen-flag">
+<h2>5. Identificador de Items para Cocina/KDS</h2>
+<div class="explanation-box">
+<h4>Lógica de Destino de Producción</h4>
+<p>
+Para gestionar qué productos se envían a la cocina o al KDS, el sistema debe implementar un indicador (o "flag") configurable. Esto debe realizarce en un nivel fuera de Catalogo, es decir una implementacion que vendra de la mano con la integracion de KDS, donde por defecto todo sera valor "true" (se envia a Cocina)
+</p>
+<ul>
+<li>
+<strong>1. El Indicador: <code>enviarACocina</code></strong>
+<p>Se propone la creación de un campo booleano (verdadero/falso) llamado <code>enviarACocina</code>. Este indicador en un princpio podrá ser asignado a <strong>cualquier nivel de la jerarquía del catálogo</strong>: Rubro, Sub Rubro, Grupo, o Ítem individual.</p>
+</li>
+<li>
+<strong>2. Regla de Herencia y Anulación (Caso de Analisis segun Catalogo):</strong>
+<p>Para determinar si un producto se envía a cocina, el sistema buscará el indicador en el nivel más específico primero y, si no lo encuentra, subirá en la jerarquía.</p>
+<ol>
+<li>El sistema revisa si el <strong>Ítem</strong> individual tiene el flag <code>enviarACocina</code> definido. Si es así, usa ese valor y termina la búsqueda.</li>
+<li>Si no, revisa su <strong>Grupo</strong> padre. Si lo tiene, usa ese valor.</li>
+<li>Si no, revisa su <strong>Sub Rubro</strong> padre. Si lo tiene, usa ese valor.</li>
+<li>Si no, revisa su <strong>Rubro</strong> padre. Si lo tiene, usa ese valor.</li>
+<li>Si no encuentra el flag en ningún nivel, el valor por defecto es <code>true</code> (se envía a cocina).</li>
+</ol>
+</li>
+<li>
+<strong>3. Busquedas en este enfoque:</strong>
+<ul>
+<li><strong>Gestión Sencilla y por parte del Fraquiciado:</strong> Permitir administrar grandes categorías de productos con pocos clics y el franquiciado puede personalizar.</li>
+<li><strong>Flexibilidad:</strong> Facilita el manejo de casos especiales y excepciones sin alterar la configuración general (Sin alterar sistema "Grido").</li>
+<li><strong>Escalabilidad:</strong> Es un sistema a prueba de futuro, que se adapta fácilmente al crecimiento del menú y a la incorporación de nuevos productos.</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 
     </div>
 
@@ -583,5 +615,7 @@ RUBRO: DESCARTABLES
             });
         });
     </script>
+
+
 </body>
 </html>
