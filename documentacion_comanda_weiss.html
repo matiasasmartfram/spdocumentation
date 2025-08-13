@@ -610,6 +610,58 @@ Esta configuración le da al franquiciado un control y sobre los items enviados 
 </ul>
 </div>
 </section>
+      <section id="item-modification">
+    <h2>6. Modificación de Ítems en Orden de Venta</h2>
+    <div class="explanation-box">
+        <h4>Flujo de Personalización de Productos</h4>
+        <p>
+            Esta funcionalidad permite al operador del POS personalizar cada producto de forma individual directamente desde el ticket de venta. El objetivo es quitar ingredientes, añadir observaciones y asegurar que esta información se guarde para ser enviada a la Comanda de Cocina y al KDS.
+        </p>
+        <ol>
+            <li>
+                <strong>Punto de Entrada: Edición desde el Ticket</strong>
+                <p>Cada línea de producto renderizada en el ticket de venta debe incluir un ícono de edición (ej. un lápiz) claramente visible. La interacción del operador con este ícono es el único disparador para iniciar el proceso de personalización del ítem seleccionado.</p>
+            </li>
+            <li>
+                <strong>El Modal de Modificación: Estructura y Lógica de Cantidades</strong>
+                <p>Al hacer clic en el ícono de edición, el sistema debe abrir un modal con las siguientes características:</p>
+                <ul>
+                    <li><strong>Título Dinámico:</strong> El título del modal debe reflejar el producto que se está editando. Ejemplo: <code>Modificar: Burger Roger</code>.</li>
+                    <li>
+                        <strong>Manejo de Cantidades Múltiples (Acordeón):</strong> El comportamiento del modal cambia según la cantidad del ítem a modificar:
+                        <ul>
+                            <li>Si la cantidad es 1, se muestra una vista de modificación simple.</li>
+                            <li>Si la cantidad es mayor a 1 (ej: <code>3x Burger Roger</code>), el cuerpo del modal debe renderizar una estructura de acordeón con 3 paneles colapsables, etiquetados secuencialmente como <code>Unidad 1</code>, <code>Unidad 2</code>, etc.</li>
+                            <li><strong>Comportamiento del Acordeón:</strong> Por defecto, todos los paneles deben estar contraídos. Al expandir un panel, cualquier otro que estuviera abierto debe contraerse automáticamente.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Contenido del Panel de Modificación</strong>
+                <p>Cada panel de unidad (ya sea en el acordeón o en la vista simple) debe contener las siguientes opciones de personalización:</p>
+                <ul>
+                    <li>
+                        <strong>Modificación de Componentes (Checklist):</strong>
+                        Esta opción solo debe aparecer para productos que estén marcados en el catálogo como "COMPONENETES" (es decir, que tengan una lista de ingredientes asociada). Se presentará como una lista de checkboxes grandes y táctiles. Todos los ingredientes aparecerán tildados por defecto; el operador los destilda para indicar cuáles se deben <strong>quitar</strong>.
+                    </li>
+                    <li>
+                        <strong>Campo de Observaciones (Texto Libre):</strong>
+                        <strong>Todos</strong> los paneles de unidad deben incluir un área de texto (<code>&lt;textarea&gt;</code>) para que el operador pueda añadir notas específicas que no se cubren con el checklist (ej: <code>cortar por la mitad</code>, <code>extra cocido</code>).
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Guardado y Persistencia de Datos</strong>
+                <p>El modal debe contener un botón de <code>Guardar Cambios</code>. Al presionarlo, ocurren dos cosas:</p>
+                <ol>
+                    <li>El modal se cierra.</li>
+                    <li>Toda la información de personalización capturada se guarda en la estructura de datos del ítem dentro del ticket. No es necesario que los cambios se reflejen visualmente en la línea del ticket en esta fase.</li>
+                </ol>
+            </li>
+        </ol>
+    </div>
+</section>
 
     </div>
 
