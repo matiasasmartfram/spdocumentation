@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Grupo - SmartFran</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --mud-palette-black: rgba(39,44,52,1);
+            --mud-palette-white: rgba(255,255,255,1);
+            --mud-palette-primary: rgba(15,0,53,1);
+            --mud-palette-primary-rgb: 15,0,53;
+            --mud-palette-primary-text: rgba(255,255,255,1);
+            --mud-palette-secondary: rgba(110,89,238,1);
+            --mud-palette-secondary-rgb: 110,89,238;
+            --mud-palette-secondary-text: rgba(255,255,255,1);
+            --mud-palette-dark: rgba(66,66,66,1);
+            --mud-palette-text-primary: rgba(66,66,66,1);
+            --mud-palette-text-secondary: rgba(0,0,0,0.54);
+            --mud-palette-surface: rgba(255,255,255,1);
+            --mud-palette-background: rgba(255,255,255,1);
+            --mud-palette-background-grey: #f9f9f9;
+            --mud-palette-drawer-background: rgba(255,255,255,1);
+            --mud-palette-drawer-text: rgba(66,66,66,1);
+            --mud-palette-appbar-background: var(--mud-palette-primary);
+            --mud-palette-appbar-text: var(--mud-palette-primary-text);
+            --mud-palette-lines-default: rgba(0,0,0,0.12);
+            --mud-palette-lines-inputs: rgba(189,189,189,1);
+            --mud-palette-divider: rgba(224,224,224,1);
+            --mud-default-borderradius: 4px;
+            --mud-appbar-height: 64px;
+            --mud-drawer-width-left: 240px;
+            --mud-typography-default-family: 'Roboto', sans-serif;
+            --mud-typography-h4-size: 2.125rem;
+            --mud-typography-h4-weight: 400;
+            --mud-typography-subtitle2-size: .875rem;
+            --mud-typography-subtitle2-weight: 500;
+            --mud-typography-body1-size: 1rem;
+            --mud-typography-body1-weight: 400;
+            --mud-typography-body2-size: .875rem;
+            --mud-typography-body2-weight: 400;
+            --mud-typography-caption-size: .75rem;
+            --mud-typography-caption-weight: 400;
+            --mud-typography-button-size: .875rem;
+            --mud-typography-button-weight: 500;
+            --mud-elevation-1: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
+            --mud-elevation-5: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 5px 8px 0px rgba(0,0,0,0.14),0px 1px 14px 0px rgba(0,0,0,0.12);
+            --mud-zindex-appbar: 1100;
+            --mud-zindex-drawer: 1000;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--mud-typography-default-family); font-size: 1rem; font-weight: 400; line-height: 1.5; color: var(--mud-palette-text-primary); background-color: var(--mud-palette-background-grey); }
+        .mud-layout { display: flex; flex-direction: row; min-height: 100vh; }
+        .mud-main-content { flex-grow: 1; padding-top: var(--mud-appbar-height); padding-left: var(--mud-drawer-width-left); transition: padding-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms; }
+        .mud-container { padding: 24px; }
+        .pa-6 { padding: 24px !important; }
+        .mud-appbar { width: 100%; display: flex; position: fixed; z-index: var(--mud-zindex-appbar); flex-direction: column; background-color: var(--mud-palette-appbar-background); color: var(--mud-palette-appbar-text); box-shadow: var(--mud-elevation-5); }
+        .mud-toolbar { display: flex; align-items: center; position: relative; padding: 0 16px; min-height: var(--mud-appbar-height); }
+        .d-flex { display: flex !important; }
+        .align-center { align-items: center !important; }
+        .justify-between { justify-content: space-between !important; }
+        .gap-3 { gap: 1rem !important; }
+        .flex-grow-1 { flex-grow: 1 !important; }
+        .flex-column { flex-direction: column !important; }
+        .ml-2 { margin-left: 0.5rem !important; }
+        .mr-6 { margin-right: 1.5rem !important; }
+        .mud-typography { margin: 0; }
+        .mud-typography-h4 { font-size: var(--mud-typography-h4-size); font-weight: var(--mud-typography-h4-weight); }
+        .mud-typography-subtitle2 { font-size: var(--mud-typography-subtitle2-size); font-weight: var(--mud-typography-subtitle2-weight); }
+        .mud-typography-caption { font-size: var(--mud-typography-caption-size); font-weight: var(--mud-typography-caption-weight); line-height: 1.66; }
+        .mud-typography-body1 { font-size: var(--mud-typography-body1-size); font-weight: var(--mud-typography-body1-weight); }
+        .mud-typography-body2 { font-size: var(--mud-typography-body2-size); font-weight: var(--mud-typography-body2-weight); }
+        .mud-dark-text { color: var(--mud-palette-dark) !important; }
+        .mud-primary-text { color: var(--mud-palette-primary) !important; }
+        .mud-link { text-decoration: none; color: inherit; }
+        .mud-link:hover { text-decoration: underline; }
+        .mud-avatar { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; }
+        .mud-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .mud-svg-icon { display: inline-block; fill: currentColor; height: 24px; width: 24px; transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; font-size: 1.5rem; user-select: none; }
+        .mud-drawer { display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; height: 100vh; background: var(--mud-palette-drawer-background); width: var(--mud-drawer-width-left); z-index: var(--mud-zindex-drawer); }
+        .mud-drawer-clipped-always { top: var(--mud-appbar-height); height: calc(100% - var(--mud-appbar-height)); }
+        .mud-elevation-1 { box-shadow: var(--mud-elevation-1); }
+        .mud-drawer-content { overflow-y: auto; flex-grow: 1; }
+        .pt-3, .pl-3, .pr-3 { padding-top: 1rem !important; padding-left: 1rem !important; padding-right: 1rem !important; }
+        .mud-nav-group { margin-bottom: 8px; }
+        .mud-nav-link { display: flex; align-items: center; padding: 8px 16px; color: var(--mud-palette-drawer-text); text-decoration: none; border-radius: var(--mud-default-borderradius); transition: background-color 150ms ease; cursor: pointer; }
+        .mud-nav-link:hover { background-color: rgba(0,0,0,0.04); }
+        .mud-nav-link.active { background-color: rgba(110, 89, 238, 0.1); }
+        .mud-nav-link.active .mud-nav-link-text { font-weight: 500; color: var(--mud-palette-secondary); }
+        .mud-nav-link-icon { margin-right: 16px; color: #757575; }
+        .mud-nav-link-text { flex-grow: 1; font-size: .875rem; }
+        .mud-nav-link-expand-icon { transition: transform 150ms ease; }
+        .mud-nav-group-expanded > .mud-nav-link > .mud-nav-link-expand-icon { transform: rotate(180deg); }
+        .mud-collapse-container { overflow: hidden; max-height: 0; transition: max-height 0.3s ease-out; }
+        .mud-collapse-container.expanded { max-height: 500px; }
+        .mud-collapse-wrapper-inner { padding: 8px 0; }
+        .mud-collapse-wrapper-inner .mud-nav-link { padding-left: 48px; }
+        .mud-card { background-color: var(--mud-palette-surface); border-radius: var(--mud-default-borderradius); }
+        .mud-card-header, .mud-card-content, .mud-card-actions { padding: 16px; }
+        .mud-paper { background-color: var(--mud-palette-surface); border-radius: var(--mud-default-borderradius); }
+        .mud-paper-outlined { border: 1px solid var(--mud-palette-lines-default); }
+        .mud-grid { display: flex; flex-wrap: wrap; margin: -8px; }
+        .mud-grid-item { padding: 8px; }
+        .mud-grid-item-xs-12 { flex-basis: 100%; max-width: 100%; }
+        @media (min-width: 960px) {
+            .mud-grid-item-md-4 { flex-basis: 33.3333%; max-width: 33.3333%; }
+            .mud-grid-item-md-8 { flex-basis: 66.6667%; max-width: 66.6667%; }
+        }
+        .mud-form { width: 100%; }
+        .mud-input-control { display: flex; flex-direction: column; }
+        .mud-input-control-input-container { position: relative; }
+        .mud-input-label { position: absolute; top: 0; left: 0; transform-origin: top left; transition: transform 200ms ease, color 200ms ease; color: var(--mud-palette-text-secondary); pointer-events: none; }
+        .mud-input-label-outlined { transform: translate(14px, 10px) scale(1); background-color: var(--mud-palette-surface); padding: 0 4px; }
+        .mud-input-slot:focus + .mud-input-outlined-border { border: 2px solid var(--mud-palette-secondary); }
+        .mud-input-slot:focus ~ .mud-input-label,
+        .mud-input-slot:not(:placeholder-shown) ~ .mud-input-label { transform: translate(12px, -8px) scale(0.75); color: var(--mud-palette-secondary); }
+        .mud-input-root { display: flex; padding: 10px 14px; border-radius: var(--mud-default-borderradius); background-color: transparent; width: 100%; font-family: inherit; font-size: 1rem; color: currentColor; border: none; }
+        .mud-input-root::placeholder { opacity: 0; }
+        .mud-input-root:focus { outline: none; }
+        .mud-input-outlined-border { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 1px solid var(--mud-palette-lines-inputs); border-radius: inherit; pointer-events: none; }
+        .mud-input-helper-text { font-size: 0.75rem; color: var(--mud-palette-text-secondary); margin-top: 4px; padding: 0 14px; }
+        textarea.mud-input-root { resize: vertical; }
+        .mud-input-adornment-end { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); }
+        .mud-button-root { font-family: var(--mud-typography-default-family); font-size: var(--mud-typography-button-size); font-weight: var(--mud-typography-button-weight); text-transform: uppercase; padding: 6px 16px; border: none; border-radius: var(--mud-default-borderradius); cursor: pointer; transition: background-color 250ms ease; }
+        .mud-button-filled-secondary { background-color: var(--mud-palette-secondary); color: var(--mud-palette-secondary-text); }
+        .mud-button-filled-secondary:hover { background-color: rgb(80,57,234); }
+        .text-align-end { text-align: end; }
+        .mud-paper-stack { display: flex; flex-direction: column; gap: 16px; }
+        .mud-divider { border: none; height: 1px; background-color: var(--mud-palette-divider); margin: 16px 0; }
+
+        /* Estilos del Interruptor (Switch) - Corregido */
+        .flag-container { display: flex; align-items: center; gap: 8px; }
+        .mud-switch { position: relative; display: inline-block; width: 34px; height: 20px; cursor: pointer; vertical-align: middle; -webkit-tap-highlight-color: transparent; }
+        .mud-switch-input { position: absolute; width: 100%; height: 100%; top: 0; left: 0; margin: 0; padding: 0; opacity: 0; cursor: inherit; }
+        .mud-switch-track { position: absolute; top: 3px; left: 0; width: 100%; height: 14px; border-radius: 7px; background-color: rgba(0,0,0,0.38); transition: background-color 150ms ease; }
+        .mud-switch-thumb { position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50%; background-color: #fafafa; box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12); transition: transform 150ms ease, background-color 150ms ease; }
+        .mud-switch-input:checked ~ .mud-switch-track { background-color: var(--mud-palette-secondary); opacity: 0.5; }
+        .mud-switch-input:checked ~ .mud-switch-thumb { transform: translateX(14px); background-color: var(--mud-palette-secondary); }
+    </style>
+</head>
+<body>
+
+<div class="mud-layout">
+
+    <main class="mud-main-content">
+        <div class="mud-container">
+            <div class="mud-card" style="background: transparent; box-shadow: none;">
+                <div class="mud-card-header">
+                     <a href="#" class="mud-typography mud-link mud-primary-text mud-typography-body2">← Volver a Grupos</a>
+                     <h4 class="mud-typography mud-typography-h4 mud-dark-text" style="font-weight: 700; margin-top: 8px;">Nuevo Grupo</h4>
+                     <h6 class="mud-typography mud-typography-subtitle2" style="color:gray !important">Agregue o modifique un grupo.</h6>
+                </div>
+                <div class="mud-card-content">
+                    <form class="mud-form">
+                        <div class="mud-paper mud-paper-outlined pa-6">
+                            <div class="mud-paper-stack">
+                                <div class="mud-grid">
+                                    <div class="mud-grid-item mud-grid-item-xs-12 mud-grid-item-md-4">
+                                        <p class="mud-typography mud-typography-body1 mud-dark-text"><strong>Datos Generales</strong></p>
+                                    </div>
+                                    <div class="mud-grid-item mud-grid-item-xs-12 mud-grid-item-md-8">
+                                        <div class="d-flex flex-column gap-3">
+                                            <div class="mud-input-control">
+                                                <div class="mud-input-control-input-container">
+                                                    <input class="mud-input-slot mud-input-root" placeholder=" " type="text">
+                                                    <div class="mud-input-outlined-border"></div><label class="mud-input-label mud-input-label-outlined">Nombre*</label>
+                                                </div>
+                                                <p class="mud-input-helper-text">Indica el nombre del grupo.</p>
+                                            </div>
+                                            <div class="mud-input-control">
+                                                <div class="mud-input-control-input-container">
+                                                    <textarea class="mud-input-slot mud-input-root" placeholder=" " rows="5"></textarea>
+                                                    <div class="mud-input-outlined-border"></div><label class="mud-input-label mud-input-label-outlined">Descripción*</label>
+                                                </div>
+                                                <p class="mud-input-helper-text">Texto libre para la descripción del grupo.</p>
+                                            </div>
+                                            <div class="mud-input-control">
+                                                <div class="mud-input-control-input-container">
+                                                    <input class="mud-input-slot mud-input-root" placeholder="Ingrese el nombre del Sub Rubro. Mínimo 3 caracteres alfanuméricos." type="text">
+                
+                                                    <div class="mud-input-outlined-border"></div><label class="mud-input-label mud-input-label-outlined">Sub Rubro*</label>
+                                                </div>
+                                                <p class="mud-input-helper-text">Sub Rubro del grupo.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mud-divider">
+                                <div class="mud-grid">
+                                    <div class="mud-grid-item mud-grid-item-xs-12 mud-grid-item-md-4">
+                                        <p class="mud-typography mud-typography-body1 mud-dark-text"><strong>KDS</strong></p>
+                                    </div>
+                                    <div class="mud-grid-item mud-grid-item-xs-12 mud-grid-item-md-8">
+                                        <div class="flag-container">
+                                            <p class="mud-typography mud-typography-body1">Enviar a Cocina (KDS)</p>
+                                            <label class="mud-switch">
+                                                <input type="checkbox" class="mud-switch-input" checked>
+                                                <span class="mud-switch-track"></span>
+                                                <span class="mud-switch-thumb"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="mud-card-actions">
+                     <div class="mud-paper text-align-end" style="box-shadow: none;">
+                         <button type="button" class="mud-button-root mud-button-filled-secondary" style="width:120px">Guardar</button>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+
+</body>
+</html>
