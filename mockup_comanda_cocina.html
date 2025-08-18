@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de Comanda Unificada</title>
+    <style>
+        /* Estilos generales para centrar y presentar el ticket en la página */
+        body {
+            font-family: sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- Estilos Específicos para la Comanda --- */
+        
+        /* Contenedor principal que da la apariencia de papel de ticket */
+        .salon-ticket-body {
+            font-family: 'Courier New', monospace;
+            width: 300px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* Borde y espaciado interno del ticket */
+        .salon-ticket-container {
+            border: 1px solid #333;
+            padding: 15px;
+        }
+        
+        /* Estilo para la cabecera con el nombre del local */
+        .salon-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .salon-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        /* Estilo para la información de la orden (Beeper, N°, Fecha) */
+        .salon-order-info p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+        
+        /* Contenedor de la lista de todos los productos */
+        .salon-item-list {
+            margin-top: 15px;
+        }
+
+        /* Título separador para las secciones "COCINA" y "SALON" */
+        .promo-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            border-top: 1.5px dashed #000;
+            border-bottom: 1.5px dashed #000;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        /* Contenedor para cada línea de producto */
+        .salon-item {
+            margin-top: 8px;
+        }
+        
+        /* Estilo para el nombre del producto y su cantidad */
+        .salon-item-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        /* Estilos para las líneas de personalización */
+        .modificacion, .observacion {
+            padding-left: 15px;
+            font-style: italic;
+            font-size: 14px;
+            margin: 2px 0 0 0;
+        }
+        
+        /* Añade el prefijo "↳ SIN:" a las modificaciones */
+        .modificacion::before {
+            content: '↳ SIN: ';
+        }
+        
+        /* Añade el prefijo "↳ Obs:" a las observaciones */
+        .observacion::before {
+            content: '↳ Obs: ';
+        }
+    </style>
+</head>
+<body>
+
+    <div class="salon-ticket-body">
+        <div class="salon-ticket-container">
+            <div class="salon-header">
+                <h2>WEISS BURGERS</h2>
+            </div>
+            <div class="salon-order-info">
+                <p><strong>Beeper:</strong> #22</p>
+                <p><strong>Orden N°:</strong> 451</p>
+                <p><strong>Fecha:</strong> 2025-08-18 - 11:55</p>  
+            </div>
+
+            <div class="salon-item-list">
+                
+                <p class="promo-title">COCINA</p>
+                <div class="salon-item">
+                    <p class="salon-item-name">3x Burger Roger</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">3x Papas Fritas</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">1x Burger California</p>
+                    <p class="modificacion">Tomate</p>        
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">1x Papas Fritas</p>
+                    <p class="observacion">Sin Sal Agregada</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">1x Burger Fuegina</p>
+                    <p class="modificacion">Cebolla</p>
+                    <p class="observacion">Bien cocida la carne</p>
+                </div>
+
+                <p class="promo-title">SALON</p>
+                <div class="salon-item">
+                    <p class="salon-item-name">2x Pepsi</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">2x Cerveza</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">2x Helado Palito</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
