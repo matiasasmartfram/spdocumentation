@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de Pantalla KDS</title>
+    <style>
+        /* Variables de color y estilos generales de la página de ejemplo */
+        :root {
+            --primary-color: #0d6efd; /* Para el botón "LISTO" */
+            --kds-green: #28a745;
+            --kds-yellow: #ffc107;
+            --kds-red: #dc3545;
+            --kds-bg: #343a40;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        /* --- Estilos para la Visualización del KDS --- */
+
+        /* Contenedor principal que simula la pantalla de cocina */
+        .kds-screen {
+            background-color: var(--kds-bg);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto; /* Permite scroll horizontal si no caben las tarjetas */
+        }
+
+        /* Estilo de cada tarjeta de orden individual */
+        .kds-order-card {
+            background-color: #fff;
+            border-radius: 6px;
+            width: 320px;
+            min-width: 320px; /* Ancho fijo para cada tarjeta */
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Encabezado de la tarjeta con N° de Orden y temporizador */
+        .kds-header {
+            padding: 10px 15px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kds-header.status-green { background-color: var(--kds-green); }
+        .kds-header.status-yellow { background-color: var(--kds-yellow); color: #000; }
+        .kds-header.status-red { background-color: var(--kds-red); }
+
+        .kds-header h4, .kds-header p {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Cuerpo de la tarjeta con la lista de productos */
+        .kds-body {
+            padding: 15px;
+            flex-grow: 1; /* Hace que el cuerpo ocupe el espacio disponible */
+            overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+        }
+
+        .kds-item {
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .kds-item:last-child {
+            border-bottom: none;
+        }
+
+        .kds-item .item-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .kds-item .modificacion {
+            color: var(--kds-red);
+            font-weight: bold;
+            padding-left: 15px;
+            margin: 2px 0 0 0;
+        }
+
+        .kds-item .observacion {
+            font-style: italic;
+            padding-left: 15px;
+            margin: 2px 0 0 0;
+        }
+
+        /* Pie de la tarjeta con el botón de acción */
+        .kds-footer {
+            padding: 10px;
+            margin-top: auto; /* Empuja el footer al fondo */
+        }
+
+        .kds-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .kds-button:hover {
+            background-color: #0b5ed7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="kds-screen">
+        
+        <div class="kds-order-card">
+            <div class="kds-header status-green">
+                <h4>Orden #451</h4>
+                <p>04:15</p>
+            </div>
+            <div class="kds-body">
+                <div class="kds-item">
+                    <p class="item-name">3x Burger Roger</p>
+                </div>
+                <div class="kds-item">
+                    <p class="item-name">3x Papas Fritas</p>
+                </div>
+                <div class="kds-item">
+                    <p class="item-name">1x Burger California</p>
+                    <p class="modificacion">SIN TOMATE</p>
+                </div>
+                <div class="kds-item">
+                    <p class="item-name">1x Papas Fritas</p>
+                    <p class="observacion">Obs: Sin Sal Agregada</p>
+                </div>  
+                <div class="kds-item">
+                    <p class="item-name">1x Burger Fuegina</p>
+                    <p class="modificacion">SIN CEBOLLA</p>
+                    <p class="observacion">Obs: Bien cocida la carne</p>
+                </div>
+            </div>
+            <div class="kds-footer">
+                <button class="kds-button">LISTO</button>
+            </div>
+        </div>
+        
+        <div class="kds-order-card">
+            <div class="kds-header status-yellow">
+                <h4>Orden #450</h4>
+                <p>12:30</p>
+            </div>
+            <div class="kds-body">
+                <div class="kds-item">
+                    <p class="item-name">2x Burger Smack</p>
+                </div>
+                <div class="kds-item">
+                    <p class="item-name">1x Burger Gulosa</p>
+                    <p class="modificacion">SIN AJO</p>
+                </div>
+                <div class="kds-item">
+                    <p class="item-name">1x Burger Gulosa</p>
+                </div>
+            </div>
+            <div class="kds-footer">
+                <button class="kds-button">LISTO</button>
+            </div>
+        </div>
+        
+        <div class="kds-order-card">
+            <div class="kds-header status-red">
+                <h4>Orden #449</h4>
+                <p>21:05</p>
+            </div>
+            <div class="kds-body">
+                <div class="kds-item">
+                    <p class="item-name">2x Burger Gulosa</p>
+                </div>
+                <div class="kds-item">
+                    <p class="item-name">2x Papas Weiss</p>
+                </div>
+            </div>
+            <div class="kds-footer">
+                <button class="kds-button">LISTO</button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
