@@ -1,4 +1,6 @@
-<html lang="es"><head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documento Final - Diseño de Catálogo y Comandas Weiss</title>
@@ -190,6 +192,14 @@
 </head>
 <body>
 
+    <nav>
+        <a href="#catalog">Catálogo</a>
+        <a href="#comanda-cocina-salon">Comanda Cocina/Salon</a>
+        <a href="#kds">KDS</a>
+        <a href="#kitchen-flag">Identificador KDS</a>
+        <a href="#item-modification">Modificación de Ítems</a>
+    </nav>
+
     <div class="container">
         <h1>Diseño de Catálogo y Comandas</h1>
         
@@ -246,209 +256,98 @@ RUBRO: DESCARTABLES
 </code></pre>
         </section>
 
-        <section id="salon">
-            <h2>2. Comanda de Salón / Ticket de Venta</h2>
-            
-            <h3>Ejemplo Visual</h3>
-            <div class="example-render">
-                <div class="salon-ticket-body">
-                    <div class="salon-ticket-container">
-                        <div class="salon-header">
-                            <h2>WEISS BURGERS</h2>
-                            <p>Orden N°: 451</p>
-                        </div>
-                        <div class="salon-order-info">
-                            <p><strong>Beeper:</strong> #22</p>
-                            <p><strong>Cajero:</strong> Ana G.</p>
-                            <p><strong>Turno ID:</strong> T-180825-PM</p>
-                            <p><strong>Fecha:</strong> 2025-08-09 - 20:15</p>  
-                        </div>
-                        <div class="salon-item-list">
-                            <p class="promo-title"> 2x PROMOCION: COMBO 1</p>
-                            <div class="salon-item">
-                                <p class="salon-item-name">2x Burger Roger</p>
-                            </div>
-                            <div class="salon-item">
-                                <p class="salon-item-name">2x Papas Fritas</p>
-                            </div>
-                             <div class="salon-item">
-                                <p class="salon-item-name">2x Pepsi</p>
-                            </div>
-                             <p class="promo-title">2x PROMOCION: COMBO 2</p>
-                            <div class="salon-item">
-                                <p class="salon-item-name">1x Burger California</p>
-                                 <p class="modificacion">Tomate</p>           
-                            </div>
-                                                        <div class="salon-item">
-                                <p class="salon-item-name">1x Burger Roger</p>       
-                            </div>
-                            <div class="salon-item">
-                                <p class="salon-item-name">1x Papas Fritas</p>
-                              <p class="observacion">Sin Sal Agregada</p>
-                            </div>
-                            <div class="salon-item">
-                                <p class="salon-item-name">1x Papas Fritas</p>
-                            </div>
-                             <div class="salon-item">
-                                <p class="salon-item-name">2x Cerveza</p>
-                            </div>  
+      <section id="comanda-cocina-salon">
+    <h2>2. Comanda Unificada (Cocina y Salón)</h2>
 
-                            <p class="promo-title">PRODUCTOS</p>
-                            <div class="salon-item">
-                                <p class="salon-item-name">1x Burger Fuegina</p>
-                                <p class="modificacion">Cebolla</p>
-                                <p class="observacion">Bien cocida la carne</p>
-                            </div>
-                            <div class="salon-item">
-                                <p class="salon-item-name">2x Helado Palito</p>
-                            </div>
-                        </div>
+    <h3>Ejemplo Visual</h3>
+    <div class="example-render">
+        <div class="salon-ticket-body">
+            <div class="salon-ticket-container">
+                <div class="salon-header">
+                    <h2>WEISS BURGERS</h2>
+                </div>
+                <div class="salon-order-info">
+                    <p><strong>Beeper:</strong> #22</p>
+                    <p><strong>Orden N°:</strong> 451</p>
+                    <p><strong>Fecha:</strong> 2025-08-09 - 20:15</p>  
+                </div>
+
+                <div class="salon-item-list">
+                    <p class="promo-title">COCINA</p>
+                    <div class="salon-item">
+                        <p class="salon-item-name">3x Burger Roger</p>
+                    </div>
+                    <div class="salon-item">
+                        <p class="salon-item-name">3x Papas Fritas</p>
+                    </div>
+                    <div class="salon-item">
+                        <p class="salon-item-name">1x Burger California</p>
+                        <p class="modificacion">Tomate</p>        
+                    </div>
+                    <div class="salon-item">
+                        <p class="salon-item-name">1x Papas Fritas</p>
+                        <p class="observacion">Sin Sal Agregada</p>
+                    </div>
+                    <div class="salon-item">
+                        <p class="salon-item-name">1x Burger Fuegina</p>
+                        <p class="modificacion">Cebolla</p>
+                        <p class="observacion">Bien cocida la carne</p>
+                    </div>
+
+                    <p class="promo-title">SALON</p>
+                    <div class="salon-item">
+                        <p class="salon-item-name">2x Pepsi</p>
+                    </div>
+                    <div class="salon-item">
+                        <p class="salon-item-name">2x Cerveza</p>
+                    </div>
+                    <div class="salon-item">
+                        <p class="salon-item-name">2x Helado Palito</p>
                     </div>
                 </div>
             </div>
-<div class="explanation-box">
-    <h4>Estructura y Reglas del Ticket de Venta</h4>
-    <ul>
-        <li>
-            <strong>1. Propósito Dual (Cliente y Staff):</strong>
-            El ticket debe ser renderizado para cumplir dos funciones. Para el <strong>cliente</strong> y para el <strong>personal de entrega</strong>, es la checklist final para ensamblar el pedido.
-        </li>
-        <li>
-            <strong>2. Información de Cabecera:</strong>
-            El ticket siempre debe comenzar con la información de la transacción, dividida en dos bloques:
-            <ul>
-                <li><u>Encabezado Principal:</u> Muestra el nombre del local (WEISS BURGER) y el <strong>Numero de Orden</strong> como identificador único de la venta (Orden N°: 451).</li>
-                <li><u>Info de Operación:</u> Detalla los datos operativos: el <strong>Beeper</strong> para llamar al cliente, el <strong>Cajero</strong> que realizó la venta, el <strong>Turno ID</strong> y <strong>Fecha y Hora</strong></li>
-            </ul>
-        </li>
-        <li>
-            <strong>3. Organización del Contenido:</strong>
-            El cuerpo del ticket se estructura mediante títulos separadores ("PROMOCION" y "PRODUCTOS"). La lógica es la siguiente:
-             <ul>
-                <li>
-    <strong>Agrupación de Promociones:</strong>
-    <ul>
-        <li>
-            <strong>Condición para Agrupar:</strong> El sistema debe agrupar todas las unidades de una misma promoción (ej. "Combo 1") bajo un único título con un multiplicador (ej. <code>2x PROMOCION: COMBO 1</code>), independientemente de si las selecciones de productos internos son idénticas o no.
-        </li>
-        <li>
-            <strong>Implementación:</strong>
-            <ul>
-                <li>El título de la promoción se renderiza con el multiplicador total. <strong>Ejemplo:</strong> <code>2x PROMOCION: COMBO 1</code>.</li>
-                <li>La cantidad de cada producto individual dentro de esa promoción también se multiplica por el mismo factor. <strong>Ejemplo:</strong> si el combo original contenía <code>1x Papas Fritas</code>, ahora se mostrará como <code>2x Papas Fritas</code>.</li>
-            </ul>
-        </li>
-        <li>
-            <strong>Excepción:</strong> Si las selecciones internas son diferentes Ej. una PROMOCION con Pepsi y otra misma PROMOCION con Agua, el sistema deben renderizarla en la misma "2x PROMOCION:..." pero <strong>dentro del contendor de la PROMOCION</strong> contener "1x Pepsi" y "1xAgua".
-        </li>
-    </ul>
-</li>
-                <li>Todos los demás artículos comprados individualmente se listan bajo el título <strong>PRODUCTOS</strong>.</li>
-            </ul>
-        </li>
-        <li>
-            <strong>4. Contenido Completo:</strong>
-             El ticket debe tener <strong>todos</strong> los artículos de la venta, incluyendo bebidas y postres. Cada ítem repetido se encapsula (ej: <code>2x Burger Roger</code>) siempre y cuanto pertenezcan a una misma CATEGORIA (PROMO o PRODUCTO).
-        </li>
-        <li>
-            <strong>5. Personalización de Productos (Modificaciones y Observaciones):</strong>
-            Cualquier personalización debe mostrarse directamente debajo del producto.
-            <ul>
-                <li><strong>Modificación (Quitar Componente):</strong> Utilizar los "Componentes" para indicar un ingrediente que el cliente NO desea (ej: 'SIN Tomate').</li>
-                <li><strong>Observación (Nota Especial):</strong> Utilizar un campo "Observacion" para instrucciones de preparación que no son estándar (ej: 'Sin Sal Agregada', 'Bien cocida la carne').</li>
-            </ul>
-        </li>
-        <li>
-            <strong>6. Regla de Agrupación por Cantidad:</strong>
-            Para optimizar el espacio y la lectura, si se ordenan múltiples unidades de un mismo producto <strong>y este no tiene ninguna personalización (Modificacion en "Componentes" u "Observacion"</strong>, el sistema debe agruparlas en una sola línea, prefijando la cantidad (ej: <code>2x Burger Roger</code>). Si uno de ellos tiene una modificación, deben listarse como ítems separados.
-        </li>
-         <li>
-            <strong>7. Proceso de Impresión:</strong>
-            El ticket se genera e imprime una única vez desde el Punto de Venta (POS) en el momento en que se confirma y cierra la transacción.
-        </li>
-    </ul>
-</div>
+        </div>
+    </div>
 
-    
-        </section>
-
-        <section id="cocina">
-            <h2>3. Comanda de Cocina</h2>
-
-            <h3>Ejemplo Visual</h3>
-            <div class="example-render">
-                <div class="cocina-ticket-body">
-                    <div class="header-cocina">
-                        <h2>COCINA</h2>
-                        <p>Beeper: #22</p>
-                        <p>Orden N°: 451</p>
-                    </div>
-
-                    <div class="sub-ticket-container">
-                        <div class="sub-ticket">
-                            <p class="item-name">3x Burger Roger</p>
-                        </div>
-
-                        <div class="sub-ticket">
-                            <p class="item-name">3x Papas Fritas</p>
-                        </div>
-                        <div class="sub-ticket">
-                            <p class="item-name">1x Burger California</p>
-                            <p class="modificacion">TOMATE</p>
-                           
-                        </div>
-                        <div class="sub-ticket">
-                            <p class="item-name">1x Papas Fritas</p>
-                             <p class="observacion">OBS: Sin Sal Agregada</p>
-                        </div>
-
-                        <div class="sub-ticket">
-                            <p class="item-name">1x Burger Fuegina</p>
-                            <p class="modificacion">CEBOLLA</p>
-                            <p class="observacion">OBS: Bien cocida la carne</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-                       <div class="explanation-box">
-                <h4>Estructura y Reglas de la Comanda de Cocina</h4>
+    <div class="explanation-box">
+        <h4>Comanda Unificada</h4>
+        <ul>
+            <li>
+                <strong>1. Propósito y Estructura General:</strong>
+                Este es el <strong>una UNICA COMANDA</strong> que se imprime. Su función es coordinar cocina y salón. La estructura se divide en tres partes claras:
                 <ul>
-                    <li>
-                        <strong>1. Propósito y Contenido Filtrado:</strong>
-                        Esta comanda está diseñada <strong>para el personal de cocina</strong>. El sistema debe filtrar la orden de venta y renderizar <strong>únicamente</strong> los productos que requieren preparación.<strong> Se deben omitir items con "Categoria" bebidas, postres y nombres de promociones</strong>.
-                    </li>
-                    <li>
-                        <strong>2. Estructura Modular (Ticket Principal y Sub-Tickets):</strong>
-                        El diseño es modular para facilitar la división de tareas en la cocina.
-                        <ul>
-                            <li><u>Ticket Principal :</u> Contiene toda la orden y un encabezado con la información esencial para identificar el pedido: <code>Beeper</code> y <code>Orden N°</code>.</li>
-                            <li><u>Sub-Ticket :</u> Cada producto a preparar se renderiza como un "sub-ticket" individual y separable.</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>3. Visualización de Personalizaciones:</strong>
-                        Las personalizaciones deben ser notorias dentro de cada <code>.sub-ticket</code>.
-                        <ul>
-                            <li><strong>Modificación (Quitar Componente):</strong> La <code>modificacion</code> se usa para nombrar el ingrediente que se debe <strong>omitir</strong> (ej: 'SIN: CEBOLLA').</li>
-                            <li><strong>Observación (Nota Especial):</strong> La <code>observacion</code> se usa para instrucciones de preparación (ej: 'OBS: Bien cocida la carne').</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>4. Regla de Agrupación:</strong>
-                        En la comanda de cocina <strong>Se agrupan los ítems con un multiplicador a menos que contenga una "Modificacion u Observacion" cada producto a preparar que tenga "Modificacion u Observacion" debe ser un <code>sub-ticket</code> individual</strong>.
-                    </li>
-                    <li>
-                        <strong>5. Impresión y Flujo de Trabajo:</strong>
-                        La comanda se imprime en la impresora designada para la cocina en el mismo momento en que se cierra la venta en el POS.
-                    </li>
+                    <li><u>Cabecera:</u> Contiene la información para identificar la orden (<code>Beeper</code>, <code>Orden N°</code>, <code>Fecha y Hora</code>).</li>
+                    <li><u>Sección COCINA:</u> Lista todos los productos que requieren preparación.</li>
+                    <li><u>Sección SALON:</u> Lista todos los productos que son despachados directamente por el personal de mostrador (bebidas, postres).</li>
                 </ul>
-            </div>
-        </section>
+            </li>
+            <li>
+                <strong>2. Lógica de Separación de Secciones:</strong>
+                El sistema debe iterar sobre todos los productos de la venta y distribuirlos en una de las dos secciones basándose en el indicador del catálogo:
+                <ul>
+                    <li>Un producto se renderiza en la sección <strong>COCINA</strong> si el flag <code>Enviar A Cocina (KDS)</code> de su <strong>Grupo</strong> es <code>true</code>.</li>
+                    <li>Un producto se renderiza en la sección <strong>SALON</strong> si el flag <code>Enviar A Cocina (KDS)</code> de su <strong>Grupo</strong> es <code>false</code>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>3. Agrupación por Cantidad:</strong>
+                Se deben agrupar los productos idénticos usando un multiplicador (ej: <code>3x Burger Roger</code>).
+            </li>
+            <li>
+                <strong>4. Excepción a la Agrupación:</strong>
+                La Aagrupación se anula y un producto <strong>DEBE</strong> listarse en una línea separada e individual (con cantidad <code>1x</code>) si tiene una <strong>modificación de componente</strong> o una <strong>observación</strong>.
+            </li>
+            <li>
+                <strong>5. Flujo de Trabajo:</strong>
+                Al imprimirse este ticket, el personal de cocina toma la primera sección para preparar, mientras que el personal de salón utiliza la segunda sección para preparar las bebidas y postres una vez listo por cocina.
+            </li>
+        </ul>
+    </div>
+</section>
 
         <section id="kds">
-            <h2>4. Visualización del KDS (Kitchen Display System)</h2>
-           
+            <h2>3. Visualización del KDS (Kitchen Display System)</h2>
+            
 
             <h3>Ejemplo Visual</h3>
             <div class="example-render">
@@ -471,7 +370,7 @@ RUBRO: DESCARTABLES
                         </div>
                         <div class="kds-item">
                             <p class="item-name">1x Papas Fritas</p>
-                                                          <p class="observacion">Obs: Sin Sal Agregada</p>
+                                                                 <p class="observacion">Obs: Sin Sal Agregada</p>
                         </div>  
                         <div class="kds-item">
                             <p class="item-name">1x Burger Fuegina</p>
@@ -496,10 +395,10 @@ RUBRO: DESCARTABLES
                             <p class="item-name">1x Burger Gulosa</p>
                             <p class="modificacion">SIN AJO</p>
                         </div>
-                                            <div class="kds-item">
+                                     <div class="kds-item">
                             <p class="item-name">1x Burger Gulosa</p>
                         </div>
-                      
+                       
                     </div>
                     <div class="kds-footer">
                         <button class="kds-button">LISTO</button>
@@ -559,12 +458,10 @@ RUBRO: DESCARTABLES
 </div>
         </section>
 <section id="kitchen-flag">
-<h2>5. Identificador de Items para Cocina/KDS</h2>
+<h2>4. Identificador de Items para Cocina/KDS</h2>
 <h3>Ejemplo Visual</h3>
 <div class="example-render">
-    <iframe src="https://matiasasmartfram.github.io/spdocumentation/mockup_items_para_cocina.html"
-            style="width: 100%; height: 600px; border: 1px solid var(--border-color); border-radius: 5px;"
-            title="Mockup de Configuración de Items para Cocina">
+    <iframe src="https://matiasasmartfram.github.io/spdocumentation/mockup_items_para_cocina.html" style="width: 100%; height: 600px; border: 1px solid var(--border-color); border-radius: 5px;" title="Mockup de Configuración de Items para Cocina">
     </iframe>
 </div>
 <div class="explanation-box">
@@ -589,8 +486,8 @@ Para determinar si un <strong>Ítem</strong> vendido debe ser enviado a producci
 <li>Leer el valor del flag <code>Enviar A Cocina (KDS)</code> de ese Grupo.</li>
 <li>Si el valor es <code>true</code>, el ítem se envía a la Comanda de Cocina y de la vista del KDS. Si es <code>false</code>, se omite por completo de la Comanda de Cocina y de la vista del KDS.</li>
 </ol>
+ <p></p>
 </li>
-  <p></p>
 <li>
 <strong>3. Implementación y Gestión por el Franquiciado</strong>
 <p>
@@ -602,7 +499,7 @@ Esta configuración le da al franquiciado un control y sobre los items enviados 
 </li>
 <li>
 <strong>Ejemplo de Inclusión:</strong> Todos los grupos de alimentos que requieren preparación, como "Burgers" o "Frituras", mantendrán el indicador activado (<code>Enviar A Cocina (KDS): true</code>).
-  <p></p>
+ <p></p>
 </li>
 </ul>
 </li>
@@ -618,12 +515,10 @@ Esta configuración le da al franquiciado un control y sobre los items enviados 
 </div>
 </section>
       <section id="item-modification">
-    <h2>6. Modificación de Ítems en Orden de Venta</h2>
+    <h2>5. Modificación de Ítems en Orden de Venta</h2>
 <h3>Ejemplo Visual</h3>
 <div class="example-render">
-     <iframe src="https://matiasasmartfram.github.io/spdocumentation/mockup_items_orden_de_venta.html"
-            style="width: 100%; height: 700px; border: 1px solid var(--border-color); border-radius: 5px;"
-            title="Mockup de Modificación Avanzada de Items">
+     <iframe src="https://matiasasmartfram.github.io/spdocumentation/mockup_items_orden_de_venta.html" style="width: 100%; height: 700px; border: 1px solid var(--border-color); border-radius: 5px;" title="Mockup de Modificación Avanzada de Items">
     </iframe>
 </div>
     <div class="explanation-box">
