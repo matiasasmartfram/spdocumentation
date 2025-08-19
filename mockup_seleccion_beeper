@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maqueta - Selección de Beeper y Tipo de Orden</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <style>
+        /* --- Estilos Generales --- */
+        :root {
+            --primary-accent: #6e59ee;
+            --primary-dark: #0f0035;
+            --success-color: #28a745;
+            --border-color: #dee2e6;
+            --bg-light-grey: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* --- Estilos del Modal --- */
+        .modal-content {
+            background-color: #fff;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            background-color: var(--primary-dark);
+            color: white;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        /* --- Grid de Selección de Beepers --- */
+        .beeper-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .beeper-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 70px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            background-color: var(--bg-light-grey);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .beeper-button:hover {
+            background-color: #e2e6ea;
+            border-color: #adb5bd;
+        }
+
+        .beeper-button.selected {
+            background-color: var(--primary-accent);
+            color: white;
+            border-color: var(--primary-accent);
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(110, 89, 238, 0.4);
+        }
+
+        /* --- Control Segmentado para Tipo de Orden --- */
+        .segmented-control {
+            display: flex;
+            width: 100%;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .segmented-control input[type="radio"] {
+            display: none;
+        }
+
+        .segment-button {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .segmented-control input[type="radio"]:checked + .segment-button {
+            background-color: #fff;
+            color: var(--primary-accent);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- Footer del Modal --- */
+        .modal-footer {
+            padding: 20px;
+            background-color: var(--bg-light-grey);
+            border-top: 1px solid var(--border-color);
+            text-align: right;
+        }
+
+        .confirm-button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: var(--success-color);
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        .confirm-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">Asignar Orden N° 1583</h2>
+        </div>
+        <div class="modal-body">
+            <!-- Grupo 1: Selección de Beeper -->
+            <div class="control-group">
+                <label>1. Seleccione un Beeper (Obligatorio)</label>
+                <div id="beeper-grid" class="beeper-grid">
+                    <!-- Los botones de beeper se generarán aquí -->
+                </div>
+            </div>
+
+            <!-- Grupo 2: Tipo de Orden -->
+            <div class="control-group">
+                <label>2. Seleccione el Tipo de Orden</label>
+                <div id="order-type-selector" class="segmented-control">
+                    <input type="radio" id="type-salon" name="order-type" value="SALON" checked>
+                    <label for="type-salon" class="segment-button">Salón</label>
+                    
+                    <input type="radio" id="type-pickup" name="order-type" value="PICKUP">
+                    <label for="type-pickup" class="segment-button">Pickup</label>
+                    
+                    <input type="radio" id="type-delivery" name="order-type" value="DELIVERY">
+                    <label for="type-delivery" class="segment-button">Delivery</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="confirm-btn" class="confirm-button" disabled>Confirmar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const beeperGrid = document.getElementById('beeper-grid');
+            const confirmBtn = document.getElementById('confirm-btn');
+            const totalBeepers = 40;
+            let selectedBeeper = null;
+
+            // 1. Generar la cuadrícula de Beepers
+            for (let i = 1; i <= totalBeepers; i++) {
+                const beeperButton = document.createElement('button');
+                beeperButton.className = 'beeper-button';
+                beeperButton.textContent = i;
+                beeperButton.dataset.beeperNumber = i;
+                beeperGrid.appendChild(beeperButton);
+            }
+
+            // 2. Lógica para la selección de Beeper
+            beeperGrid.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target.classList.contains('beeper-button')) {
+                    // Deseleccionar el botón activo anterior
+                    const currentSelected = beeperGrid.querySelector('.selected');
+                    if (currentSelected) {
+                        currentSelected.classList.remove('selected');
+                    }
+
+                    // Seleccionar el nuevo botón y guardar el valor
+                    target.classList.add('selected');
+                    selectedBeeper = target.dataset.beeperNumber;
+
+                    // Habilitar el botón de confirmar
+                    confirmBtn.disabled = false;
+                }
+            });
+
+            // 3. Lógica del botón de confirmación
+            confirmBtn.addEventListener('click', () => {
+                // Obtener el tipo de orden seleccionado
+                const selectedOrderType = document.querySelector('input[name="order-type"]:checked').value;
+
+                // Mostrar los datos capturados (en una aplicación real, aquí se enviarían los datos)
+                alert(
+                    `Datos Confirmados:\n` +
+                    `---------------------\n` +
+                    `Beeper Seleccionado: ${selectedBeeper}\n` +
+                    `Tipo de Orden: ${selectedOrderType}`
+                );
+            });
+        });
+    </script>
+
+</body>
+</html>
