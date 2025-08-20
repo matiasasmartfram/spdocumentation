@@ -573,6 +573,209 @@ Esta configuración le da al franquiciado un control y sobre los items enviados 
     </div>
 </section>
 
+         <section id="kds-backend">
+    <h2>7. Backend del KDS: Arquitectura y API</h2>
+    <div class="explanation-box">
+        <h4>Backend del KDS</h4>
+           
+        <h5>1. Modelo de Datos (Azure Cosmos DB)</h5>
+        <p>
+            Se utilizará un contenedor en Cosmos <code>OrdenesDeCocina</code>. El documento principal será la <code>OrdenDeCocina</code>.
+        </p>
+        <h6>Documento: OrdenDeCocina</h6>
+        <pre><code>{
+    "id": "id_cosmos",
+    "idOrdenPOS": "451",        // El N° de la Orden
+    "idPOS": "416",             //Identificador del POS que generó la orden
+    "numeroBeeper": "22",
+    "tipoOrden": "Pickup",      // Posibles valores: "Salón", "Pickup", "Delivery"
+    "estado": "Pendiente",      // Ciclo de vida: "Pendiente" -> "Listo"
+    "cajero": "Analia Gomez",
+    "idTurno": "TM-180825",
+    "items": [
+        {
+            "idItemCatalogo": "64",     //SKU o Id
+            "nombre": "Burger Roger", 
+            "cantidad": 2,             
+            "personalizaciones": {              //Estructura de personalizaciones detallada
+                "componentesEliminados": [],             // Array de strings
+                "extras": [],                            // Array de strings
+                "observaciones": "Sin Mayonesa"          // String único
+            }
+        },
+        {
+            "idItemCatalogo": "65",
+            "nombre": "Burger Gulosa",
+            "cantidad": 1,
+            "personalizaciones": {
+                "componentesEliminados": ["Bacon"],
+                "extras": ["Extra Bacon"],
+                "observaciones": ""
+            }
+        }
+    ],
+    "fechaCreacion": "2025-08-19T16:55:00Z",  
+    "fechaActualizacion": "2025-08-19T16:55:00Z",
+}
+
+
+</code></pre>
+
+        <h5>2. Definición de Endpoints de la API REST</h5>
+        <h6>Endpoint 1: Crear una Nueva Orden de Cocina</h6>
+        <ul>
+            <li><strong>URL:</strong> <code>POST /api/kds/ordenes</code></li>
+            <li><strong>Descripción:</strong> Recibe los detalles de una venta del POS, filtra los ítems marcados para producción y crea un nuevo documento <code>OrdenDeCocina</code> en la base de datos con estado "Pendiente".</li>
+            <li><strong>Payload de Entrada (Request Body):</strong>
+                <pre><code>{
+    "idOrdenPOS": "451",
+    "idPOS": "POS-02",
+    "numeroBeeper": "22",
+    "tipoOrden": "Pickup",
+    "cajero": "Ana G.",
+    "idTurno": "T-180825-PM",
+    "items": [
+        {
+            "idItemCatalogo": "BURG-CALI",
+            "nombre": "Burger California",
+            "cantidad": 1,
+            "enviarACocina": true,
+            "personalizaciones": {
+                "componentesEliminados": ["Tomate"],
+                "extras": ["Extra Bacon", "Doble Cheddar"],
+                "observaciones": "Carne bien cocida"
+            }
+        },
+        {
+            "idItemCatalogo": "BEB-COKE",
+            "nombre": "Coca-Cola",
+            "cantidad": 1,
+            "enviarACocina": false,
+            "personalizaciones": {
+                "componentesEliminados": [], "extras": [], "observaciones": ""
+            }
+        }
+    ]
+}</code></pre>
+            </li>
+            <li>
+                <strong>Nota Importante sobre la Lógica de <code>componentesEliminados</code>:</strong>
+                <p style="margin-top: 5px;">El frontend del POS debe mostrar todos los componentes de un producto como checkboxes tildados por defecto (valor <code>true</code>). El array <code>componentesEliminados</code> en el payload debe contener <strong>únicamente</strong> los nombres de aquellos ingredientes que el operador explícitamente <strong>destildó</strong> (cuyo estado cambió a <code>false</code>).</p>
+            </li>
+            <li><strong>Respuesta Exitosa:</strong> <code>201 Created</code> - Devuelve el documento <code>OrdenDeCocina</code> recién creado.</li>
+        </ul>
+
+        <h6>Endpoint 2: Obtener Órdenes Activas</h6>
+        <ul>
+            <li><strong>URL:</strong> <code>GET /api/kds/ordenes/activas</code></li>
+            <li><strong>Descripción:</strong> Devuelve un array de todas las órdenes cuyo estado sea "Pendiente" o "EnPreparacion", ordenadas por fecha de creación.</li>
+            <li><strong>Respuesta Exitosa:</strong> <code>200 OK</code>.</li>
+        </ul>
+
+        <h6>Endpoint 3: Actualizar el Estado de una Orden</h6>
+        <ul>
+            <li><strong>URL:</strong> <code>PATCH /api/kds/ordenes/{id}</code></li>
+            <li><strong>Descripción:</strong> Actualiza el estado de una orden específica cuando un cocinero interactúa con ella en el KDS.</li>
+            <li><strong>Payload de Entrada (Request Body):</strong> <pre><code>{ "estado": "EnPreparacion" }</code></pre></li>
+            <li><strong>Respuesta Exitosa:</strong> <code>200 OK</code>.</li>
+        </ul>
+
+        <h5>3. Consideraciones Adicionales y Evolución Futura</h5>
+        <ul>
+            <li><strong>Seguridad:</strong> La API debe estar protegida mediante API Keys o un sistema de autenticación similar para asegurar que solo los sistemas autorizados (POS, KDS) puedan interactuar con ella.</li>
+            <li><strong>Escalabilidad:</strong> Se recomienda el uso de una arquitectura Serverless (como Azure Functions) para alojar los endpoints. Esto permite que el sistema escale automáticamente para manejar picos de demanda sin intervención manual.</li>
+            <li><strong>Métricas y Analytics:</strong> La estructura de datos en Cosmos DB está diseñada para permitir futuras explotaciones y generar reportes sobre tiempos de preparación, productos con más extras, rendimiento por POS, etc.</li>
+            <li><strong>Evolución Futura (WebSockets):</strong> Aunque no se implementará inicialmente, la arquitectura está preparada para incorporar WebSockets. En una fase posterior, el backend podría emitir eventos en tiempo real (ej. <code>nueva-orden</code>) para que las pantallas KDS se actualicen instantáneamente sin necesidad de recargas manuales.</li>
+        </ul>
+    </div>
+</section>
+      
+      <section id="assignment-panel">
+    <h2>8. Panel de Asignación de Orden (Flujo KDS)</h2>
+
+    <h3>Ejemplo Visual</h3>
+    <div class="example-render">
+        <div style="width: 420px; background-color: #fff; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 1px solid #ddd;">
+            <div style="background-color: #4a148c; color: white; padding: 16px; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                <h4 style="margin: 0; font-size: 20px; border: none; padding: 0;">Asignar Orden N° 1583</h4>
+            </div>
+            <div style="padding: 24px;">
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">1. Ingrese un Beeper (Obligatorio)</label>
+                    <input type="number" placeholder="N° de Beeper" style="width: 100%; padding: 12px; font-size: 18px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+                </div>
+                <div style="margin-top: 24px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">2. Seleccione el Tipo de Orden</label>
+                    <div style="display: flex; border: 1px solid #ccc; border-radius: 6px; overflow: hidden;">
+                        <button style="flex: 1; padding: 12px; font-size: 16px; border: none; background-color: #e0e0e0; cursor: pointer;">Salón</button>
+                        <button style="flex: 1; padding: 12px; font-size: 16px; border: none; background-color: #e0e0e0; cursor: pointer; border-left: 1px solid #ccc; border-right: 1px solid #ccc;">Pickup</button>
+                        <button style="flex: 1; padding: 12px; font-size: 16px; border: none; background-color: #0d6efd; color: white; cursor: pointer;">Delivery</button>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 16px; background-color: #f5f5f5; text-align: right; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                <button style="padding: 12px 24px; font-size: 16px; font-weight: bold; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">Confirmar</button>
+            </div>
+        </div>
+        </div>
+
+    <div class="explanation-box">
+        <h4>Panel de Asignación de Bepper y Tipo de Orden</h4>
+        <p>
+            Es un paso <strong>obligatorio</strong> en el flujo de venta, que se activa únicamente cuando el módulo KDS está habilitado. Es un panel modal que se muestra entre la confirmacion de la Orden de Venta y la selección del método de pago.
+        </p>
+        <ol>
+            <li>
+                <strong>Flujo del Panel (POS)</strong>
+                <p>El "Panel de Asignación de Bepper y Tipo de Orden" debe inciarse al presionar el boton "PAGAR" en la Orden de Venta. El flujo se modifica de la siguiente manera:</p>
+            </li>
+            <li>
+                <strong>Comportamiento Detallado del Panel</strong>
+                <p>El panel debe implementarse como una ventana modal que se superpone en el POS.</p>
+                <ul>
+                    <li><strong>Título:</strong> Debe incluir el número de la orden actual (ej. <code>"Asignar Orden N° 1583"</code>).</li>
+                    <li>
+                        <strong>Campo de Beeper (Entrada Manual):</strong>
+                        <ul>
+                            <li>Debe ser un campo de texto de tipo numérico de dos digitos con un placeholder (ej. "N° de Beeper NN").</li>
+                            <li>Este campo es <strong>obligatorio</strong> para poder continuar.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Selector de Tipo de Orden:</strong>
+                        <ul>
+                            <li>Un control segmentado con tres opciones: <code>"Salón"</code>, <code>"Pickup"</code>, <code>"Delivery"</code>.</li>
+                            <li>Ninguna opcion debe estar seleccionada al inciop, debe ser de obligacion la seleccion de un Tipo por el usuario.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Lógica de Validación (Botón "Confirmar"):</strong>
+                        <ul>
+                            <li>El botón "Confirmar" debe estar <strong>deshabilitado por defecto</strong>.</li>
+                            <li>Se habilitará <strong>únicamente</strong> cuando el campo de Beeper contenga un valor numérico válido y el Campo "Tipo de Orden" tenga un check seleccionado.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Flujo de Datos al Confirmar</strong>
+                <p>La acción de "Confirmar" es un paso intermedio. No envía los datos al KDS todavía.</p>
+                <ol>
+                    <li>
+                        <strong>Captura y Almacenamiento Temporal:</strong> Se debe capturar el <code>NumeroDeBeeper</code> ingresado y el <code>TipoDeOrden</code> seleccionado y almacenar temporalmente hasta el cierre de la transaccion.
+                    </li>
+                    <li>
+                        <strong>Cierre y Metodo de Pago:</strong> El Panel se cierra y, acto seguido, se abre el <strong>Modal de Métodos de Pago</strong> para continuar con el cobro.
+                    </li>
+                    <li>
+                        <strong>Envío Final:</strong> Solo cuando la venta se haya completado exitosamente (después del pago), el objeto final de la orden —que ahora contiene el <code>NumeroDeBeeper</code> y el <code>TipoDeOrden</code>— es enviado al backend del KDS.
+                    </li>
+                </ol>
+            </li>
+        </ol>
+    </div>
+</section>
+
     </div>
 
     <script>
