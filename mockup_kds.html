@@ -60,11 +60,23 @@
         .kds-header.status-yellow { background-color: var(--kds-yellow); color: #000; }
         .kds-header.status-red { background-color: var(--kds-red); }
 
-        .kds-header h4, .kds-header p {
+        .kds-header h4, .kds-header .timer {
             margin: 0;
             font-size: 20px;
             font-weight: bold;
         }
+
+        /* --- INICIO DE LA MODIFICACIÓN CSS --- */
+        .order-type {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            background-color: rgba(0, 0, 0, 0.15); /* Fondo semitransparente */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        /* --- FIN DE LA MODIFICACIÓN CSS --- */
 
         /* Cuerpo de la tarjeta con la lista de productos */
         .kds-body {
@@ -129,10 +141,13 @@
     <div class="kds-screen">
         
         <div class="kds-order-card">
+            <!-- --- INICIO DE LA MODIFICACIÓN HTML 1 --- -->
             <div class="kds-header status-green">
                 <h4>Orden #451</h4>
-                <p>04:15</p>
+                <span class="order-type">Salón</span>
+                <p class="timer">04:15</p>
             </div>
+            <!-- --- FIN DE LA MODIFICACIÓN HTML 1 --- -->
             <div class="kds-body">
                 <div class="kds-item">
                     <p class="item-name">3x Burger Roger</p>
@@ -160,10 +175,13 @@
         </div>
         
         <div class="kds-order-card">
+            <!-- --- INICIO DE LA MODIFICACIÓN HTML 2 --- -->
             <div class="kds-header status-yellow">
                 <h4>Orden #450</h4>
-                <p>12:30</p>
+                <span class="order-type">Pickup</span>
+                <p class="timer">12:30</p>
             </div>
+            <!-- --- FIN DE LA MODIFICACIÓN HTML 2 --- -->
             <div class="kds-body">
                 <div class="kds-item">
                     <p class="item-name">2x Burger Smack</p>
@@ -182,10 +200,13 @@
         </div>
         
         <div class="kds-order-card">
+            <!-- --- INICIO DE LA MODIFICACIÓN HTML 3 --- -->
             <div class="kds-header status-red">
                 <h4>Orden #449</h4>
-                <p>21:05</p>
+                <span class="order-type">Delivery</span>
+                <p class="timer">21:05</p>
             </div>
+            <!-- --- FIN DE LA MODIFICACIÓN HTML 3 --- -->
             <div class="kds-body">
                 <div class="kds-item">
                     <p class="item-name">2x Burger Gulosa</p>
@@ -203,3 +224,4 @@
 
 </body>
 </html>
+
