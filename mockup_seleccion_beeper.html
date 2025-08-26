@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mockup - Panel de Asignación de De Beeper y Tipo de Orden</title>
+    <title>Mockup - Panel de Asignación con Cancelación</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
         :root {
             --primary-accent: #6e59ee;
             --primary-dark: #0f0035;
             --success-color: #28a745;
+            --cancel-color: #dc3545; /* Rojo para cancelar */
             --border-color: #dee2e6;
             --bg-light-grey: #f8f9fa;
         }
@@ -118,24 +119,38 @@
             padding: 20px;
             background-color: var(--bg-light-grey);
             border-top: 1px solid var(--border-color);
-            text-align: right;
+            display: flex;
+            justify-content: space-between; /* Alinea uno a la izquierda, otro a la derecha */
+            gap: 10px;
         }
 
-        .confirm-button {
+        .action-button {
             padding: 15px 30px;
             font-size: 1.1rem;
             font-weight: 500;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            transition: background-color 0.2s, opacity 0.2s;
+        }
+        
+        .cancel-button {
+            background-color: var(--cancel-color); /* Color rojo */
+            color: white;
+        }
+        .cancel-button:hover {
+            background-color: #c82333; /* Un rojo más oscuro al pasar el mouse */
+        }
+
+        .confirm-button {
             background-color: var(--success-color);
             color: white;
-            transition: background-color 0.2s;
         }
 
         .confirm-button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -143,20 +158,17 @@
 
     <div class="modal-content">
         <div class="modal-header">
-            <h2 id="modal-title">Asignar Orden N° 1583</h2>
+            <h2 id="modal-title">Asignación de Beeper y Tipo de Orden</h2>
         </div>
         <div class="modal-body">
-            <!-- Grupo 1: Entrada de Beeper -->
             <div class="control-group">
                 <label for="beeper-input">1. Ingrese un Beeper (Obligatorio)</label>
-                <input type="number" id="beeper-input" placeholder="N° de Beeper NN">
+                <input type="number" id="beeper-input" placeholder="NN" min="0" max="99" maxlength="2">
             </div>
 
-            <!-- Grupo 2: Tipo de Orden -->
             <div class="control-group">
                 <label>2. Seleccione el Tipo de Orden (Obligatorio)</label>
                 <div id="order-type-selector" class="segmented-control">
-                    <!-- NINGUNO ESTÁ 'checked' POR DEFECTO -->
                     <input type="radio" id="type-salon" name="order-type" value="SALON">
                     <label for="type-salon" class="segment-button">Salón</label>
                     
@@ -169,7 +181,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button id="confirm-btn" class="confirm-button" disabled>Confirmar</button>
+            <button id="cancel-btn" class="action-button cancel-button">Cancelar</button>
+            <button id="confirm-btn" class="action-button confirm-button" disabled>Confirmar</button>
         </div>
     </div>
 
@@ -178,35 +191,40 @@
             const beeperInput = document.getElementById('beeper-input');
             const orderTypeSelector = document.getElementById('order-type-selector');
             const confirmBtn = document.getElementById('confirm-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
 
-            // Función para verificar si el formulario es válido
             function checkFormValidity() {
-                const beeperFilled = beeperInput.value.trim() !== '';
-                const typeSelected = orderTypeSelector.querySelector('input[name="order-type"]:checked') !== null;
+                const beeperValue = beeperInput.value.trim();
+                // Validación: debe ser un número, tener 1 o 2 dígitos, y no puede estar vacío
+                const beeperIsValid = /^\d{1,2}$/.test(beeperValue); 
+                const typeIsSelected = orderTypeSelector.querySelector('input[name="order-type"]:checked') !== null;
 
-                // Habilitar el botón solo si AMBAS condiciones se cumplen
-                if (beeperFilled && typeSelected) {
-                    confirmBtn.disabled = false;
-                } else {
-                    confirmBtn.disabled = true;
-                }
+                confirmBtn.disabled = !(beeperIsValid && typeIsSelected);
             }
 
-            // 1. Añadir listeners a AMBOS controles
-            beeperInput.addEventListener('input', checkFormValidity);
-            orderTypeSelector.addEventListener('change', checkFormValidity); // 'change' es ideal para grupos de radios
+            // Iniciar la validación al cargar si ya hay valores (aunque para este caso no los habrá)
+            checkFormValidity();
 
-            // 2. Lógica del botón de confirmación
+            beeperInput.addEventListener('input', checkFormValidity);
+            orderTypeSelector.addEventListener('change', checkFormValidity);
+
             confirmBtn.addEventListener('click', () => {
                 const beeperNumber = beeperInput.value;
                 const selectedOrderType = document.querySelector('input[name="order-type"]:checked').value;
 
                 alert(
-                    `Datos Confirmados:\n` +
-                    `---------------------\n` +
+                    `Datos Confirmados (simulación):\n` +
+                    `-----------------------------\n` +
                     `Beeper Ingresado: ${beeperNumber}\n` +
-                    `Tipo de Orden: ${selectedOrderType}`
+                    `Tipo de Orden: ${selectedOrderType}\n\n` +
+                    `Ahora se procedería al modal de pago.`
                 );
+                // Aquí iría el código para cerrar este modal y abrir el de métodos de pago
+            });
+            
+            cancelBtn.addEventListener('click', () => {
+                alert('Operación Cancelada. Volviendo a la pantalla del ticket.');
+                // Aquí iría el código para cerrar este modal y regresar a la pantalla anterior (ticket de venta)
             });
         });
     </script>
