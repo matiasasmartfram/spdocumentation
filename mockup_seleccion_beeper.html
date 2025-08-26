@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mockup - Panel de Asignación con Cancelación</title>
+    <title>Mockup - Panel de Asignación con Observación</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
         :root {
@@ -54,6 +54,10 @@
         .control-group {
             margin-bottom: 25px;
         }
+        /* Eliminar el margen inferior del último grupo para un mejor espaciado */
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
 
         .control-group label {
             display: block;
@@ -63,14 +67,22 @@
             font-size: 1.1rem;
         }
 
-        #beeper-input {
+        .text-input {
             width: 100%;
             padding: 15px;
-            font-size: 1.8rem;
-            text-align: center;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             box-sizing: border-box;
+        }
+        .text-input:focus {
+            border-color: var(--primary-accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(110, 89, 238, 0.2);
+        }
+
+        #beeper-input {
+            font-size: 1.8rem;
+            text-align: center;
             -moz-appearance: textfield;
         }
         #beeper-input::-webkit-outer-spin-button,
@@ -78,10 +90,9 @@
             -webkit-appearance: none;
             margin: 0;
         }
-        #beeper-input:focus {
-            border-color: var(--primary-accent);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(110, 89, 238, 0.2);
+
+        #order-observation {
+            font-size: 1.2rem; /* Un poco más pequeño que el beeper */
         }
 
         .segmented-control {
@@ -120,7 +131,7 @@
             background-color: var(--bg-light-grey);
             border-top: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-between; /* Alinea uno a la izquierda, otro a la derecha */
+            justify-content: space-between;
             gap: 10px;
         }
 
@@ -135,11 +146,11 @@
         }
         
         .cancel-button {
-            background-color: var(--cancel-color); /* Color rojo */
+            background-color: var(--cancel-color);
             color: white;
         }
         .cancel-button:hover {
-            background-color: #c82333; /* Un rojo más oscuro al pasar el mouse */
+            background-color: #c82333;
         }
 
         .confirm-button {
@@ -163,7 +174,7 @@
         <div class="modal-body">
             <div class="control-group">
                 <label for="beeper-input">1. Ingrese un Beeper (Obligatorio)</label>
-                <input type="number" id="beeper-input" placeholder="NN" min="0" max="99" maxlength="2">
+                <input type="number" id="beeper-input" class="text-input" placeholder="NN" maxlength="2">
             </div>
 
             <div class="control-group">
@@ -179,6 +190,11 @@
                     <label for="type-delivery" class="segment-button">Delivery</label>
                 </div>
             </div>
+            
+            <div class="control-group">
+                <label for="order-observation">3. Observación General (Opcional)</label>
+                <input type="text" id="order-observation" class="text-input" placeholder="Ej: cliente apurado, pedido grande...">
+            </div>
         </div>
         <div class="modal-footer">
             <button id="cancel-btn" class="action-button cancel-button">Cancelar</button>
@@ -190,19 +206,18 @@
         document.addEventListener('DOMContentLoaded', () => {
             const beeperInput = document.getElementById('beeper-input');
             const orderTypeSelector = document.getElementById('order-type-selector');
+            const orderObservation = document.getElementById('order-observation');
             const confirmBtn = document.getElementById('confirm-btn');
             const cancelBtn = document.getElementById('cancel-btn');
 
             function checkFormValidity() {
                 const beeperValue = beeperInput.value.trim();
-                // Validación: debe ser un número, tener 1 o 2 dígitos, y no puede estar vacío
                 const beeperIsValid = /^\d{1,2}$/.test(beeperValue); 
                 const typeIsSelected = orderTypeSelector.querySelector('input[name="order-type"]:checked') !== null;
 
                 confirmBtn.disabled = !(beeperIsValid && typeIsSelected);
             }
 
-            // Iniciar la validación al cargar si ya hay valores (aunque para este caso no los habrá)
             checkFormValidity();
 
             beeperInput.addEventListener('input', checkFormValidity);
@@ -211,20 +226,23 @@
             confirmBtn.addEventListener('click', () => {
                 const beeperNumber = beeperInput.value;
                 const selectedOrderType = document.querySelector('input[name="order-type"]:checked').value;
+                const observationText = orderObservation.value.trim();
 
-                alert(
-                    `Datos Confirmados (simulación):\n` +
-                    `-----------------------------\n` +
-                    `Beeper Ingresado: ${beeperNumber}\n` +
-                    `Tipo de Orden: ${selectedOrderType}\n\n` +
-                    `Ahora se procedería al modal de pago.`
-                );
-                // Aquí iría el código para cerrar este modal y abrir el de métodos de pago
+                let alertMessage = `Datos Confirmados (simulación):\n` +
+                                   `-----------------------------\n` +
+                                   `Beeper Ingresado: ${beeperNumber}\n` +
+                                   `Tipo de Orden: ${selectedOrderType}`;
+                
+                if (observationText) {
+                    alertMessage += `\nObservación: ${observationText}`;
+                }
+
+                alertMessage += `\n\nAhora se procedería al modal de pago.`;
+                alert(alertMessage);
             });
             
             cancelBtn.addEventListener('click', () => {
                 alert('Operación Cancelada. Volviendo a la pantalla del ticket.');
-                // Aquí iría el código para cerrar este modal y regresar a la pantalla anterior (ticket de venta)
             });
         });
     </script>
