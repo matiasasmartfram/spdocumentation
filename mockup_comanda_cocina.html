@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejemplo de Comanda Unificada</title>
+    <title>Ejemplo de Comanda Unificada (Cabecera Mejorada)</title>
     <style>
-        /* Estilos generales para centrar y presentar el ticket en la página */
+        /* Estilos generales para la página de ejemplo */
         body {
             font-family: sans-serif;
             background-color: #e9ecef;
@@ -20,7 +20,6 @@
 
         /* --- Estilos Específicos para la Comanda --- */
         
-        /* Contenedor principal que da la apariencia de papel de ticket */
         .salon-ticket-body {
             font-family: 'Courier New', monospace;
             width: 300px;
@@ -28,36 +27,58 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
-        /* Borde y espaciado interno del ticket */
         .salon-ticket-container {
             border: 1px solid #333;
             padding: 15px;
         }
         
-        /* Estilo para la cabecera con el nombre del local */
-        .salon-header {
+        /* --- NUEVOS ESTILOS PARA LA CABECERA --- */
+        .new-header-container {
             text-align: center;
             margin-bottom: 15px;
         }
+
+        .main-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-block {
+            flex: 1;
+            border-radius: 8px;
+            padding: 8px;
+        }
         
-        .salon-header h2 {
-            margin: 0;
-            font-size: 22px;
+        .info-block span {
+            display: block;
+            font-size: 12px;
             font-weight: bold;
+            text-transform: uppercase;
         }
-        
-        /* Estilo para la información de la orden (Beeper, N°, Fecha) */
-        .salon-order-info p {
-            margin: 4px 0;
-            font-size: 14px;
+
+        .info-block p {
+            margin: 4px 0 0 0;
+            font-size: 28px; /* Tamaño grande para el valor */
+            font-weight: bold;
+            line-height: 1.1;
         }
+
+        .secondary-info p {
+            margin: 2px 0;
+            font-size: 14px; /* Tamaño mediano */
+        }
+        .secondary-info p.fecha-hora {
+             font-size: 12px; /* Tamaño pequeño */
+             color: #555;
+        }
+        /* --- FIN DE NUEVOS ESTILOS --- */
         
-        /* Contenedor de la lista de todos los productos */
         .salon-item-list {
             margin-top: 15px;
         }
 
-        /* Título separador para las secciones "COCINA" y "SALON" */
         .promo-title {
             font-weight: bold;
             text-transform: uppercase;
@@ -70,19 +91,16 @@
             font-size: 16px;
         }
         
-        /* Contenedor para cada línea de producto */
         .salon-item {
             margin-top: 8px;
         }
         
-        /* Estilo para el nombre del producto y su cantidad */
         .salon-item-name {
             font-weight: bold;
             font-size: 14px;
             margin: 0;
         }
         
-        /* Estilos para las líneas de personalización */
         .modificacion, .observacion {
             padding-left: 15px;
             font-style: italic;
@@ -90,12 +108,10 @@
             margin: 2px 0 0 0;
         }
         
-        /* Añade el prefijo "↳ SIN:" a las modificaciones */
         .modificacion::before {
             content: '↳ SIN: ';
         }
         
-        /* Añade el prefijo "↳ Obs:" a las observaciones */
         .observacion::before {
             content: '↳ Obs: ';
         }
@@ -105,14 +121,22 @@
 
     <div class="salon-ticket-body">
         <div class="salon-ticket-container">
-            <div class="salon-header">
-                <h2>WEISS BURGERS</h2>
-            </div>
-            <div class="salon-order-info">
-                <p><strong>Beeper:</strong> #22</p>
-                <p><strong>Orden N°:</strong> 451</p>
-                <p><strong>Tipo:</strong> Pickup</p>
-                <p><strong>Fecha:</strong> 18/08/2025 - 17:23</p>  
+            
+            <div class="new-header-container">
+                <div class="main-info">
+                    <div class="info-block">
+                        <span>Beeper</span>
+                        <p>22</p>
+                    </div>
+                    <div class="info-block">
+                        <span>Tipo</span>
+                        <p>Pickup</p>
+                    </div>
+                </div>
+                <div class="secondary-info">
+                    <h3><strong>Orden N°:</strong> 451</h3>
+                    <p class="fecha-hora">18/08/2025 - 17:30</p>
+                </div>
             </div>
 
             <div class="salon-item-list">
