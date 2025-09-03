@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comanda de Delivery</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .receipt {
+            font-family: 'Courier New', Courier, monospace;
+            width: 320px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .receipt h2 {
+            text-align: center;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+
+        .receipt section {
+            margin-bottom: 10px;
+        }
+
+        .receipt p {
+            margin: 2px 0;
+        }
+
+        .receipt strong {
+            display: inline-block;
+            width: 110px; /* Ancho fijo para las etiquetas para alinear los valores */
+        }
+        
+        .receipt .address-value, .receipt .observations-value {
+            padding-left: 115px; /* Indentación para las líneas adicionales */
+            display: block;
+            margin-top: -1.5em; /* Ajuste para que quede alineado */
+        }
+
+        .receipt .section-title {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .receipt .item-details .item-name {
+            margin-bottom: 5px;
+        }
+
+        .receipt .item-details .item-flavors {
+            padding-left: 15px;
+        }
+        
+        .receipt .payment-details {
+            margin-top: 10px;
+        }
+
+        .receipt .payment-details .total {
+            font-weight: bold;
+        }
+        
+        .receipt hr {
+            border: none;
+            border-top: 1px dashed #333;
+            margin: 10px 0;
+        }
+   .salon-item-list {
+            margin-top: 15px;
+        }
+
+        .promo-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            border-top: 1.5px dashed #000;
+            border-bottom: 1.5px dashed #000;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            text-align: center;
+            font-size: 16px;
+        }
+        .payment-info {
+            margin-top: 15px;
+            border-top: 1.5px solid #000;
+            padding-top: 10px;
+            font-size: 14px;
+        }
+        .payment-info p {
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .payment-info .total {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .modificacion::before { content: '↳ SIN: '; }
+        .observacion::before { content: '↳ Obs: '; }
+    </style>
+</head>
+<body>
+
+    <div class="receipt">
+      <h2>WEISS</h2>
+        <h2>DELIVERY</h2>
+
+        <section>
+            <hr>
+            <p><strong>Turno:</strong> 41</p>
+            <hr>
+            <p><strong>Plataforma:</strong> PediGrido</p>
+            <p><strong>Nro Pedido:</strong> 1756406692363</p>
+            <p><strong>Cliente:</strong> Alejandro Chumbita</p>
+            <p><strong>Documento:</strong> 33333333</p>
+            <p><strong>Teléfono:</strong> 33333333</p>
+            <p><strong>Dirección:</strong> Av. General Paz 100 -</p>
+            <p><strong>Observaciones:</strong> A media cuadra del</p>
+            <hr>
+        </section>
+
+        <section>
+            <p>DELIVERY EXTERNO:</p>
+            <p>RETIRA:</p>
+        </section>
+
+   <p class="promo-title">COCINA</p>
+                <div class="salon-item">
+                    <p class="salon-item-name">3x Burger Roger</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">3x Papas Fritas</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">1x Burger California</p>
+                    <p class="modificacion">Tomate</p>        
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">1x Papas Fritas</p>
+                    <p class="observacion">Sin Sal Agregada</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">1x Burger Fuegina</p>
+                    <p class="modificacion">Cebolla</p>
+                    <p class="observacion">Bien cocida la carne</p>
+                </div>
+
+                <p class="promo-title">SALON</p>
+                <div class="salon-item">
+                    <p class="salon-item-name">2x Pepsi</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">2x Cerveza</p>
+                </div>
+                <div class="salon-item">
+                    <p class="salon-item-name">2x Helado Palito</p>
+                </div>
+
+        
+        <div class="payment-info">
+                <p class="total"><strong>Total:</strong> <span>$ 9500.00</span></p>
+                <p><strong>Forma Pago:</strong> <span>Efectivo</span></p>
+                <p><strong>Paga con:</strong> <span>$ 9500.00</span></p>
+                <p><strong>Vuelto:</strong> <span>$ 0.00</span></p>
+            </div>
+    </div>
+
+</body>
+</html>
