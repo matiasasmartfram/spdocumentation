@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos Promoción</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos generales y variables */
+        :root {
+            --sidebar-width: 240px;
+            --header-height: 64px;
+            --primary-color: #0f0035;
+            --secondary-color: #6e59ee;
+            --text-primary: #424242;
+            --text-secondary: rgba(0, 0, 0, 0.54);
+            --text-disabled: rgba(0, 0, 0, 0.38);
+            --bg-body: #f5f5f5;
+            --bg-card: #ffffff;
+            --border-color: #bdbdbd;
+            --divider-color: #e0e0e0;
+            --shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+            --border-radius: 3px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-card);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            padding-top: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .logo img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: #f0f0f0;
+            color: var(--primary-color);
+        }
+
+        .sidebar-nav .active a {
+            background-color: var(--bg-body);
+            color: var(--primary-color);
+        }
+
+        .sidebar-nav a i {
+            margin-right: 15px;
+            font-size: 1.1rem;
+            color: var(--text-disabled);
+        }
+
+        .sidebar-nav .active a i {
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-body);
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0 20px;
+            height: var(--header-height);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.8rem;
+        }
+
+        .user-profile .user-name {
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            background-color: #616161;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Page Body */
+        .page-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* Estructura de dos columnas del formulario */
+        .form-row {
+            display: flex;
+            border-bottom: 1px solid var(--divider-color);
+            padding: 20px 0;
+        }
+
+        .form-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .form-label-col {
+            flex: 0 0 25%; /* Ajusta el ancho de la columna de etiquetas */
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            padding-right: 20px;
+        }
+
+        .form-input-col {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 1px var(--secondary-color);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-disabled);
+        }
+
+        textarea.form-control {
+            height: 80px;
+            resize: none;
+        }
+
+        .form-note {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* Componentes específicos */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.2s;
+        }
+
+        .btn-select-image {
+            background-color: #f0f0f0;
+            color: #666;
+            border: 1px solid #ccc;
+            width: 100%;
+            text-align: left;
+            padding: 10px 15px;
+        }
+
+        .btn-select-image:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-select-image i {
+            margin-right: 8px;
+        }
+        
+        .file-info {
+            font-size: 0.8rem;
+            color: var(--text-disabled);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-info i {
+            margin-right: 5px;
+        }
+
+        .form-group-inline {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        
+        .form-group-inline .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .date-input-group, .time-input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .date-input-group input, .time-input-group input {
+            padding-right: 35px;
+        }
+
+        .input-with-icon {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            right: 15px;
+            color: var(--text-disabled);
+        }
+
+        .days-of-week {
+            display: flex;
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .btn-day {
+            padding: 8px 15px;
+            border: 1px solid var(--divider-color);
+            border-radius: 20px;
+            background-color: transparent;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: capitalize;
+        }
+
+        .btn-day.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .btn-add {
+            background-color: var(--secondary-color);
+            color: white;
+            margin-top: 15px;
+        }
+
+        /* Footer */
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px 0;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-add-combo {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-save {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .combos-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .input-search i {
+            right: 10px;
+            left: auto;
+        }
+
+        /* Checkbox Switch */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 38px;
+          height: 20px;
+        }
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 20px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 14px;
+          width: 14px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: var(--secondary-color);
+        }
+        input:checked + .slider:before {
+          transform: translateX(18px);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        
+
+        <main class="content-area">
+
+
+            <div class="page-body">
+                <h1 class="page-title">DATOS PROMOCIÓN</h1>
+                <div class="form-container">
+                  
+                                      <div class="form-row">
+                        <div class="form-label-col">Acciones Comerciales</div>
+                        <div class="form-input-col">
+                             <div class="switch-container">
+                                <label class="switch">
+                                    <input type="checkbox" id="obligatoria">
+                                    <span class="slider"></span>
+                                </label>
+                                <label for="obligatoria">Por defecto en false - true->PROMO - false->COMBO</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-label-col">Generales</div>
+                        <div class="form-input-col">
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" id="nombre" class="form-control" placeholder="Nombre es requerido">
+                            </div>
+                            <div class="form-group">
+                                <label for="descripcion">Descripción</label>
+                                <textarea id="descripcion" class="form-control" placeholder="Descripción es requerido"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label-col">Condición de Activación</div>
+                        <div class="form-input-col">
+                             <div class="switch-container">
+                                <label class="switch">
+                                    <input type="checkbox" id="obligatoria" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <label for="obligatoria">Obligatoria</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-label-col">Imagen</div>
+                        <div class="form-input-col">
+                            <div class="form-group">
+                                <label>Recursos Multimedia:</label>
+                                <p class="form-note">Puedes subir un archivo de imagen de <strong>hasta 5MB</strong>. (Formatos admitidos: .jpg, .jpeg, .png)</p>
+                                <button class="btn btn-select-image"><i class="fas fa-upload"></i> SELECCIONAR IMAGEN</button>
+                                <p class="file-info"><i class="fas fa-info-circle"></i> Seleccione un archivo. Formatos admitidos: .jpg, .jpeg, .png</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label-col">Cantidad Máxima por Ticket</div>
+                        <div class="form-input-col">
+                            <div class="form-group">
+                                <input type="number" class="form-control" placeholder="0">
+                                <p class="form-note">Si se ingresa cantidad igual a 0 no tendrá límites.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label-col">Vigencia</div>
+                        <div class="form-input-col">
+                            <div class="form-group-inline">
+                                <div class="date-input-group">
+                                    <label for="desde-vigencia">Desde</label>
+                                    <div class="input-with-icon">
+                                        <input type="date" id="desde-vigencia" class="form-control" value="2025-09-04">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                </div>
+                                <div class="date-input-group">
+                                    <label for="hasta-vigencia">Hasta</label>
+                                    <div class="input-with-icon">
+                                        <input type="date" id="hasta-vigencia" class="form-control" value="2025-09-05">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label-col">Días y Horarios</div>
+                        <div class="form-input-col">
+                            <div class="switch-container">
+                                <label class="switch">
+                                    <input type="checkbox" id="todo-el-dia" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <label for="todo-el-dia">Todo el día</label>
+                            </div>
+                            <div class="form-group-inline">
+                                <div class="time-input-group">
+                                    <label for="desde-horario">Desde</label>
+                                    <div class="input-with-icon">
+                                        <input type="time" id="desde-horario" class="form-control" value="00:00">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                                <div class="time-input-group">
+                                    <label for="hasta-horario">Hasta</label>
+                                    <div class="input-with-icon">
+                                        <input type="time" id="hasta-horario" class="form-control" value="00:00">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="days-of-week">
+                                <button class="btn-day active">Lunes</button>
+                                <button class="btn-day active">Martes</button>
+                                <button class="btn-day active">Miércoles</button>
+                                <button class="btn-day active">Jueves</button>
+                                <button class="btn-day active">Viernes</button>
+                                <button class="btn-day active">Sábado</button>
+                                <button class="btn-day active">Domingo</button>
+                                <button class="btn-day">Feriado</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label-col">Ámbito de Aplicación</div>
+                        <div class="form-input-col">
+                            <div class="form-group-inline">
+                                <div class="input-with-icon input-search">
+                                    <input type="text" class="form-control" placeholder="Escriba el país*">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <div class="input-with-icon">
+                                    <select class="form-control">
+                                        <option>Tipo de filtro</option>
+                                        <option>País</option>
+                                    </select>
+                                    <i class="fas fa-caret-down"></i>
+                                </div>
+                                <button class="btn btn-add">AGREGAR</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label-col">Grupos</div>
+                        <div class="form-input-col">
+                             <div class="combos-section">
+                                <button class="btn btn-add-combo">AGREGAR GRUPO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-buttons">
+                    <button class="btn btn-save">GUARDAR</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
