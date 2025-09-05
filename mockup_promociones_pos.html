@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pop-up de Combos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos base del body */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Estilo general para elementos redondeados */
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        /* Estilos del modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem;
+            width: 95%;
+            max-width: 1600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            max-height: 95vh;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Estilos del cuerpo del pop-up */
+        .modal-body {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            flex: 1;
+            /* Permite el desplazamiento si el contenido es demasiado largo */
+            overflow-y: auto;
+        }
+        
+        .column {
+            display: flex;
+            flex-direction: column;
+            /* Permite que cada columna tenga su propio scroll si es necesario */
+            overflow-y: auto;
+            min-height: 0; /* Soluciona un problema de flexbox */
+        }
+
+        /* Ajuste de los tamaños de las columnas */
+        .options-column {
+            flex: 3;
+        }
+
+        .selected-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            /* Permite el scroll de la columna seleccionada de forma independiente */
+            overflow-y: auto;
+        }
+
+        .column-header {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Contenedores de opciones (los combos) */
+        .options-container {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .options-container:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.3s ease;
+        }
+        .dropdown-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            padding-top: 0.5rem;
+            overflow-y: hidden;
+        }
+        
+        .dropdown-content.active {
+            display: grid;
+        }
+
+        /* Estilo de los elementos de los combos */
+        .option-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        @media (max-width: 1024px) {
+            .dropdown-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dropdown-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .option-item:hover,
+        .option-item.selected {
+            border-color: #6e59ee;
+            background-color: #f3f4f6;
+        }
+
+        .option-item img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 50%;
+            margin-bottom: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-item .item-name {
+            font-size: 0.75rem;
+            text-align: center;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .option-item .item-description {
+            font-size: 0.65rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        /* Estilos para el carrito de compras (Seleccionados) */
+        .selected-items-container {
+            background-color: #f9fafb;
+            padding: 1rem;
+            overflow-y: auto; /* Permite desplazamiento si hay muchos ítems */
+        }
+
+        .selected-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+        }
+        
+        .selected-item img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .selected-item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .selected-item-combo, .selected-item-name {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .selected-item-name {
+            font-weight: 400;
+            color: #6b7280;
+        }
+
+        /* Estilos para el nuevo cuadro de observaciones */
+        .observations-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            /* Asegura que no se encoja */
+            flex-shrink: 0;
+        }
+
+        .observations-container h4 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 0.5rem;
+        }
+
+        .observations-container textarea {
+            width: 100%;
+            height: 80px;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            /* La caja de texto siempre ocupará todo el ancho disponible */
+            box-sizing: border-box;
+        }
+        
+        .observations-container textarea:focus {
+            outline: none;
+            border-color: #6e59ee;
+            box-shadow: 0 0 0 3px rgba(110, 89, 238, 0.2);
+        }
+        
+        /* Estilos de los botones del footer */
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.2s, opacity 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            color: #4b5563;
+        }
+
+        .btn-continue {
+            background-color: #6e59ee;
+            color: white;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .btn-continue.enabled {
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay">
+        <div class="modal-content rounded-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">Arma el combo..</h2>
+            </div>
+            <div class="modal-body">
+                <div class="column options-column">
+                    <h3 class="column-header">Elegí una opción de cada grupo</h3>
+                    
+                    <!-- Combo 1 -->
+                    <div class="options-container">
+                        <div class="dropdown-header" data-combo="1">
+                            <span>Grupo 1</span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                        <div class="dropdown-content active" id="combo-1-content">
+                            <!-- Items del combo 1 -->
+                        </div>
+                    </div>
+
+                    <!-- Combo 2 -->
+                    <div class="options-container">
+                        <div class="dropdown-header" data-combo="2">
+                            <span>Grupo 2</span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                        <div class="dropdown-content" id="combo-2-content">
+                            <!-- Items del combo 2 -->
+                        </div>
+                    </div>
+
+                    <!-- Combo 3 -->
+                    <div class="options-container">
+                        <div class="dropdown-header" data-combo="3">
+                            <span>Grupo 3</span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                        <div class="dropdown-content" id="combo-3-content">
+                            <!-- Items del combo 3 -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column selected-column">
+                    <h3 class="column-header">Seleccionado/s para el combo</h3>
+                    <div class="selected-items-container rounded-lg" id="selected-items-container">
+                        <!-- Items seleccionados se agregarán aquí -->
+                    </div>
+                    
+                    <!-- Nuevo cuadro de observaciones -->
+                    <div class="observations-container">
+                        <h4>Observaciones</h4>
+                        <textarea></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-cancel" id="btn-cancel">CANCELAR</button>
+                <button class="btn btn-continue" id="btn-continue">CONTINUAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de los combos con sus items e imágenes
+        const combos = [
+            {
+                id: 1,
+                name: "Grupo 1",
+                items: [
+                    { id: 1, name: "Bacon Cheese", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 2, name: "Roger", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 3, name: "Burguer Crispy", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 4, name: "Golosa", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 5, name: "Clásica", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 6, name: "Doble Queso", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 7, name: "Mega Hamburguesa", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 8, name: "Vegetariana", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 9, name: "Chicken Sandwich", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 10, name: "Fish Sandwich", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 11, name: "Triple Bacon", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 12, name: "Super Doble", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 13, name: "Hamburguesa Gourmet", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 14, name: "Bacon Barbacoa", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 15, name: "Pollo Picante", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 16, name: "Hamburguesa Italiana", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 17, name: "Hamburguesa Mexicana", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 18, name: "Hamburguesa Americana", image: "https://i.imgur.com/k91Jb7I.png" }
+                ]
+            },
+            {
+                id: 2,
+                name: "Grupo 2",
+                items: [
+                    { id: 5, name: "Papas Fritas", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 6, name: "Batatas Fritas", image: "https://i.imgur.com/k91Jb7I.png" }
+                ]
+            },
+            {
+                id: 3,
+                name: "Grupo 3",
+                items: [
+                    { id: 7, name: "Pepsi", image: "https://i.imgur.com/k91Jb7I.png" },
+                    { id: 8, name: "Seven Up", image: "https://i.imgur.com/k91Jb7I.png" }
+                ]
+            }
+        ];
+
+        // Estado de la aplicación
+        let selectedItems = {};
+
+        // Referencias a elementos del DOM
+        const dropdowns = document.querySelectorAll('.dropdown-header');
+        const selectedItemsContainer = document.getElementById('selected-items-container');
+        const btnContinue = document.getElementById('btn-continue');
+        
+        // Renderiza los items de los combos en el DOM
+        function renderComboItems() {
+            combos.forEach(combo => {
+                const contentDiv = document.getElementById(`combo-${combo.id}-content`);
+                contentDiv.innerHTML = ''; // Limpiar contenido anterior
+                combo.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('option-item');
+                    itemDiv.dataset.comboId = combo.id;
+                    itemDiv.dataset.itemId = item.id;
+                    
+                    const img = document.createElement('img');
+                    img.src = item.image;
+                    img.alt = item.name;
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.classList.add('item-name');
+                    nameSpan.textContent = item.name;
+
+                    const itemDescription = document.createElement('span');
+                    itemDescription.classList.add('item-description');
+                    itemDescription.textContent = 'Detalle del producto'; // Texto de ejemplo
+                    
+                    itemDiv.appendChild(img);
+                    itemDiv.appendChild(nameSpan);
+                    itemDiv.appendChild(itemDescription);
+                    
+                    itemDiv.addEventListener('click', () => selectItem(combo.id, item));
+                    contentDiv.appendChild(itemDiv);
+                });
+            });
+        }
+
+        // Maneja la lógica de selección de un ítem
+        function selectItem(comboId, item) {
+            // Elimina la selección previa del mismo combo
+            if (selectedItems[comboId]) {
+                const oldSelection = document.querySelector(`.option-item[data-combo-id="${comboId}"][data-item-id="${selectedItems[comboId].id}"]`);
+                if (oldSelection) {
+                    oldSelection.classList.remove('selected');
+                }
+            }
+            
+            // Marca el nuevo ítem como seleccionado
+            const newSelection = document.querySelector(`.option-item[data-combo-id="${comboId}"][data-item-id="${item.id}"]`);
+            if (newSelection) {
+                newSelection.classList.add('selected');
+            }
+
+            // Almacena el ítem seleccionado
+            selectedItems[comboId] = item;
+            
+            // Renderiza los items seleccionados
+            renderSelectedItems();
+            
+            // Cierra el combo actual y abre el siguiente
+            toggleComboContent(comboId, false);
+            if (comboId < combos.length) {
+                toggleComboContent(comboId + 1, true);
+            }
+            
+            // Verifica si se puede habilitar el botón Continuar
+            checkContinueButton();
+        }
+
+        // Renderiza los items seleccionados en el contenedor de la derecha
+        function renderSelectedItems() {
+            selectedItemsContainer.innerHTML = '';
+            
+            // Ordena los items por el ID del combo
+            const sortedKeys = Object.keys(selectedItems).sort((a, b) => a - b);
+            
+            sortedKeys.forEach(comboId => {
+                const item = selectedItems[comboId];
+                if (item) {
+                    const selectedItemDiv = document.createElement('div');
+                    selectedItemDiv.classList.add('selected-item');
+                    
+                    const img = document.createElement('img');
+                    img.src = item.image;
+                    img.alt = item.name;
+
+                    const infoDiv = document.createElement('div');
+                    infoDiv.classList.add('selected-item-info');
+
+                    const comboSpan = document.createElement('span');
+                    comboSpan.classList.add('selected-item-combo');
+                    comboSpan.textContent = `Grupo ${comboId}`;
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.classList.add('selected-item-name');
+                    nameSpan.textContent = item.name;
+                    
+                    infoDiv.appendChild(comboSpan);
+                    infoDiv.appendChild(nameSpan);
+                    selectedItemDiv.appendChild(img);
+                    selectedItemDiv.appendChild(infoDiv);
+                    
+                    selectedItemsContainer.appendChild(selectedItemDiv);
+                }
+            });
+        }
+
+        // Habilita/Deshabilita el botón Continuar
+        function checkContinueButton() {
+            // Se habilita si se ha seleccionado un ítem de cada combo
+            if (Object.keys(selectedItems).length === combos.length) {
+                btnContinue.classList.add('enabled');
+            } else {
+                btnContinue.classList.remove('enabled');
+            }
+        }
+        
+        // Maneja el toggle de los dropdowns
+        function toggleComboContent(comboId, forceOpen = null) {
+            const dropdownContent = document.getElementById(`combo-${comboId}-content`);
+            if (!dropdownContent) return; // Salir si el elemento no existe
+
+            const dropdownArrow = dropdownContent.previousElementSibling.querySelector('.dropdown-arrow');
+            
+            const isOpen = dropdownContent.classList.contains('active');
+            
+            if (forceOpen !== null) {
+                if (forceOpen && !isOpen) {
+                    dropdownContent.classList.add('active');
+                    dropdownArrow.classList.add('rotated');
+                } else if (!forceOpen && isOpen) {
+                    dropdownContent.classList.remove('active');
+                    dropdownArrow.classList.remove('rotated');
+                }
+            } else {
+                dropdownContent.classList.toggle('active');
+                dropdownArrow.classList.toggle('rotated');
+            }
+        }
+        
+        // Event listeners para los dropdowns
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', (e) => {
+                const comboId = parseInt(e.currentTarget.dataset.combo, 10);
+                // Cierra todos los combos antes de abrir el seleccionado
+                dropdowns.forEach(d => {
+                    const id = parseInt(d.dataset.combo, 10);
+                    if (id !== comboId) {
+                        toggleComboContent(id, false);
+                    }
+                });
+                toggleComboContent(comboId);
+            });
+        });
+
+        // Carga inicial
+        document.addEventListener('DOMContentLoaded', () => {
+            renderComboItems();
+            renderSelectedItems();
+            checkContinueButton();
+            toggleComboContent(1, true); // Abre el primer combo al inicio
+        });
+        
+    </script>
+</body>
+</html>
