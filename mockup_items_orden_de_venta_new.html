@@ -204,12 +204,11 @@
 
         .instance-title { margin: 0; font-size: 1.1rem; font-weight: 500; }
         
-        /* ESTILO PARA EL INDICADOR DE MODIFICACIÓN */
         .modified-indicator {
             color: var(--modified-indicator-color);
-            font-size: 0.85rem; /* Más pequeño que el título principal */
+            font-size: 0.85rem;
             font-weight: 400;
-            margin-left: 5px; /* Pequeño espacio a la izquierda */
+            margin-left: 5px;
         }
         
         .accordion-icon { 
@@ -278,16 +277,17 @@
             flex-shrink: 0;
         }
         .checkbox-wrapper input[type="checkbox"]:checked + label {
-            background-color: #e8eaf6;
-            border-color: var(--primary-accent);
-            color: var(--primary-dark);
+             background-color: #e8eaf6; /* Vuelve al color azul claro */
+    border-color: var(--primary-accent); /* Vuelve al color de acento principal (azul) */
+    color: var(--primary-dark);
         }
         .checkbox-wrapper input[type="checkbox"]:checked + label::before {
             background-color: var(--primary-accent);
             border-color: var(--primary-accent);
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: center;
+            background-size: 60%;
         }
         .checkbox-wrapper label:hover { background-color: #e9ecef; }
 
@@ -313,9 +313,7 @@
             <span>Total</span>
             <span></span>
         </div>
-        <div id="ticket-items" class="ticket-items-list">
-            <!-- El contenido del ticket se genera dinámicamente -->
-        </div>
+        <div id="ticket-items" class="ticket-items-list"></div>
     </div>
 
     <div id="modification-modal" class="modal">
@@ -324,8 +322,7 @@
                 <h2 id="mod-modal-title">Modificar Ítem</h2>
                 <button class="close-button">&times;</button>
             </div>
-            <div id="mod-modal-body" class="mod-modal-body">
-                </div>
+            <div id="mod-modal-body" class="mod-modal-body"></div>
             <div class="modal-footer">
                 <button id="save-modifications-btn" class="confirm-button">Guardar Cambios</button>
             </div>
@@ -334,7 +331,6 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- DATOS INICIALES ---
         let ticket = [
             {
                 name: 'Bacon Cheese',
@@ -360,110 +356,78 @@
                 quantity: 3,
                 price: 3000,
                 customizations: [
-                    { observation: '', isModified: false },
-                    { observation: '', isModified: false },
-                    { observation: '', isModified: false }
+                    { observation: '', isModified: false }, { observation: '', isModified: false }, { observation: '', isModified: false }
                 ]
             },
-            {
-                name: 'Pepsi',
-                quantity: 3,
-                price: 3000,
-                customizations: [
-                    { observation: '', isModified: false },
-                    { observation: '', isModified: false },
-                    { observation: '', isModified: false }
-                ]
-            }
         ];
 
-        // --- ELEMENTOS DEL DOM ---
         const ticketItemsList = document.getElementById('ticket-items');
         const modificationModal = document.getElementById('modification-modal');
         const modModalTitle = document.getElementById('mod-modal-title');
         const modModalBody = document.getElementById('mod-modal-body');
         const saveModBtn = document.getElementById('save-modifications-btn');
 
-        // Función para comparar si una personalización ha cambiado
         function hasCustomizationChanged(originalCustom, currentCustom, itemIngredients) {
-            // Comparar observaciones
-            if (originalCustom.observation !== currentCustom.observation) {
-                return true;
-            }
-
-            // Comparar ingredientes (solo si el item tiene ingredientes)
+            if (originalCustom.observation !== currentCustom.observation) return true;
             if (itemIngredients && itemIngredients.length > 0) {
                 const originalRemoved = new Set(originalCustom.removedIngredients);
                 const currentRemoved = new Set(currentCustom.removedIngredients);
-
-                if (originalRemoved.size !== currentRemoved.size) {
-                    return true;
-                }
+                if (originalRemoved.size !== currentRemoved.size) return true;
                 for (let ing of originalRemoved) {
-                    if (!currentRemoved.has(ing)) {
-                        return true;
-                    }
+                    if (!currentRemoved.has(ing)) return true;
                 }
             }
             return false;
         }
 
-        // --- FUNCIONES DE RENDERIZADO ---
         function renderTicket() {
             ticketItemsList.innerHTML = '';
             ticket.forEach((item, index) => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'ticket-item';
                 itemEl.dataset.ticketIndex = index;
-
                 itemEl.innerHTML = `
                     <div class="item-details">
                         <span>${item.name}</span>
-                        <button class="edit-item-btn">
-                            <i class="material-icons">edit</i>
-                        </button>
+                        <button class="edit-item-btn"><i class="material-icons">edit</i></button>
                     </div>
                     <div class="item-quantity">${item.quantity}</div>
                     <div class="item-total">$${(item.quantity * item.price).toFixed(2)}</div>
                     <div class="delete-item-btn-wrapper">
-                        <button class="delete-item-btn">
-                            <i class="material-icons">delete_forever</i>
-                        </button>
-                    </div>
-                `;
+                        <button class="delete-item-btn"><i class="material-icons">delete_forever</i></button>
+                    </div>`;
                 ticketItemsList.appendChild(itemEl);
             });
         }
 
-        let originalCustomizationsState = []; // Para almacenar el estado original al abrir el modal
+        let originalCustomizationsState = [];
 
         function openModificationModal(ticketIndex) {
             const itemToModify = ticket[ticketIndex];
             if (!itemToModify) return;
 
             modModalTitle.textContent = `Modificar: ${itemToModify.name}`;
-            modModalBody.innerHTML = ''; 
-
-            // Almacenar el estado original de las personalizaciones al abrir el modal
-            originalCustomizationsState = itemToModify.customizations.map(c => ({ ...c }));
+            modModalBody.innerHTML = '';
+            originalCustomizationsState = JSON.parse(JSON.stringify(itemToModify.customizations));
 
             itemToModify.customizations.forEach((custom, i) => {
                 const instanceContainer = document.createElement('div');
                 instanceContainer.className = 'modification-instance';
                 instanceContainer.dataset.instanceIndex = i;
-                instanceContainer.dataset.originalObservation = custom.observation; // Guarda la observación original
-                instanceContainer.dataset.originalRemovedIngredients = JSON.stringify(custom.removedIngredients); // Guarda los ingredientes originales
-
+                
                 let ingredientsHtml = '';
                 if (itemToModify.ingredients && itemToModify.ingredients.length > 0) {
-                    ingredientsHtml = '<h4>Ingredientes:</h4><div class="ingredients-checklist">';
+                    ingredientsHtml = `<h4>Quitar Ingredientes:</h4><div class="ingredients-checklist">`;
                     itemToModify.ingredients.forEach(ingredient => {
-                        const isChecked = !custom.removedIngredients.includes(ingredient);
+                        // --- INICIO DE CAMBIO DE LÓGICA 1 ---
+                        // El check está marcado si el ingrediente ESTÁ en la lista de removidos.
+                        const isChecked = custom.removedIngredients.includes(ingredient);
                         ingredientsHtml += `
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="inst-${i}-${ingredient.replace(/\s+/g, '')}" name="${ingredient}" ${isChecked ? 'checked' : ''} data-original-checked="${isChecked}">
-                                <label for="inst-${i}-${ingredient.replace(/\s+/g, '')}">${ingredient}</label>
+                                <input type="checkbox" id="inst-${i}-${ingredient.replace(/\s+/g, '')}" name="${ingredient}" ${isChecked ? 'checked' : ''}>
+                                <label for="inst-${i}-${ingredient.replace(/\s+/g, '')}">SIN ${ingredient}</label>
                             </div>`;
+                        // --- FIN DE CAMBIO DE LÓGICA 1 ---
                     });
                     ingredientsHtml += '</div>';
                 }
@@ -477,53 +441,42 @@
                             <span class="instance-title">${itemToModify.name} #${i + 1}</span>
                             ${modifiedIndicator}
                         </div>
-                        <button class="delete-item-btn delete-instance-btn">
-                            <i class="material-icons">delete</i>
-                        </button>
+                        <button class="delete-item-btn delete-instance-btn"><i class="material-icons">delete</i></button>
                     </div>
                     <div class="accordion-content">
                         ${ingredientsHtml}
                         <h4>Observaciones:</h4>
                         <textarea class="observation-textarea" placeholder="Añadir observación para esta unidad...">${custom.observation}</textarea>
-                    </div>
-                `;
+                    </div>`;
                 modModalBody.appendChild(instanceContainer);
             });
             
             saveModBtn.dataset.ticketIndex = ticketIndex;
             modificationModal.classList.add('show');
-
-            // Adjuntar event listeners para detectar cambios en checkboxes y textareas
             addChangeListenersToModal(ticketIndex);
         }
 
-        // Función para agregar listeners a los elementos del modal para detectar cambios
         function addChangeListenersToModal(ticketIndex) {
             modModalBody.querySelectorAll('.modification-instance').forEach((instanceEl, instanceIdx) => {
                 const itemToModify = ticket[ticketIndex];
-                const originalCustomization = originalCustomizationsState[instanceIdx]; // Estado original de esta instancia
+                const originalCustomization = originalCustomizationsState[instanceIdx];
+                const update = () => updateModifiedIndicator(instanceEl, instanceIdx, itemToModify, originalCustomization);
 
-                // Listeners para checkboxes
-                instanceEl.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                    checkbox.addEventListener('change', () => {
-                        updateModifiedIndicator(instanceEl, instanceIdx, itemToModify, originalCustomization);
-                    });
-                });
-
-                // Listeners para textareas
-                instanceEl.querySelector('.observation-textarea').addEventListener('input', () => {
-                    updateModifiedIndicator(instanceEl, instanceIdx, itemToModify, originalCustomization);
-                });
+                instanceEl.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.addEventListener('change', update));
+                instanceEl.querySelector('.observation-textarea').addEventListener('input', update);
             });
         }
 
-        // Función para actualizar el indicador "(Modificado)"
         function updateModifiedIndicator(instanceEl, instanceIdx, itemToModify, originalCustomization) {
             const currentObservation = instanceEl.querySelector('.observation-textarea').value.trim();
             const currentRemovedIngredients = [];
-            instanceEl.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+            
+            // --- INICIO DE CAMBIO DE LÓGICA 2 ---
+            // Se añaden a la lista los ingredientes cuyo checkbox ESTÁ MARCADO.
+            instanceEl.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
                 currentRemovedIngredients.push(cb.name);
             });
+            // --- FIN DE CAMBIO DE LÓGICA 2 ---
 
             const currentCustomization = {
                 observation: currentObservation,
@@ -534,59 +487,46 @@
             const titleSpan = instanceEl.querySelector('.instance-title');
             let indicatorSpan = instanceEl.querySelector('.modified-indicator');
 
-            if (isModified) {
-                if (!indicatorSpan) {
-                    indicatorSpan = document.createElement('span');
-                    indicatorSpan.className = 'modified-indicator';
-                    titleSpan.after(indicatorSpan); // Añadirlo después del título
-                }
+            if (isModified && !indicatorSpan) {
+                indicatorSpan = document.createElement('span');
+                indicatorSpan.className = 'modified-indicator';
                 indicatorSpan.textContent = '(Modificado)';
-            } else {
-                if (indicatorSpan) {
-                    indicatorSpan.remove();
-                }
+                titleSpan.after(indicatorSpan);
+            } else if (!isModified && indicatorSpan) {
+                indicatorSpan.remove();
             }
         }
 
-
-        // --- FUNCIONES DE LÓGICA ---
         function saveModifications(ticketIndexStr) {
             const ticketIndex = parseInt(ticketIndexStr, 10);
             const itemToModify = ticket[ticketIndex];
             if (!itemToModify) return;
 
-            const instances = modModalBody.querySelectorAll('.modification-instance');
             const newCustomizations = [];
-
-            instances.forEach((instance, i) => {
+            modModalBody.querySelectorAll('.modification-instance').forEach((instance, i) => {
                 const observation = instance.querySelector('.observation-textarea').value.trim();
-                let customization = { observation };
-                
-                if (itemToModify.ingredients && itemToModify.ingredients.length > 0) {
-                    const removedIngredients = [];
-                    instance.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
-                        removedIngredients.push(cb.name);
-                    });
-                    customization.removedIngredients = removedIngredients;
-                }
-                
-                // Determinar si la instancia actual ha sido modificada respecto a su estado original
-                const originalCustom = originalCustomizationsState[i];
-                customization.isModified = hasCustomizationChanged(originalCustom, customization, itemToModify.ingredients);
+                const removedIngredients = [];
+                // --- INICIO DE CAMBIO DE LÓGICA 3 ---
+                // Se guardan los ingredientes cuyo checkbox ESTÁ MARCADO.
+                instance.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                    removedIngredients.push(cb.name);
+                });
+                // --- FIN DE CAMBIO DE LÓGICA 3 ---
 
-                newCustomizations.push(customization);
+                const currentCustomization = { observation, removedIngredients };
+                const originalCustom = originalCustomizationsState[i];
+                const isModified = hasCustomizationChanged(originalCustom, currentCustomization, itemToModify.ingredients);
+                
+                newCustomizations.push({ ...currentCustomization, isModified });
             });
             
             itemToModify.customizations = newCustomizations;
-            
-            console.log("Cambios guardados para el ítem:", ticket[ticketIndex]);
-            alert(`Cambios guardados para "${itemToModify.name}". Revisa la consola (F12) para ver el objeto actualizado.`);
-
+            console.log("Cambios guardados:", ticket[ticketIndex]);
             closeModal();
         }
 
         function deleteTicketItem(ticketIndex) {
-            if (confirm(`¿Estás seguro de que quieres eliminar "${ticket[ticketIndex].name}" del ticket?`)) {
+            if (confirm(`¿Eliminar "${ticket[ticketIndex].name}" del ticket?`)) {
                 ticket.splice(ticketIndex, 1);
                 renderTicket();
             }
@@ -595,7 +535,7 @@
         function deleteInstanceItem(ticketIndex, instanceIndex) {
             const item = ticket[ticketIndex];
             if (item.quantity === 1) {
-                if (confirm(`Esta es la última unidad. ¿Quieres eliminar "${item.name}" del ticket por completo?`)) {
+                if (confirm(`Es la última unidad. ¿Eliminar "${item.name}" por completo?`)) {
                     ticket.splice(ticketIndex, 1);
                     closeModal();
                     renderTicket();
@@ -603,70 +543,42 @@
             } else {
                 item.quantity--;
                 item.customizations.splice(instanceIndex, 1);
-                // Volver a abrir el modal para reflejar los cambios y re-evaluar los indicadores
-                // Necesitamos recrear originalCustomizationsState para el nuevo conjunto de instancias
-                openModificationModal(ticketIndex); 
+                openModificationModal(ticketIndex);
             }
         }
 
         function closeModal() {
             modificationModal.classList.remove('show');
-            originalCustomizationsState = []; // Limpiar al cerrar
+            originalCustomizationsState = [];
         }
 
-        // --- EVENT LISTENERS ---
-        ticketItemsList.addEventListener('click', (e) => {
+        ticketItemsList.addEventListener('click', e => {
             const button = e.target.closest('button');
             if (!button) return;
-
             const itemIndex = parseInt(e.target.closest('.ticket-item').dataset.ticketIndex, 10);
-
-            if (button.classList.contains('edit-item-btn')) {
-                openModificationModal(itemIndex);
-            } else if (button.classList.contains('delete-item-btn')) {
-                deleteTicketItem(itemIndex);
-            }
+            if (button.classList.contains('edit-item-btn')) openModificationModal(itemIndex);
+            if (button.classList.contains('delete-item-btn')) deleteTicketItem(itemIndex);
         });
 
-        modModalBody.addEventListener('click', (e) => {
+        modModalBody.addEventListener('click', e => {
             const deleteBtn = e.target.closest('.delete-instance-btn');
             const toggleArea = e.target.closest('.accordion-toggle-area');
-
             if (deleteBtn) {
                 const ticketIndex = parseInt(saveModBtn.dataset.ticketIndex, 10);
                 const instanceIndex = parseInt(deleteBtn.closest('.modification-instance').dataset.instanceIndex, 10);
                 deleteInstanceItem(ticketIndex, instanceIndex);
             } else if (toggleArea) {
-                const header = toggleArea.parentElement;
-                const parentInstance = header.parentElement;
-                const content = header.nextElementSibling;
-                
-                if (parentInstance.classList.contains('open')) {
-                    parentInstance.classList.remove('open');
-                    content.style.maxHeight = null;
-                } else { 
-                    modModalBody.querySelectorAll('.modification-instance').forEach(inst => {
-                        inst.classList.remove('open');
-                        inst.querySelector('.accordion-content').style.maxHeight = null;
-                    });
-                    parentInstance.classList.add('open');
-                    content.style.maxHeight = content.scrollHeight + "px";
-                }
+                const parentInstance = toggleArea.closest('.modification-instance');
+                const content = parentInstance.querySelector('.accordion-content');
+                const isOpen = parentInstance.classList.toggle('open');
+                content.style.maxHeight = isOpen ? content.scrollHeight + "px" : null;
             }
         });
-        
+
         modificationModal.querySelector('.close-button').addEventListener('click', closeModal);
-        saveModBtn.addEventListener('click', (e) => {
-            saveModifications(e.target.dataset.ticketIndex);
-        });
+        saveModBtn.addEventListener('click', e => saveModifications(e.target.dataset.ticketIndex));
+        window.addEventListener('click', e => { if (e.target === modificationModal) closeModal(); });
 
-        window.addEventListener('click', (e) => {
-            if (e.target === modificationModal) {
-                closeModal();
-            }
-        });
-
-        // --- INICIALIZACIÓN ---
         renderTicket();
     });
     </script>
