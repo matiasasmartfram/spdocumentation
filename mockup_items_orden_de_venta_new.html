@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación de Edición de Orden (Final)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* --- Reset y Variables --- */
+        :root {
+            --primary-dark: #0f0035;
+            --primary-accent: #6e59ee;
+            --danger-color: #e21b23;
+            --text-dark: #333;
+            --bg-light: #ffffff;
+            --bg-grey: #f4f6f8;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: var(--bg-grey);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        /* --- Columna del Ticket (Panel Principal) --- */
+        .ticket-column {
+            width: 100%;
+            max-width: 600px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ticket-header {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr auto;
+            font-weight: 500;
+            color: #555;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .ticket-header span:first-child { text-align: left; }
+        .ticket-header span:nth-child(3) { text-align: right; }
+
+        .ticket-items-list { padding: 10px 0; }
+
+        .ticket-item {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr auto;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .ticket-item:last-child { border-bottom: none; }
+
+        .item-details {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .edit-item-btn, .delete-item-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .edit-item-btn:hover, .delete-item-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .edit-item-btn { color: var(--primary-accent); }
+        .delete-item-btn { color: var(--danger-color); }
+        .edit-item-btn .material-icons, .delete-item-btn .material-icons { font-size: 20px; }
+        
+        .delete-item-btn-wrapper {
+            padding-left: 15px;
+        }
+
+        .item-quantity { text-align: center; }
+        .item-total { text-align: right; font-weight: 500; }
+        
+        /* --- Estilos de Modales --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show { display: flex; }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 90%;
+            /* --- INICIO DE LA MODIFICACIÓN CSS 1 --- */
+            max-width: 800px; /* Modal más ancho */
+            /* --- FIN DE LA MODIFICACIÓN CSS 1 --- */
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header, .modal-footer {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .modal-header { border-bottom: 1px solid #eee; }
+        .modal-footer { border-top: 1px solid #eee; }
+
+        .modal-header h2 { margin: 0; font-size: 1.2rem; }
+
+        .close-button {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .confirm-button {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--success-color);
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* --- Estilos del Modal de Modificación --- */
+        .mod-modal-body {
+            padding: 20px;
+            /* --- INICIO DE LA MODIFICACIÓN CSS 2 --- */
+            max-height: 80vh; /* Aumentado para más contenido visible */
+            /* --- FIN DE LA MODIFICACIÓN CSS 2 --- */
+            overflow-y: auto;
+        }
+
+        .modification-instance {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        /* --- INICIO DE LA MODIFICACIÓN CSS 3 --- */
+        .accordion-header {
+            width: 100%;
+            background-color: #f8f9fa;
+            border: none;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+        }
+        
+        .accordion-toggle-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-grow: 0.9;
+            cursor: pointer;
+        }
+        .accordion-toggle-area:hover {
+            opacity: 0.8;
+        }
+        
+        .delete-instance-btn {
+            flex-shrink: 0; /* Evita que el botón se encoja */
+        }
+        /* --- FIN DE LA MODIFICACIÓN CSS 3 --- */
+
+        .instance-title { margin: 0; font-size: 1.1rem; font-weight: 500; }
+        
+        .accordion-icon { 
+            transition: transform 0.3s ease;
+        }
+        .modification-instance.open .accordion-icon { transform: rotate(180deg); }
+
+        .accordion-content {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+        .modification-instance.open .accordion-content {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .accordion-content h4 {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .accordion-content h4:first-child { margin-top: 0; }
+
+        .ingredients-checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-wrapper {
+            display: block;
+            position: relative;
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .checkbox-wrapper label {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+        .checkbox-wrapper label::before {
+            content: '';
+            width: 24px;
+            height: 24px;
+            border: 2px solid #adb5bd;
+            border-radius: 4px;
+            margin-right: 15px;
+            background-color: #fff;
+            transition: background-color 0.2s, border-color 0.2s;
+            flex-shrink: 0;
+        }
+        .checkbox-wrapper input[type="checkbox"]:checked + label {
+            background-color: #e8eaf6;
+            border-color: var(--primary-accent);
+            color: var(--primary-dark);
+        }
+        .checkbox-wrapper input[type="checkbox"]:checked + label::before {
+            background-color: var(--primary-accent);
+            border-color: var(--primary-accent);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .checkbox-wrapper label:hover { background-color: #e9ecef; }
+
+        .observation-textarea {
+            width: 100%;
+            min-height: 70px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ticket-column">
+        <div class="ticket-header">
+            <span>Detalle</span>
+            <span>Cantidad</span>
+            <span>Total</span>
+            <span></span>
+        </div>
+        <div id="ticket-items" class="ticket-items-list">
+            <!-- El contenido del ticket se genera dinámicamente -->
+        </div>
+    </div>
+
+    <div id="modification-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="mod-modal-title">Modificar Ítem</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div id="mod-modal-body" class="mod-modal-body">
+                </div>
+            <div class="modal-footer">
+                <button id="save-modifications-btn" class="confirm-button">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DATOS INICIALES ---
+        let ticket = [
+            {
+                name: 'Bacon Cheese',
+                quantity: 2,
+                price: 15000,
+                ingredients: ['Cheddar', 'Bacon', 'Pan de Papa', 'Carne 180gr'],
+                customizations: [
+                    { removedIngredients: [], observation: '' },
+                    { removedIngredients: [], observation: '' }
+                ]
+            },
+            {
+                name: 'Gulosa',
+                quantity: 1,
+                price: 15000,
+                ingredients: ['Cheddar', 'Bacon', 'Aros de Cebolla', 'Huevo Frito', 'Pan de Papa', 'Carne 180gr'],
+                customizations: [
+                    { removedIngredients: [], observation: '' }
+                ]
+            },
+            {
+                name: 'Papas Fritas',
+                quantity: 3,
+                price: 3000,
+                customizations: [
+                    { observation: '' },
+                    { observation: '' },
+                    { observation: '' }
+                ]
+            },
+            {
+                name: 'Pepsi',
+                quantity: 3,
+                price: 3000,
+                customizations: [
+                    { observation: '' },
+                    { observation: '' },
+                    { observation: '' }
+                ]
+            }
+        ];
+
+        // --- ELEMENTOS DEL DOM ---
+        const ticketItemsList = document.getElementById('ticket-items');
+        const modificationModal = document.getElementById('modification-modal');
+        const modModalTitle = document.getElementById('mod-modal-title');
+        const modModalBody = document.getElementById('mod-modal-body');
+        const saveModBtn = document.getElementById('save-modifications-btn');
+
+        // --- FUNCIONES DE RENDERIZADO ---
+        function renderTicket() {
+            ticketItemsList.innerHTML = '';
+            ticket.forEach((item, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'ticket-item';
+                itemEl.dataset.ticketIndex = index;
+
+                itemEl.innerHTML = `
+                    <div class="item-details">
+                        <span>${item.name}</span>
+                        <button class="edit-item-btn">
+                            <i class="material-icons">edit</i>
+                        </button>
+                    </div>
+                    <div class="item-quantity">${item.quantity}</div>
+                    <div class="item-total">$${(item.quantity * item.price).toFixed(2)}</div>
+                    <div class="delete-item-btn-wrapper">
+                        <button class="delete-item-btn">
+                            <i class="material-icons">delete_forever</i>
+                        </button>
+                    </div>
+                `;
+                ticketItemsList.appendChild(itemEl);
+            });
+        }
+
+        function openModificationModal(ticketIndex) {
+            const itemToModify = ticket[ticketIndex];
+            if (!itemToModify) return;
+
+            modModalTitle.textContent = `Modificar: ${itemToModify.name}`;
+            modModalBody.innerHTML = ''; 
+
+            itemToModify.customizations.forEach((custom, i) => {
+                const instanceContainer = document.createElement('div');
+                instanceContainer.className = 'modification-instance';
+                instanceContainer.dataset.instanceIndex = i;
+                
+                let ingredientsHtml = '';
+                if (itemToModify.ingredients && itemToModify.ingredients.length > 0) {
+                    ingredientsHtml = '<h4>Ingredientes:</h4><div class="ingredients-checklist">';
+                    itemToModify.ingredients.forEach(ingredient => {
+                        const isChecked = !custom.removedIngredients.includes(ingredient);
+                        ingredientsHtml += `
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="inst-${i}-${ingredient.replace(/\s+/g, '')}" name="${ingredient}" ${isChecked ? 'checked' : ''}>
+                                <label for="inst-${i}-${ingredient.replace(/\s+/g, '')}">${ingredient}</label>
+                            </div>`;
+                    });
+                    ingredientsHtml += '</div>';
+                }
+
+                // --- INICIO DE LA MODIFICACIÓN HTML ---
+                instanceContainer.innerHTML = `
+                    <div class="accordion-header">
+                        <div class="accordion-toggle-area">
+                            <i class="material-icons accordion-icon">expand_more</i>
+                            <span class="instance-title">${itemToModify.name} #${i + 1}</span>
+                        </div>
+                        <button class="delete-item-btn delete-instance-btn">
+                            <i class="material-icons">delete</i>
+                        </button>
+                    </div>
+                    <div class="accordion-content">
+                        ${ingredientsHtml}
+                        <h4>Observaciones:</h4>
+                        <textarea class="observation-textarea" placeholder="Añadir observación para esta unidad...">${custom.observation}</textarea>
+                    </div>
+                `;
+                // --- FIN DE LA MODIFICACIÓN HTML ---
+                modModalBody.appendChild(instanceContainer);
+            });
+            
+            saveModBtn.dataset.ticketIndex = ticketIndex;
+            modificationModal.classList.add('show');
+        }
+
+        // --- FUNCIONES DE LÓGICA ---
+        function saveModifications(ticketIndexStr) {
+            const ticketIndex = parseInt(ticketIndexStr, 10);
+            const itemToModify = ticket[ticketIndex];
+            if (!itemToModify) return;
+
+            const instances = modModalBody.querySelectorAll('.modification-instance');
+            const newCustomizations = [];
+
+            instances.forEach(instance => {
+                const observation = instance.querySelector('.observation-textarea').value.trim();
+                let customization = { observation };
+                
+                if (itemToModify.ingredients && itemToModify.ingredients.length > 0) {
+                    const removedIngredients = [];
+                    instance.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+                        removedIngredients.push(cb.name);
+                    });
+                    customization.removedIngredients = removedIngredients;
+                }
+                
+                newCustomizations.push(customization);
+            });
+            
+            itemToModify.customizations = newCustomizations;
+            
+            console.log("Cambios guardados para el ítem:", ticket[ticketIndex]);
+            alert(`Cambios guardados para "${itemToModify.name}". Revisa la consola (F12) para ver el objeto actualizado.`);
+
+            closeModal();
+        }
+
+        function deleteTicketItem(ticketIndex) {
+            if (confirm(`¿Estás seguro de que quieres eliminar "${ticket[ticketIndex].name}" del ticket?`)) {
+                ticket.splice(ticketIndex, 1);
+                renderTicket();
+            }
+        }
+
+        function deleteInstanceItem(ticketIndex, instanceIndex) {
+            const item = ticket[ticketIndex];
+            if (item.quantity === 1) {
+                if (confirm(`Esta es la última unidad. ¿Quieres eliminar "${item.name}" del ticket por completo?`)) {
+                    ticket.splice(ticketIndex, 1);
+                    closeModal();
+                    renderTicket();
+                }
+            } else {
+                item.quantity--;
+                item.customizations.splice(instanceIndex, 1);
+                openModificationModal(ticketIndex);
+            }
+        }
+
+        function closeModal() {
+            modificationModal.classList.remove('show');
+        }
+
+        // --- EVENT LISTENERS ---
+        ticketItemsList.addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (!button) return;
+
+            const itemIndex = parseInt(e.target.closest('.ticket-item').dataset.ticketIndex, 10);
+
+            if (button.classList.contains('edit-item-btn')) {
+                openModificationModal(itemIndex);
+            } else if (button.classList.contains('delete-item-btn')) {
+                deleteTicketItem(itemIndex);
+            }
+        });
+
+        // --- INICIO DE LA MODIFICACIÓN JAVASCRIPT ---
+        modModalBody.addEventListener('click', (e) => {
+            const deleteBtn = e.target.closest('.delete-instance-btn');
+            const toggleArea = e.target.closest('.accordion-toggle-area');
+
+            if (deleteBtn) {
+                const ticketIndex = parseInt(saveModBtn.dataset.ticketIndex, 10);
+                const instanceIndex = parseInt(deleteBtn.closest('.modification-instance').dataset.instanceIndex, 10);
+                deleteInstanceItem(ticketIndex, instanceIndex);
+            } else if (toggleArea) {
+                const header = toggleArea.parentElement;
+                const parentInstance = header.parentElement;
+                const content = header.nextElementSibling;
+                
+                if (parentInstance.classList.contains('open')) {
+                    parentInstance.classList.remove('open');
+                    content.style.maxHeight = null;
+                } else { 
+                    modModalBody.querySelectorAll('.modification-instance').forEach(inst => {
+                        inst.classList.remove('open');
+                        inst.querySelector('.accordion-content').style.maxHeight = null;
+                    });
+                    parentInstance.classList.add('open');
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            }
+        });
+        // --- FIN DE LA MODIFICACIÓN JAVASCRIPT ---
+        
+        modificationModal.querySelector('.close-button').addEventListener('click', closeModal);
+        saveModBtn.addEventListener('click', (e) => {
+            saveModifications(e.target.dataset.ticketIndex);
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modificationModal) {
+                closeModal();
+            }
+        });
+
+        // --- INICIALIZACIÓN ---
+        renderTicket();
+    });
+    </script>
+</body>
+</html>
