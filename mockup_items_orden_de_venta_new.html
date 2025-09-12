@@ -17,6 +17,7 @@
             --bg-grey: #f4f6f8;
             --border-color: #e0e0e0;
             --success-color: #28a745;
+            --modified-indicator-color: #e21b23; /* Rojo para "Modificado" */
         }
 
         body {
@@ -122,9 +123,7 @@
             padding: 0;
             border: 1px solid #888;
             width: 90%;
-            /* --- INICIO DE LA MODIFICACIÓN CSS 1 --- */
             max-width: 800px; /* Modal más ancho */
-            /* --- FIN DE LA MODIFICACIÓN CSS 1 --- */
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             display: flex;
@@ -166,9 +165,7 @@
         /* --- Estilos del Modal de Modificación --- */
         .mod-modal-body {
             padding: 20px;
-            /* --- INICIO DE LA MODIFICACIÓN CSS 2 --- */
             max-height: 80vh; /* Aumentado para más contenido visible */
-            /* --- FIN DE LA MODIFICACIÓN CSS 2 --- */
             overflow-y: auto;
         }
 
@@ -179,7 +176,6 @@
             overflow: hidden;
         }
 
-        /* --- INICIO DE LA MODIFICACIÓN CSS 3 --- */
         .accordion-header {
             width: 100%;
             background-color: #f8f9fa;
@@ -194,7 +190,7 @@
         .accordion-toggle-area {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px; /* Reducido ligeramente para acomodar el texto de modificado */
             flex-grow: 0.9;
             cursor: pointer;
         }
@@ -205,9 +201,16 @@
         .delete-instance-btn {
             flex-shrink: 0; /* Evita que el botón se encoja */
         }
-        /* --- FIN DE LA MODIFICACIÓN CSS 3 --- */
 
         .instance-title { margin: 0; font-size: 1.1rem; font-weight: 500; }
+        
+        /* ESTILO PARA EL INDICADOR DE MODIFICACIÓN */
+        .modified-indicator {
+            color: var(--modified-indicator-color);
+            font-size: 0.85rem; /* Más pequeño que el título principal */
+            font-weight: 400;
+            margin-left: 5px; /* Pequeño espacio a la izquierda */
+        }
         
         .accordion-icon { 
             transition: transform 0.3s ease;
@@ -339,8 +342,8 @@
                 price: 15000,
                 ingredients: ['Cheddar', 'Bacon', 'Pan de Papa', 'Carne 180gr'],
                 customizations: [
-                    { removedIngredients: [], observation: '' },
-                    { removedIngredients: [], observation: '' }
+                    { removedIngredients: [], observation: '', isModified: false },
+                    { removedIngredients: [], observation: '', isModified: false }
                 ]
             },
             {
@@ -349,7 +352,7 @@
                 price: 15000,
                 ingredients: ['Cheddar', 'Bacon', 'Aros de Cebolla', 'Huevo Frito', 'Pan de Papa', 'Carne 180gr'],
                 customizations: [
-                    { removedIngredients: [], observation: '' }
+                    { removedIngredients: [], observation: '', isModified: false }
                 ]
             },
             {
@@ -357,9 +360,9 @@
                 quantity: 3,
                 price: 3000,
                 customizations: [
-                    { observation: '' },
-                    { observation: '' },
-                    { observation: '' }
+                    { observation: '', isModified: false },
+                    { observation: '', isModified: false },
+                    { observation: '', isModified: false }
                 ]
             },
             {
@@ -367,9 +370,9 @@
                 quantity: 3,
                 price: 3000,
                 customizations: [
-                    { observation: '' },
-                    { observation: '' },
-                    { observation: '' }
+                    { observation: '', isModified: false },
+                    { observation: '', isModified: false },
+                    { observation: '', isModified: false }
                 ]
             }
         ];
@@ -380,6 +383,30 @@
         const modModalTitle = document.getElementById('mod-modal-title');
         const modModalBody = document.getElementById('mod-modal-body');
         const saveModBtn = document.getElementById('save-modifications-btn');
+
+        // Función para comparar si una personalización ha cambiado
+        function hasCustomizationChanged(originalCustom, currentCustom, itemIngredients) {
+            // Comparar observaciones
+            if (originalCustom.observation !== currentCustom.observation) {
+                return true;
+            }
+
+            // Comparar ingredientes (solo si el item tiene ingredientes)
+            if (itemIngredients && itemIngredients.length > 0) {
+                const originalRemoved = new Set(originalCustom.removedIngredients);
+                const currentRemoved = new Set(currentCustom.removedIngredients);
+
+                if (originalRemoved.size !== currentRemoved.size) {
+                    return true;
+                }
+                for (let ing of originalRemoved) {
+                    if (!currentRemoved.has(ing)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         // --- FUNCIONES DE RENDERIZADO ---
         function renderTicket() {
@@ -408,6 +435,8 @@
             });
         }
 
+        let originalCustomizationsState = []; // Para almacenar el estado original al abrir el modal
+
         function openModificationModal(ticketIndex) {
             const itemToModify = ticket[ticketIndex];
             if (!itemToModify) return;
@@ -415,11 +444,16 @@
             modModalTitle.textContent = `Modificar: ${itemToModify.name}`;
             modModalBody.innerHTML = ''; 
 
+            // Almacenar el estado original de las personalizaciones al abrir el modal
+            originalCustomizationsState = itemToModify.customizations.map(c => ({ ...c }));
+
             itemToModify.customizations.forEach((custom, i) => {
                 const instanceContainer = document.createElement('div');
                 instanceContainer.className = 'modification-instance';
                 instanceContainer.dataset.instanceIndex = i;
-                
+                instanceContainer.dataset.originalObservation = custom.observation; // Guarda la observación original
+                instanceContainer.dataset.originalRemovedIngredients = JSON.stringify(custom.removedIngredients); // Guarda los ingredientes originales
+
                 let ingredientsHtml = '';
                 if (itemToModify.ingredients && itemToModify.ingredients.length > 0) {
                     ingredientsHtml = '<h4>Ingredientes:</h4><div class="ingredients-checklist">';
@@ -427,19 +461,21 @@
                         const isChecked = !custom.removedIngredients.includes(ingredient);
                         ingredientsHtml += `
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="inst-${i}-${ingredient.replace(/\s+/g, '')}" name="${ingredient}" ${isChecked ? 'checked' : ''}>
+                                <input type="checkbox" id="inst-${i}-${ingredient.replace(/\s+/g, '')}" name="${ingredient}" ${isChecked ? 'checked' : ''} data-original-checked="${isChecked}">
                                 <label for="inst-${i}-${ingredient.replace(/\s+/g, '')}">${ingredient}</label>
                             </div>`;
                     });
                     ingredientsHtml += '</div>';
                 }
 
-                // --- INICIO DE LA MODIFICACIÓN HTML ---
+                const modifiedIndicator = custom.isModified ? `<span class="modified-indicator">(Modificado)</span>` : '';
+
                 instanceContainer.innerHTML = `
                     <div class="accordion-header">
                         <div class="accordion-toggle-area">
                             <i class="material-icons accordion-icon">expand_more</i>
                             <span class="instance-title">${itemToModify.name} #${i + 1}</span>
+                            ${modifiedIndicator}
                         </div>
                         <button class="delete-item-btn delete-instance-btn">
                             <i class="material-icons">delete</i>
@@ -451,13 +487,67 @@
                         <textarea class="observation-textarea" placeholder="Añadir observación para esta unidad...">${custom.observation}</textarea>
                     </div>
                 `;
-                // --- FIN DE LA MODIFICACIÓN HTML ---
                 modModalBody.appendChild(instanceContainer);
             });
             
             saveModBtn.dataset.ticketIndex = ticketIndex;
             modificationModal.classList.add('show');
+
+            // Adjuntar event listeners para detectar cambios en checkboxes y textareas
+            addChangeListenersToModal(ticketIndex);
         }
+
+        // Función para agregar listeners a los elementos del modal para detectar cambios
+        function addChangeListenersToModal(ticketIndex) {
+            modModalBody.querySelectorAll('.modification-instance').forEach((instanceEl, instanceIdx) => {
+                const itemToModify = ticket[ticketIndex];
+                const originalCustomization = originalCustomizationsState[instanceIdx]; // Estado original de esta instancia
+
+                // Listeners para checkboxes
+                instanceEl.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        updateModifiedIndicator(instanceEl, instanceIdx, itemToModify, originalCustomization);
+                    });
+                });
+
+                // Listeners para textareas
+                instanceEl.querySelector('.observation-textarea').addEventListener('input', () => {
+                    updateModifiedIndicator(instanceEl, instanceIdx, itemToModify, originalCustomization);
+                });
+            });
+        }
+
+        // Función para actualizar el indicador "(Modificado)"
+        function updateModifiedIndicator(instanceEl, instanceIdx, itemToModify, originalCustomization) {
+            const currentObservation = instanceEl.querySelector('.observation-textarea').value.trim();
+            const currentRemovedIngredients = [];
+            instanceEl.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+                currentRemovedIngredients.push(cb.name);
+            });
+
+            const currentCustomization = {
+                observation: currentObservation,
+                removedIngredients: currentRemovedIngredients
+            };
+
+            const isModified = hasCustomizationChanged(originalCustomization, currentCustomization, itemToModify.ingredients);
+            const titleSpan = instanceEl.querySelector('.instance-title');
+            let indicatorSpan = instanceEl.querySelector('.modified-indicator');
+
+            if (isModified) {
+                if (!indicatorSpan) {
+                    indicatorSpan = document.createElement('span');
+                    indicatorSpan.className = 'modified-indicator';
+                    titleSpan.after(indicatorSpan); // Añadirlo después del título
+                }
+                indicatorSpan.textContent = '(Modificado)';
+            } else {
+                if (indicatorSpan) {
+                    indicatorSpan.remove();
+                }
+            }
+        }
+
 
         // --- FUNCIONES DE LÓGICA ---
         function saveModifications(ticketIndexStr) {
@@ -468,7 +558,7 @@
             const instances = modModalBody.querySelectorAll('.modification-instance');
             const newCustomizations = [];
 
-            instances.forEach(instance => {
+            instances.forEach((instance, i) => {
                 const observation = instance.querySelector('.observation-textarea').value.trim();
                 let customization = { observation };
                 
@@ -480,6 +570,10 @@
                     customization.removedIngredients = removedIngredients;
                 }
                 
+                // Determinar si la instancia actual ha sido modificada respecto a su estado original
+                const originalCustom = originalCustomizationsState[i];
+                customization.isModified = hasCustomizationChanged(originalCustom, customization, itemToModify.ingredients);
+
                 newCustomizations.push(customization);
             });
             
@@ -509,12 +603,15 @@
             } else {
                 item.quantity--;
                 item.customizations.splice(instanceIndex, 1);
-                openModificationModal(ticketIndex);
+                // Volver a abrir el modal para reflejar los cambios y re-evaluar los indicadores
+                // Necesitamos recrear originalCustomizationsState para el nuevo conjunto de instancias
+                openModificationModal(ticketIndex); 
             }
         }
 
         function closeModal() {
             modificationModal.classList.remove('show');
+            originalCustomizationsState = []; // Limpiar al cerrar
         }
 
         // --- EVENT LISTENERS ---
@@ -531,7 +628,6 @@
             }
         });
 
-        // --- INICIO DE LA MODIFICACIÓN JAVASCRIPT ---
         modModalBody.addEventListener('click', (e) => {
             const deleteBtn = e.target.closest('.delete-instance-btn');
             const toggleArea = e.target.closest('.accordion-toggle-area');
@@ -558,7 +654,6 @@
                 }
             }
         });
-        // --- FIN DE LA MODIFICACIÓN JAVASCRIPT ---
         
         modificationModal.querySelector('.close-button').addEventListener('click', closeModal);
         saveModBtn.addEventListener('click', (e) => {
