@@ -95,7 +95,7 @@
 
   <div class="container">
     <header class="main-header">
-      <h1>Documento de Especificación: Formato JSON Estructurado para Pedidos</h1>
+      <h1>Documento: Nuevo Formato News sobre objeto 'DETAILS' para Pedidos</h1>
       <div class="version-info">
       </div>
     </header>
@@ -128,7 +128,7 @@
                 <tr><td><code>itemType</code></td><td>String</td><td>Define la estructura. Valores: <code>PRODUCT</code>, <code>COMBO</code>, <code>PROMOTION</code>, <code>COMPONENT</code>.</td></tr>
                 <tr><td><code>articleId</code></td><td>String</td><td>Identificador único del artículo en la plataforma de origen. Proporciona trazabilidad.</td></tr>
                 <tr><td><code>sku</code></td><td>String</td><td>El Identificador Único de Producto (SKU) interno.</td></tr>
-                <tr><td><code>articleDescription</code></td><td>String</td><td>El nombre descriptivo y legible del ítem.</td></tr>
+                <tr><td><code>description</code></td><td>String</td><td>El nombre descriptivo y legible del ítem.</td></tr>
                 <tr><td><code>price</code></td><td>Number</td><td>Precio del ítem. Para contenedores (COMBO/PROMOTION), es el precio total del paquete.</td></tr>
                 <tr><td><code>discount</code></td><td>Number</td><td>Monto total de descuento aplicado específicamente a este ítem. Por defecto es 0.</td></tr>
                 <tr><td><code>quantity</code></td><td>Number</td><td>La cantidad de unidades de este ítem.</td></tr>
@@ -149,7 +149,7 @@
   "itemType": "PRODUCT",
   "articleId": "176321948",
   "sku": "176321948",
-  "articleDescription": "Gaseosa Pepsi 354 ml",
+  "description": "Gaseosa Pepsi 354 ml",
   "price": 4000,
   "discount": 0,
   "quantity": 2,
@@ -161,7 +161,7 @@
   "itemType": "PRODUCT",
   "articleId": "143787167",
   "sku": "143787167",
-  "articleDescription": "Hamburguesa Smack",
+  "description": "Hamburguesa Smack",
   "price": 18500,
   "quantity": 1,
   "customizations": { /* ... ver sección 5 ... */ },
@@ -178,7 +178,7 @@
   "articleId": "143787155",
   "sku": "143787155",
   "price": 18000,
-  "articleDescription": "Combo 1 - Gulosa",
+  "description": "Combo 1 - Gulosa",
   "quantity": 1,
   "customizations": null,
   
@@ -187,7 +187,7 @@
     {
       "itemType": "PRODUCT",
       "sku": "143787155",
-      "articleDescription": "Gulosa",
+      "description": "Gulosa",
       "price": 0, // El precio está incluido en el padre
       "quantity": 1,
       "customizations": { /* ... puede tener sus propias personalizaciones ... */ }
@@ -195,7 +195,7 @@
     {
       "itemType": "PRODUCT",
       "sku": "185798491",
-      "articleDescription": "Gaseosa 7Up Lima 354 ml",
+      "description": "Gaseosa 7Up Lima 354 ml",
       "price": 0,
       "quantity": 1,
       "customizations": null
@@ -230,14 +230,14 @@
       {
         "itemType": "COMPONENT",
         "sku": "145742786",
-        "articleDescription": "Sin queso cheddar",
+        "description": "Sin queso cheddar",
         "price": 0,
         "quantity": 1
       },
       {
         "itemType": "COMPONENT",
         "sku": "145742787",
-        "articleDescription": "Sin ketchup",
+        "description": "Sin ketchup",
         "price": 0,
         "quantity": 1
       }
@@ -246,7 +246,7 @@
       {
         "itemType": "COMPONENT",
         "sku": "185804975",
-        "articleDescription": "Acompañamiento con cheddar",
+        "description": "Acompañamiento con cheddar",
         "price": 2500,
         "quantity": 1
       }
