@@ -1,0 +1,270 @@
+<!DOCTYPE
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Especificación: Formato JSON Estructurado para Pedidos v3.0</title>
+  
+  <!-- Estilos de la librería Prism.js para resaltado de sintaxis -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap');
+
+    :root {
+      --primary-color: #0d6efd;
+      --bg-color: #f8f9fa;
+      --text-color: #212529;
+      --text-muted-color: #6c757d;
+      --border-color: #dee2e6;
+      --code-bg: #22272e;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 2em;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+      padding: 2.5em;
+    }
+
+    .main-header {
+        text-align: center;
+        margin-bottom: 2em;
+        padding-bottom: 1em;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .main-header h1 { margin: 0 0 0.1em 0; font-size: 2.5em; }
+    .main-header .version-info { display: flex; justify-content: center; gap: 2em; color: var(--text-muted-color); }
+    
+    .toc { background-color: #e9ecef; padding: 1.5em; border-radius: 8px; margin-bottom: 3em; }
+    .toc h2 { margin-top: 0; font-size: 1.2em; }
+    .toc ul { list-style-type: none; padding-left: 0; margin: 0; }
+    .toc ul li a { text-decoration: none; color: var(--primary-color); font-weight: 500; }
+    .toc ul li a:hover { text-decoration: underline; }
+
+    section { margin-bottom: 3em; }
+    
+    h2 { font-size: 1.8em; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5em; margin-bottom: 1em; }
+    h3 { font-size: 1.4em; margin-top: 1.5em; margin-bottom: 1em; border-bottom: 1px dashed var(--border-color); padding-bottom: 0.5em; }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5em;
+    }
+    th, td {
+        padding: 0.8em 1em;
+        text-align: left;
+        border: 1px solid var(--border-color);
+        vertical-align: top;
+    }
+    th { background-color: var(--bg-color); font-weight: 500; }
+    td:first-child { font-weight: 500; }
+
+    pre {
+      margin: 1em 0;
+      padding: 1.5em;
+      background-color: var(--code-bg);
+      color: #adbac7;
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+      overflow-x: hidden;
+      border-radius: 6px;
+    }
+    
+    ul { padding-left: 20px; }
+    ul li { margin-bottom: 0.5em; }
+    code { font-family: 'Fira Code', monospace; background-color: #e9ecef; padding: 0.2em 0.4em; border-radius: 4px; }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <header class="main-header">
+      <h1>Documento de Especificación: Formato JSON Estructurado para Pedidos</h1>
+      <div class="version-info">
+      </div>
+    </header>
+
+
+    <section id="overview">
+      <h2>1. Objetivo General</h2>
+      <p>Este documento define el formato JSON de salida para pedidos procesados desde plataformas de delivery externas.</p>
+   
+    </section>
+
+    <section id="root-structure">
+      <h2>2. Estructura Raíz</h2>
+      <p>Nivel superior: <code>items</code>. El valor de esta clave es siempre un Array que contendrá la lista de ítems que componen el pedido.</p>
+      <pre><code class="language-json">{
+  "items": [
+    // ... Array de objetos Ítem ...
+  ]
+}</code></pre>
+    </section>
+    
+    <section id="item-object">
+        <h2>3. El Objeto <code>item</code></h2>
+        <p>El <code>item</code> esta determinado por el atributo <code>itemType</code>. A continuación se detallan todos los atributos posibles que un Ítem puede tener.</p>
+        <table>
+            <thead>
+                <tr><th>Atributo</th><th>Tipo</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>itemType</code></td><td>String</td><td>Define la estructura. Valores: <code>PRODUCT</code>, <code>COMBO</code>, <code>PROMOTION</code>, <code>COMPONENT</code>.</td></tr>
+                <tr><td><code>articleId</code></td><td>String</td><td>Identificador único del artículo en la plataforma de origen. Proporciona trazabilidad.</td></tr>
+                <tr><td><code>sku</code></td><td>String</td><td>El Identificador Único de Producto (SKU) interno.</td></tr>
+                <tr><td><code>articleDescription</code></td><td>String</td><td>El nombre descriptivo y legible del ítem.</td></tr>
+                <tr><td><code>price</code></td><td>Number</td><td>Precio del ítem. Para contenedores (COMBO/PROMOTION), es el precio total del paquete.</td></tr>
+                <tr><td><code>discount</code></td><td>Number</td><td>Monto total de descuento aplicado específicamente a este ítem. Por defecto es 0.</td></tr>
+                <tr><td><code>quantity</code></td><td>Number</td><td>La cantidad de unidades de este ítem.</td></tr>
+                <tr><td><code>customizations</code></td><td>Object | null</td><td>Encapsula todas las modificaciones de un <code>PRODUCT</code>. Siempre <code>null</code> para otros tipos.</td></tr>
+                <tr><td><code>includedItems</code></td><td>Array | null</td><td>Un array de Ítems contenidos dentro de un <code>COMBO</code> o <code>PROMOTION</code>. Siempre <code>null</code> para otros tipos.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="item-types">
+        <h2>4.El objeto <code>itemType</code></h2>
+
+        <h3>itemType: 'PRODUCT'</h3>
+        <p><strong>Propósito:</strong> Representa un artículo vendible, ya sea de forma independiente o como parte de un combo.</p>
+        <p><strong>Comportamiento:</strong> Es el único tipo de ítem que puede tener el atributo <code>customizations</code> poblado. Su atributo <code>includedItems</code> siempre es <code>null</code>.</p>
+        <h4>Ejemplo A: Producto simple</h4>
+        <pre><code class="language-json">{
+  "itemType": "PRODUCT",
+  "articleId": "176321948",
+  "sku": "176321948",
+  "articleDescription": "Gaseosa Pepsi 354 ml",
+  "price": 4000,
+  "discount": 0,
+  "quantity": 2,
+  "customizations": null,
+  "includedItems": null
+}</code></pre>
+        <h4>Ejemplo B: Producto con personalizaciones</h4>
+        <pre><code class="language-json">{
+  "itemType": "PRODUCT",
+  "articleId": "143787167",
+  "sku": "143787167",
+  "articleDescription": "Hamburguesa Smack",
+  "price": 18500,
+  "quantity": 1,
+  "customizations": { /* ... ver sección 5 ... */ },
+  "includedItems": null
+}</code></pre>
+
+        <h3>itemType: 'COMBO' y 'PROMOTION'</h3>
+        <p><strong>Propósito:</strong> Representan un contenedor o un agrupador comercial, no un producto físico. Su función es empaquetar varios <code>PRODUCT</code>.</p>
+        <p><strong>Comportamiento:</strong> El objeto principal describe el paquete y su precio total. Su atributo <code>customizations</code> siempre es <code>null</code>. Su atributo <code>includedItems</code> siempre es un array que contiene los <code>PRODUCT</code>s que lo componen.</p>
+        <h4>Ejemplo: Un COMBO completo</h4>
+        <pre><code class="language-json">{
+  // --- El Contenedor ---
+  "itemType": "COMBO",
+  "articleId": "143787155",
+  "sku": "143787155",
+  "price": 18000,
+  "articleDescription": "Combo 1 - Gulosa",
+  "quantity": 1,
+  "customizations": null,
+  
+  // --- Los Productos Incluidos ---
+  "includedItems": [
+    {
+      "itemType": "PRODUCT",
+      "sku": "143787155",
+      "articleDescription": "Gulosa",
+      "price": 0, // El precio está incluido en el padre
+      "quantity": 1,
+      "customizations": { /* ... puede tener sus propias personalizaciones ... */ }
+    },
+    {
+      "itemType": "PRODUCT",
+      "sku": "185798491",
+      "articleDescription": "Gaseosa 7Up Lima 354 ml",
+      "price": 0,
+      "quantity": 1,
+      "customizations": null
+    }
+  ]
+}</code></pre>
+    </section>
+
+    <section id="customizations">
+        <h2>5. El Objeto <code>customizations</code> y el <code>itemType: 'COMPONENT'</code></h2>
+        <p>Este objeto para describir cómo se modifica un <code>PRODUCT</code>.</p>
+        <ul>
+            <li><strong>Propósito del <code>customizations</code>:</strong> Contiene todas las modificaciones de un producto: ingredientes quitados, extras añadidos y notas de texto libre.</li>
+            <li><strong>Propósito del <code>COMPONENT</code>:</strong> Describir un modificador con las propiedades de un artículo (sku, price, etc.). Un <code>COMPONENT</code> no puede tener <code>customizations</code> ni <code>includedItems</code>.</li>
+        </ul>
+        
+        <h4>Estructura del objeto <code>customizations</code>:</h4>
+         <table>
+            <thead><tr><th>Atributo</th><th>Tipo</th><th>Descripción</th></tr></thead>
+            <tbody>
+                <tr><td><code>removedComponents</code></td><td>Array</td><td>Array de objetos con <code>itemType: 'COMPONENT'</code> que fueron quitados.</td></tr>
+                <tr><td><code>extras</code></td><td>Array</td><td>Array de objetos con <code>itemType: 'COMPONENT'</code> que fueron añadidos (pueden tener costo).</td></tr>
+                <tr><td><code>observation</code></td><td>String</td><td>Un campo de texto libre con notas para la cocina (ej. "Bien cocida").</td></tr>
+            </tbody>
+        </table>
+
+        <h4>Ejemplo completo de un objeto <code>customizations</code>:</h4>
+        <pre><code class="language-json">{
+  "customizations": {
+    "observation": "CON POCA SAL",
+    "removedComponents": [
+      {
+        "itemType": "COMPONENT",
+        "sku": "145742786",
+        "articleDescription": "Sin queso cheddar",
+        "price": 0,
+        "quantity": 1
+      },
+      {
+        "itemType": "COMPONENT",
+        "sku": "145742787",
+        "articleDescription": "Sin ketchup",
+        "price": 0,
+        "quantity": 1
+      }
+    ],
+    "extras": [
+      {
+        "itemType": "COMPONENT",
+        "sku": "185804975",
+        "articleDescription": "Acompañamiento con cheddar",
+        "price": 2500,
+        "quantity": 1
+      }
+    ]
+  }
+}</code></pre>
+    </section>
+  </div>
+
+  <!-- Scripts para funcionalidad (resaltado de sintaxis) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      Prism.highlightAll();
+    });
+  </script>
+
+</body>
+</html>
