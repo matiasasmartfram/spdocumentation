@@ -119,21 +119,21 @@
     
     <section id="item-object">
         <h2>3. El Objeto <code>item</code></h2>
-        <p>El <code>item</code> esta determinado por el atributo <code>itemType</code>. A continuación se detallan todos los atributos posibles que un Ítem puede tener.</p>
+        <p>El <code>item</code> - <code>itemType</code>. Atributos que un <code>item</code> puede tener.</p>
         <table>
             <thead>
                 <tr><th>Atributo</th><th>Tipo</th><th>Descripción</th></tr>
             </thead>
             <tbody>
-                <tr><td><code>itemType</code></td><td>String</td><td>Define la estructura. Valores: <code>PRODUCT</code>, <code>COMBO</code>, <code>PROMOTION</code>, <code>COMPONENT</code>.</td></tr>
-                <tr><td><code>articleId</code></td><td>String</td><td>Identificador único del artículo en la plataforma de origen. Proporciona trazabilidad.</td></tr>
+                <tr><td><code>itemType</code></td><td>String</td><td>Valores: <code>PRODUCT</code>, <code>COMBO</code>, <code>PROMOTION</code>, <code>COMPONENT</code>.</td></tr>
+                <tr><td><code>articleId</code></td><td>String</td><td>Identificador del artículo en la plataforma de origen.</td></tr>
                 <tr><td><code>sku</code></td><td>String</td><td>El Identificador Único de Producto (SKU) interno.</td></tr>
-                <tr><td><code>description</code></td><td>String</td><td>El nombre descriptivo y legible del ítem.</td></tr>
-                <tr><td><code>price</code></td><td>Number</td><td>Precio del ítem. Para contenedores (COMBO/PROMOTION), es el precio total del paquete.</td></tr>
-                <tr><td><code>discount</code></td><td>Number</td><td>Monto total de descuento aplicado específicamente a este ítem. Por defecto es 0.</td></tr>
-                <tr><td><code>quantity</code></td><td>Number</td><td>La cantidad de unidades de este ítem.</td></tr>
-                <tr><td><code>customizations</code></td><td>Object | null</td><td>Encapsula todas las modificaciones de un <code>PRODUCT</code>. Siempre <code>null</code> para otros tipos.</td></tr>
-                <tr><td><code>includedItems</code></td><td>Array | null</td><td>Un array de Ítems contenidos dentro de un <code>COMBO</code> o <code>PROMOTION</code>. Siempre <code>null</code> para otros tipos.</td></tr>
+                <tr><td><code>description</code></td><td>String</td><td>El nombre del ítem.</td></tr>
+                <tr><td><code>price</code></td><td>Number</td><td>Precio del ítem.</td></tr>
+                <tr><td><code>discount</code></td><td>Number</td><td>Descuento a este ítem. Por defecto es 0.</td></tr>
+                <tr><td><code>quantity</code></td><td>Number</td><td>La cantidad.</td></tr>
+                <tr><td><code>customizations</code></td><td>Object | null</td><td>Encapsula las modificaciones de un <code>PRODUCT</code>. Siempre <code>null</code> para otros tipos.</td></tr>
+                <tr><td><code>includedItems</code></td><td>Array | null</td><td>Un array de Ítems  dentro de un <code>COMBO</code> o <code>PROMOTION</code>. Siempre <code>null</code> para otros tipos.</td></tr>
             </tbody>
         </table>
     </section>
@@ -142,7 +142,7 @@
         <h2>4.El objeto <code>itemType</code></h2>
 
         <h3>itemType: 'PRODUCT'</h3>
-        <p><strong>Propósito:</strong> Representa un artículo vendible, ya sea de forma independiente o como parte de un combo.</p>
+        <p><strong>Propósito:</strong> Representa un artículo.</p>
         <p><strong>Comportamiento:</strong> Es el único tipo de ítem que puede tener el atributo <code>customizations</code> poblado. Su atributo <code>includedItems</code> siempre es <code>null</code>.</p>
         <h4>Ejemplo A: Producto simple</h4>
         <pre><code class="language-json">{
@@ -164,13 +164,13 @@
   "description": "Hamburguesa Smack",
   "price": 18500,
   "quantity": 1,
-  "customizations": { /* ... ver sección 5 ... */ },
+  "customizations": { /* ... ver punto 5 ... */ },
   "includedItems": null
 }</code></pre>
 
         <h3>itemType: 'COMBO' y 'PROMOTION'</h3>
-        <p><strong>Propósito:</strong> Representan un contenedor o un agrupador comercial, no un producto físico. Su función es empaquetar varios <code>PRODUCT</code>.</p>
-        <p><strong>Comportamiento:</strong> El objeto principal describe el paquete y su precio total. Su atributo <code>customizations</code> siempre es <code>null</code>. Su atributo <code>includedItems</code> siempre es un array que contiene los <code>PRODUCT</code>s que lo componen.</p>
+        <p><strong>Propósito:</strong> Representan un agrupador comercial. Empaqueta varios <code>PRODUCT</code>.</p>
+        <p><strong>Comportamiento:</strong> Su atributo <code>customizations</code> siempre es <code>null</code>. Su atributo <code>includedItems</code> siempre es un array que contiene los <code>PRODUCT</code>s que lo componen.</p>
         <h4>Ejemplo: Un COMBO completo</h4>
         <pre><code class="language-json">{
   // --- El Contenedor ---
@@ -208,7 +208,7 @@
         <h2>5. El Objeto <code>customizations</code> y el <code>itemType: 'COMPONENT'</code></h2>
         <p>Este objeto para describir cómo se modifica un <code>PRODUCT</code>.</p>
         <ul>
-            <li><strong>Propósito del <code>customizations</code>:</strong> Contiene todas las modificaciones de un producto: ingredientes quitados, extras añadidos y notas de texto libre.</li>
+            <li><strong>Propósito del <code>customizations</code>:</strong> Contiene todas las modificaciones de un producto: ingredientes quitados, extras y observaciones.</li>
             <li><strong>Propósito del <code>COMPONENT</code>:</strong> Describir un modificador con las propiedades de un artículo (sku, price, etc.). Un <code>COMPONENT</code> no puede tener <code>customizations</code> ni <code>includedItems</code>.</li>
         </ul>
         
