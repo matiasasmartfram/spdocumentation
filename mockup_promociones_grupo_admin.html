@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Grupo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            max-width: 90%;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .form-container {
+            padding: 24px;
+        }
+        
+        /* Estilos generales para todos los grupos de formulario */
+        .form-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            flex: 0 0 200px;
+            font-weight: 500;
+            color: #555;
+            padding-top: 10px;
+        }
+
+        .input-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container input,
+        .input-container select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .input-container select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M7.41 4.59L6 6l-1.41-1.41L4 6l2 2 2-2z"/></svg>') no-repeat right 12px center;
+            background-size: 12px;
+            padding-right: 30px;
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 12px;
+            color: #555;
+            pointer-events: none;
+        }
+
+        .currency-input input {
+            padding-left: 24px;
+        }
+
+        .items-flex-container {
+            flex: 1;
+            display: flex;
+            gap: 16px;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .search-container input {
+            flex: 1;
+            border: none;
+            padding: 8px 12px;
+            font-size: 1rem;
+        }
+
+        .search-container input:focus {
+            outline: none;
+        }
+
+        .search-button {
+            background-color: transparent;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .item-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-row input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .delete-button {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px 24px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+            gap: 8px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .cancel-button {
+            background-color: #e0e0e0;
+            color: #555;
+        }
+
+        .cancel-button:hover {
+            background-color: #d0d0d0;
+        }
+
+        .add-button {
+            background-color: #1a73e8;
+            color: #fff;
+        }
+
+        .add-button:hover {
+            background-color: #1562c1;
+        }
+
+        /* Estilos específicos para el switch */
+        .form-switch-group {
+            display: flex;
+            align-items: center; /* Alinea verticalmente los elementos */
+            justify-content: space-between; /* Mueve el switch a la derecha */
+            margin-bottom: 24px;
+            width: 100%;
+        }
+        
+        .switch-label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #8A2BE2; /* Color lila */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+
+        .switch-container label[for="obligatoria"] {
+            font-weight: normal;
+            margin: 0;
+            padding: 0;
+            flex: 0;
+            color: #333;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .form-group, .form-switch-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .form-group label, .switch-label {
+                flex: auto;
+                padding-bottom: 8px;
+            }
+            .items-flex-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .form-switch-group {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Crear Grupo</h1>
+    </div>
+    <div class="form-container">
+        <div class="form-group">
+            <label for="group-name">Nombre de Grupo</label>
+            <div class="input-container">
+                <input id="group-name" value="Hamburguesas">
+            </div>
+        </div>
+
+        <div class="form-switch-group">
+            <span class="switch-label">Condición de Activación</span>
+            <div class="switch-container">
+                <label class="switch">
+                    <input type="checkbox" id="obligatoria" checked>
+                    <span class="slider"></span>
+                </label>
+                <label for="obligatoria">Obligatoria</label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="promo-type">Tipo de Promoción</label>
+            <div class="input-container">
+                <select id="promo-type">
+                    <option value="precio-fijo">Precio Fijo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="group-quantity">Articulos a Seleccionar</label>
+            <div class="input-container">
+                <input type="number" id="group-quantity" value="1">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Cantidad</label>
+            <div class="input-container">
+                <input type="number" id="quantity" value="1">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="value">Valor</label>
+            <div class="input-container currency-input">
+                <span class="currency-symbol">$</span>
+                <input type="text" id="value" value="8.000,00">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="items">Artículos / Grupos</label>
+            <div class="items-flex-container">
+                <div class="search-container">
+                    <input type="text" id="search-option" placeholder="Buscar opción gulosa">
+                    <button id="add-item-button" class="search-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.098zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="item-list" class="item-list">
+                    <div class="item-row">
+                        <input type="text" value="Bacon Cheese" readonly>
+                        <button class="delete-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </button>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <button class="cancel-button">CANCELAR</button>
+        <button class="add-button">AGREGAR</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const addItemButton = document.getElementById('add-item-button');
+        const searchInput = document.getElementById('search-option');
+        const itemList = document.getElementById('item-list');
+
+        const addItem = () => {
+            const newItemText = searchInput.value.trim();
+            if (newItemText) {
+                const newItemRow = document.createElement('div');
+                newItemRow.className = 'item-row';
+                newItemRow.innerHTML = `
+                    <input type="text" value="${newItemText}" readonly>
+                    <button class="delete-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                        </svg>
+                    </button>
+                `;
+                itemList.appendChild(newItemRow);
+                searchInput.value = '';
+            }
+        };
+
+        addItemButton.addEventListener('click', addItem);
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addItem();
+            }
+        });
+
+        itemList.addEventListener('click', (e) => {
+            if (e.target.closest('.delete-button')) {
+                const itemRow = e.target.closest('.item-row');
+                if (itemRow) {
+                    itemRow.remove();
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
