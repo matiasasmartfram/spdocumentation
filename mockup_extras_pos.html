@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalizar Bacon Cheese</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6e59ee;
+            --background-color: #f0f2f5;
+            --container-bg-color: #fff;
+            --border-color: #e5e7eb;
+            --text-color: #4b5563;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .modal-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--container-bg-color);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .item-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .item-title {
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .delete-icon {
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+        
+        .option-item.extra {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option-item label {
+            flex-grow: 1;
+        }
+
+        /* Checkbox style */
+        .option-item.componente .option-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            margin-right: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            flex-shrink: 0;
+        }
+
+        .option-item.componente .option-checkbox:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .option-item.componente .option-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 2px;
+        }
+
+        .option-item.componente .option-label {
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        /* Quantity selector style */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        
+        .quantity-selector button {
+            background-color: #f7f7f7;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            font-size: 1rem;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quantity-selector .quantity-display {
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            text-align: center;
+            min-width: 25px;
+        }
+
+        .quantity-selector button:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .extra-price {
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .observation-area {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            box-sizing: border-box;
+            margin-top: 1rem;
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.9rem;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel {
+            background-color: #e9ecef;
+            color: #6c757d;
+            border: none;
+        }
+        
+        .btn-save {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title">Bacon Cheese</h2>
+            <button class="modal-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="item-card">
+                <div class="item-header">
+                    <h3 class="item-title">Bacon Cheese #1</h3>
+                    <i class="fas fa-trash-alt delete-icon"></i>
+                </div>
+                
+                <h4 class="section-title">Componentes</h4>
+                <div class="option-item componente">
+                    <input type="checkbox" id="sin-bacon" class="option-checkbox">
+                    <label for="sin-bacon" class="option-label">SIN Bacon</label>
+                </div>
+                <div class="option-item componente">
+                    <input type="checkbox" id="sin-queso-cheddar" class="option-checkbox">
+                    <label for="sin-queso-cheddar" class="option-label">SIN Queso Cheddar</label>
+                </div>
+                
+                <h4 class="section-title" style="margin-top: 1.5rem;">Extras</h4>
+                <div class="option-item extra">
+                    <div class="quantity-selector">
+                        <button class="minus">-</button>
+                        <span class="quantity-display">0</span>
+                        <button class="plus">+</button>
+                    </div>
+                    <label class="option-label">Cebolla Caramelizada</label>
+                    <span class="extra-price">$ 0,00</span>
+                </div>
+                <div class="option-item extra">
+                    <div class="quantity-selector">
+                        <button class="minus">-</button>
+                        <span class="quantity-display">0</span>
+                        <button class="plus">+</button>
+                    </div>
+                    <label class="option-label">Salsa Barbacoa</label>
+                    <span class="extra-price">$ 0,00</span>
+                </div>
+                <div class="option-item extra">
+                    <div class="quantity-selector">
+                        <button class="minus">-</button>
+                        <span class="quantity-display">0</span>
+                        <button class="plus">+</button>
+                    </div>
+                    <label class="option-label">Doble Queso</label>
+                    <span class="extra-price">$ 0,00</span>
+                </div>
+                
+                <h4 class="section-title" style="margin-top: 1.5rem;">Observaciones</h4>
+                <textarea class="observation-area" placeholder="Añadir observación para esta unidad..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-cancel">CANCELAR</button>
+            <button class="btn btn-save">GUARDAR</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.quantity-selector').forEach(selector => {
+                const minusBtn = selector.querySelector('.minus');
+                const plusBtn = selector.querySelector('.plus');
+                const quantityDisplay = selector.querySelector('.quantity-display');
+
+                minusBtn.addEventListener('click', () => {
+                    let currentQuantity = parseInt(quantityDisplay.textContent);
+                    if (currentQuantity > 0) {
+                        quantityDisplay.textContent = currentQuantity - 1;
+                    }
+                });
+
+                plusBtn.addEventListener('click', () => {
+                    let currentQuantity = parseInt(quantityDisplay.textContent);
+                    quantityDisplay.textContent = currentQuantity + 1;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
