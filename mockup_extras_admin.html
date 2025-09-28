@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bacon Cheese - Composición</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6e59ee;
+            --secondary-color: #f0f2f5;
+            --text-color: #4b5563;
+            --border-color: #e5e7eb;
+            --input-bg-color: #fff;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            color: var(--text-color);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        
+        .header-subtitle {
+            font-size: 0.875rem;
+            color: #888;
+        }
+        
+        .tabs-container {
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            background-color: #f9fafb;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .content-container {
+            padding: 2rem;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        .content-card {
+            background: var(--input-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .row-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-label {
+            position: absolute;
+            top: -0.75rem;
+            left: 0.75rem;
+            background: white;
+            padding: 0 0.25rem;
+            font-size: 0.75rem;
+            color: #666;
+            pointer-events: none;
+            transition: top 0.3s, font-size 0.3s;
+        }
+        
+        .input-with-icon {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 0.875rem;
+        }
+
+        .input-with-icon input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 0;
+            background: none;
+            font-size: 0.875rem;
+        }
+
+        .input-with-icon .fa-search {
+            color: #999;
+            margin-right: 0.5rem;
+        }
+        
+        .input-with-icon .fa-times-circle {
+            color: #ccc;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        .quantity-input {
+            width: 80px;
+        }
+
+        .quantity-input input {
+            text-align: center;
+        }
+
+        .action-icon {
+            color: #999;
+            cursor: pointer;
+            font-size: 1.25rem;
+            margin-left: 0.5rem;
+        }
+
+        .add-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        
+        .add-button .fa-plus-circle {
+            font-size: 1rem;
+        }
+        
+        .item-list {
+            margin-top: 1rem;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-info strong {
+            display: block;
+        }
+
+        .item-row select, .item-row input {
+            font-size: 0.875rem;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .switch-container {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+        
+        .switch-container input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        .footer {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+
+        .btn-cancel {
+            background: #e9ecef;
+            color: var(--text-color);
+            border: none;
+        }
+
+        .btn-save {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+        }
+        
+        .extra-input-group {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="header">
+            <h1 class="header-title">
+                <a href="#"><i class="fas fa-arrow-left"></i> Volver a Items</a>
+                Bacon Cheese
+            </h1>
+            <p class="header-subtitle">Agregue o modifique un Item al catalogo.</p>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tab" data-tab="general">General</div>
+            <div class="tab active" data-tab="composition">Composición</div>
+            <div class="tab" data-tab="multimedia">Multimedia</div>
+            <div class="tab" data-tab="sku">SKU</div>
+            <div class="tab" data-tab="price-venta">Listas de precios de venta</div>
+            <div class="tab" data-tab="price-costo">Listas de precios de costo</div>
+        </div>
+
+        <div class="content-container">
+            <div class="tab-content active" id="composition">
+                <div class="content-card">
+                    <h2 class="content-title">Componentes Genéricos</h2>
+                    <div class="item-list" id="generic-items-list">
+                    </div>
+                    <div class="row-container">
+                        <div class="input-group">
+                            <label class="input-label">Genérico</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Ingrese un código o descripción">
+                                <i class="fas fa-times-circle" style="display:none;"></i>
+                            </div>
+                        </div>
+                        <div class="input-group quantity-input">
+                            <label class="input-label">Cantidad</label>
+                            <input type="text" value="0.000">
+                        </div>
+                        <i class="fas fa-trash-alt action-icon" style="color: #ccc;"></i>
+                    </div>
+                    <div class="add-button" id="add-generic-btn">
+                        <i class="fas fa-plus-circle"></i> AGREGAR GENÉRICO
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2 class="content-title">Componentes Items</h2>
+                    <div class="item-list" id="component-items-list">
+                    </div>
+                    <div class="row-container">
+                        <div class="input-group">
+                            <label class="input-label">Item</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Ingrese un código o descripción">
+                                <i class="fas fa-times-circle" style="display:none;"></i>
+                            </div>
+                        </div>
+                        <div class="input-group quantity-input">
+                            <label class="input-label">Cantidad</label>
+                            <input type="text" value="0.000">
+                        </div>
+                        <div class="toggle-switch">
+                            <label>Opcional</label>
+                            <label class="switch-container">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <i class="fas fa-trash-alt action-icon" style="color: #ccc;"></i>
+                    </div>
+                    <div class="add-button" id="add-item-btn">
+                        <i class="fas fa-plus-circle"></i> AGREGAR ITEM
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2 class="content-title">Componentes Extras</h2>
+                    <div class="item-list" id="extra-items-list">
+                        <div class="row-container">
+                            <div class="input-group extra-input-group">
+                                <label class="input-label">Extra</label>
+                                <div class="input-with-icon">
+                                    <input type="text" value="Extra Medallon de Carne" readonly>
+                                </div>
+                            </div>
+                            <i class="fas fa-trash-alt action-icon"></i>
+                        </div>
+                        
+                        <div class="row-container">
+                            <div class="input-group extra-input-group">
+                                <label class="input-label">Extra</label>
+                                <div class="input-with-icon">
+                                    <input type="text" value="Extra Bacon" readonly>
+                                </div>
+                            </div>
+                          
+                            <i class="fas fa-trash-alt action-icon"></i>
+                        </div>
+                       <div class="add-button" id="add-item-btn">
+                        <i class="fas fa-plus-circle"></i> AGREGAR EXTRA
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="general">
+            </div>
+            <div class="tab-content" id="multimedia">
+            </div>
+            <div class="tab-content" id="sku">
+            </div>
+            <div class="tab-content" id="price-venta">
+            </div>
+            <div class="tab-content" id="price-costo">
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn btn-cancel">CANCELAR</button>
+            <button class="btn btn-save">GUARDAR</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const targetTab = tab.getAttribute('data-tab');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+
+            // Data inicial para los componentes
+            const initialGeneric = [];
+            const initialItems = [
+                { id: 1, name: "Medallon de Carne", qty: "1.000", optional: true },
+                { id: 7, name: "Bacon", qty: "1.000", optional: true },
+                { id: 3, name: "Queso Cheddar", qty: "1.000", optional: true },
+                { id: 10, name: "Pan de Hamburguesa", qty: "1.000", optional: true }
+            ];
+
+            const genericList = document.getElementById('generic-items-list');
+            const componentList = document.getElementById('component-items-list');
+            const addGenericBtn = document.getElementById('add-generic-btn');
+            const addItemBtn = document.getElementById('add-item-btn');
+
+            function renderItems(items, container, isItemComponent = false) {
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const row = document.createElement('div');
+                    row.classList.add('row-container');
+                    
+                    const inputGroupName = document.createElement('div');
+                    inputGroupName.classList.add('input-group');
+                    inputGroupName.innerHTML = `
+                        <label class="input-label">${isItemComponent ? 'Item' : 'Genérico'}</label>
+                        <div class="input-with-icon">
+                            <input type="text" value="${item.id} | ${item.name}" readonly>
+                            <i class="fas fa-times-circle" style="display:inline;"></i>
+                        </div>
+                    `;
+                    
+                    const inputGroupQty = document.createElement('div');
+                    inputGroupQty.classList.add('input-group', 'quantity-input');
+                    inputGroupQty.innerHTML = `
+                        <label class="input-label">Cantidad</label>
+                        <input type="text" value="${item.qty}">
+                    `;
+
+                    row.appendChild(inputGroupName);
+                    row.appendChild(inputGroupQty);
+
+                    if (isItemComponent) {
+                        const toggleSwitch = document.createElement('div');
+                        toggleSwitch.classList.add('toggle-switch');
+                        toggleSwitch.innerHTML = `
+                            <label>Opcional</label>
+                            <label class="switch-container">
+                                <input type="checkbox" ${item.optional ? '' : 'checked'}>
+                                <span class="slider"></span>
+                            </label>
+                        `;
+                        row.appendChild(toggleSwitch);
+                    }
+
+                    const trashIcon = document.createElement('i');
+                    trashIcon.classList.add('fas', 'fa-trash-alt', 'action-icon');
+                    trashIcon.addEventListener('click', () => {
+                        row.remove();
+                    });
+                    row.appendChild(trashIcon);
+
+                    container.appendChild(row);
+                });
+            }
+
+            // Renderizar los datos iniciales
+            renderItems(initialGeneric, genericList);
+            renderItems(initialItems, componentList, true);
+
+            // Agregar funcionalidad a los botones "Agregar"
+            addGenericBtn.addEventListener('click', () => {
+                const newGenericItem = { id: '', name: '', qty: "0.000" };
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = `
+                    <div class="row-container">
+                        <div class="input-group">
+                            <label class="input-label">Genérico</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Ingrese un código o descripción">
+                                <i class="fas fa-times-circle" style="display:none;"></i>
+                            </div>
+                        </div>
+                        <div class="input-group quantity-input">
+                            <label class="input-label">Cantidad</label>
+                            <input type="text" value="0.000">
+                        </div>
+                        <i class="fas fa-trash-alt action-icon"></i>
+                    </div>
+                `;
+                const newRow = tempDiv.firstElementChild;
+                newRow.querySelector('.fa-trash-alt').addEventListener('click', () => {
+                    newRow.remove();
+                });
+                genericList.appendChild(newRow);
+            });
+
+            addItemBtn.addEventListener('click', () => {
+                const newItem = { id: '', name: '', qty: "0.000", optional: true };
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = `
+                    <div class="row-container">
+                        <div class="input-group">
+                            <label class="input-label">Item</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Ingrese un código o descripción">
+                                <i class="fas fa-times-circle" style="display:none;"></i>
+                            </div>
+                        </div>
+                        <div class="input-group quantity-input">
+                            <label class="input-label">Cantidad</label>
+                            <input type="text" value="0.000">
+                        </div>
+                        <div class="toggle-switch">
+                            <label>Opcional</label>
+                            <label class="switch-container">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <i class="fas fa-trash-alt action-icon"></i>
+                    </div>
+                `;
+                const newRow = tempDiv.firstElementChild;
+                newRow.querySelector('.fa-trash-alt').addEventListener('click', () => {
+                    newRow.remove();
+                });
+                componentList.appendChild(newRow);
+            });
+            
+            // Lógica para los nuevos campos de "Componentes Extras"
+            const extraItemsList = document.getElementById('extra-items-list');
+            
+            // Función para manejar la eliminación de los campos de extras
+            extraItemsList.querySelectorAll('.action-icon').forEach(icon => {
+                icon.addEventListener('click', (event) => {
+                    event.target.closest('.row-container').remove();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
