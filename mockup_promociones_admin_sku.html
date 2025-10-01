@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos Promoción y SKU</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos generales y variables */
+        :root {
+            --sidebar-width: 0px; /* Se elimina el sidebar */
+            --header-height: 64px;
+            --primary-color: #0f0035;
+            --secondary-color: #6e59ee;
+            --text-primary: #424242;
+            --text-secondary: rgba(0, 0, 0, 0.54);
+            --text-disabled: rgba(0, 0, 0, 0.38);
+            --bg-body: #f5f5f5;
+            --bg-card: #ffffff;
+            --border-color: #bdbdbd;
+            --divider-color: #e0e0e0;
+            --shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+            --border-radius: 3px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Se mantiene el área de contenido principal para la disposición */
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-body);
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: space-between; /* Añadido para mejor layout */
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0 20px;
+            height: var(--header-height);
+        }
+        
+        .main-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.8rem;
+        }
+
+        .user-profile .user-name {
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            background-color: #616161;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Page Body */
+        .page-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        /* --- Tab Styles --- */
+        .tabs-header {
+            display: flex;
+            border-bottom: 2px solid var(--divider-color);
+            margin-bottom: 0px; /* Ajuste para que el contenido de la pestaña se pegue al borde */
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 5px;
+            border-radius: 4px 4px 0 0;
+            text-transform: uppercase;
+        }
+
+        .tab-button:hover:not(.active) {
+            background-color: #ededed;
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            background-color: var(--bg-card); 
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05); /* Sombra ligera en la pestaña activa */
+        }
+
+        .tab-content {
+            flex-grow: 1;
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow-y: auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Formulario (Datos Promoción) - Mantiene tu estilo original */
+        .form-container {
+             /* Eliminado padding, border-radius y box-shadow de aquí para moverlo a .tab-content */
+            padding: 0;
+            box-shadow: none;
+            border-radius: 0;
+            background-color: transparent;
+            flex-grow: 1;
+        }
+        
+        .form-row {
+            display: flex;
+            border-bottom: 1px solid var(--divider-color);
+            padding: 20px 0;
+        }
+        
+        .form-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .form-label-col {
+            flex: 0 0 25%;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            padding-right: 20px;
+        }
+
+        .form-input-col {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        /* ... (Mantener el resto de estilos de formulario) ... */
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 1px var(--secondary-color);
+        }
+        
+        .form-group-inline {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        
+        .input-with-icon {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            right: 15px;
+            color: var(--text-disabled);
+        }
+
+        .days-of-week {
+            display: flex;
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .btn-day {
+            padding: 8px 15px;
+            border: 1px solid var(--divider-color);
+            border-radius: 20px;
+            background-color: transparent;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: capitalize;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .btn-day.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Estilos para la nueva sección SKU ASOCIADOS (Reemplaza los estilos de tabla) --- */
+        .sku-related-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--divider-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sku-related-header {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .sku-relation-form {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .sku-relation-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .sku-relation-group label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .sku-relation-group .form-control {
+            padding-right: 35px; /* Espacio para el icono del select/input */
+        }
+        
+        .sku-relation-group .input-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(2px); /* Ajuste visual */
+            color: var(--text-disabled);
+            pointer-events: none; /* Asegura que el icono no interfiera con el select */
+        }
+        
+        .sku-relation-group .input-icon.caret {
+            transform: translateY(-50%); 
+            pointer-events: none;
+            right: 10px;
+        }
+
+        .sku-relation-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .btn-delete-relation {
+            background-color: transparent;
+            border: none;
+            color: var(--text-disabled);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 10px;
+            align-self: center;
+            margin-bottom: 0;
+        }
+        
+        .btn-add-sku-relation {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s;
+        }
+
+        /* Footer */
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px 0 0 0;
+            gap: 10px;
+            border-top: 1px solid var(--divider-color);
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-cancel {
+            background-color: #f0f0f0;
+            color: var(--text-primary);
+        }
+
+        .btn-save {
+            background-color: var(--secondary-color);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Utilidades */
+        .m-t-20 { margin-top: 20px; }
+
+
+        @media (max-width: 768px) {
+            .page-body {
+                padding: 10px;
+            }
+            .form-row {
+                flex-direction: column;
+                padding: 10px 0;
+            }
+            .form-label-col {
+                flex: none;
+                padding-right: 0;
+                margin-bottom: 5px;
+            }
+            .form-input-col {
+                width: 100%;
+            }
+            .form-group-inline {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .days-of-week {
+                flex-wrap: wrap;
+            }
+            
+            /* Responsive para la nueva sección SKU */
+            .sku-relation-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-delete-relation {
+                margin-top: 10px;
+                align-self: flex-start;
+            }
+            .btn-add-sku-relation {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        
+        <main class="content-area">
+            <header class="main-header">
+                <div class="main-title">Configuración de Promoción</div>
+                <div class="user-profile">
+                    <span class="user-name">Usuario Admin</span>
+                    <div class="user-avatar">A</div>
+                </div>
+            </header>
+
+            <div class="page-body">
+                <h1 class="page-title page-title-main">DATOS PROMOCIÓN</h1>
+
+                <!-- Solapas de Navegación -->
+                <div class="tabs-header">
+                    <button class="tab-button active" data-tab="datos-promocion">DATOS PROMOCION</button>
+                    <button class="tab-button" data-tab="sku-asociados">SKU</button>
+                </div>
+
+                <!-- Contenido de Solapa 1: DATOS PROMOCION -->
+                <div id="datos-promocion" class="tab-content">
+                    <div class="form-container">
+                        
+                        <!-- Contenido original del formulario -->
+                        <div class="form-row">
+                            <div class="form-label-col">Acciones Comerciales</div>
+                            <div class="form-input-col">
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input type="checkbox" id="tipo-promocion">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="tipo-promocion">Por defecto en false - true->PROMO - false->COMBO</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-label-col">Generales</div>
+                            <div class="form-input-col">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" id="nombre" class="form-control" placeholder="Nombre es requerido">
+                                </div>
+                                <div class="form-group">
+                                    <label for="descripcion">Descripción</label>
+                                    <textarea id="descripcion" class="form-control" placeholder="Descripción es requerido"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-label-col">Condición de Activación</div>
+                            <div class="form-input-col">
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input type="checkbox" id="obligatoria" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="obligatoria">Obligatoria</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-label-col">Imagen</div>
+                            <div class="form-input-col">
+                                <div class="form-group">
+                                    <label>Recursos Multimedia:</label>
+                                    <p class="form-note">Puedes subir un archivo de imagen de <strong>hasta 5MB</strong>. (Formatos admitidos: .jpg, .jpeg, .png)</p>
+                                    <button class="btn btn-select-image"><i class="fas fa-upload"></i> SELECCIONAR IMAGEN</button>
+                                    <p class="file-info"><i class="fas fa-info-circle"></i> Seleccione un archivo. Formatos admitidos: .jpg, .jpeg, .png</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-label-col">Cantidad Máxima por Ticket</div>
+                            <div class="form-input-col">
+                                <div class="form-group">
+                                    <input type="number" class="form-control" placeholder="0">
+                                    <p class="form-note">Si se ingresa cantidad igual a 0 no tendrá límites.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-label-col">Vigencia</div>
+                            <div class="form-input-col">
+                                <div class="form-group-inline">
+                                    <div class="date-input-group">
+                                        <label for="desde-vigencia">Desde</label>
+                                        <div class="input-with-icon">
+                                            <input type="date" id="desde-vigencia" class="form-control" value="2025-09-04">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                    </div>
+                                    <div class="date-input-group">
+                                        <label for="hasta-vigencia">Hasta</label>
+                                        <div class="input-with-icon">
+                                            <input type="date" id="hasta-vigencia" class="form-control" value="2025-09-05">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-label-col">Días y Horarios</div>
+                            <div class="form-input-col">
+                                <div class="switch-container">
+                                    <label class="switch">
+                                        <input type="checkbox" id="todo-el-dia" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="todo-el-dia">Todo el día</label>
+                                </div>
+                                <div class="form-group-inline m-t-20">
+                                    <div class="time-input-group">
+                                        <label for="desde-horario">Desde</label>
+                                        <div class="input-with-icon">
+                                            <input type="time" id="desde-horario" class="form-control" value="00:00">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                    </div>
+                                    <div class="time-input-group">
+                                        <label for="hasta-horario">Hasta</label>
+                                        <div class="input-with-icon">
+                                            <input type="time" id="hasta-horario" class="form-control" value="00:00">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="days-of-week">
+                                    <button class="btn-day active">Lunes</button>
+                                    <button class="btn-day active">Martes</button>
+                                    <button class="btn-day active">Miércoles</button>
+                                    <button class="btn-day active">Jueves</button>
+                                    <button class="btn-day active">Viernes</button>
+                                    <button class="btn-day active">Sábado</button>
+                                    <button class="btn-day active">Domingo</button>
+                                    <button class="btn-day">Feriado</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-label-col">Ámbito de Aplicación</div>
+                            <div class="form-input-col">
+                                <div class="form-group-inline">
+                                    <div class="input-with-icon input-search">
+                                        <input type="text" class="form-control" placeholder="Escriba el país*">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div class="input-with-icon">
+                                        <select class="form-control">
+                                            <option>Tipo de filtro</option>
+                                            <option>País</option>
+                                        </select>
+                                        <i class="fas fa-caret-down"></i>
+                                    </div>
+                                    <button class="btn btn-add">AGREGAR</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="border-bottom: none;">
+                            <div class="form-label-col">Grupos</div>
+                            <div class="form-input-col">
+                                    <div class="combos-section" style="justify-content: flex-start;">
+                                        <button class="btn btn-add-combo">AGREGAR GRUPO</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenido de Solapa 2: SKU ASOCIADOS (Nueva Estructura de Relaciones) -->
+                <div id="sku-asociados" class="tab-content hidden">
+                    
+                    <div class="sku-related-container">
+                        <div class="sku-related-header">SKUS RELACIONADOS</div>
+
+                        <!-- Fila de entrada de relación SKU (como se ve en la imagen) -->
+                        <div class="sku-relation-form">
+                            
+                            <!-- Columna Tipo (Select) -->
+                            <div class="sku-relation-group" style="flex: 2;">
+                                <label for="sku-type-select">Tipo</label>
+                                <select id="sku-type-select" class="form-control">
+                                    <option value="">Seleccione..</option>
+                                    <option value="smart_pedidos">Smart_Pedidos</option>
+                                    <option value="smart_cloud">Smart_Cloud</option>
+                                    <option value="smart_loyalty">Smart_Loyalty</option>
+                                </select>
+                                <span class="input-icon caret"><i class="fas fa-caret-down"></i></span>
+                                <span class="sku-relation-info">Tipo de sku.</span>
+                            </div>
+
+                            <!-- Columna Código (Input/Text Area) -->
+                            <div class="sku-relation-group" style="flex: 3;">
+                                <label for="sku-code-input">Código</label>
+                                <!-- Nota: Usamos input type text en lugar de textarea ya que la imagen solo muestra una línea -->
+                                <input type="text" id="sku-code-input" class="form-control" placeholder="Código sku relacionado al item.">
+                                <span class="sku-relation-info">Código sku relacionado al item.</span>
+                            </div>
+                            
+                            <!-- Botón de eliminación (Para simular una fila ya existente) -->
+                            <button class="btn-delete-relation" title="Eliminar relación">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Contenedor para agregar más filas de SKUs asociados (simulación de lista) -->
+                        <div id="sku-list-container">
+                            <!-- Aquí se agregarían dinámicamente más filas .sku-relation-form -->
+                        </div>
+                        
+                        <!-- Botón AGREGAR SKU -->
+                        <div style="text-align: right; margin-top: 20px;">
+                             <button class="btn-add-sku-relation">
+                                <i class="fas fa-plus"></i> AGREGAR SKU
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Los botones de Guardar/Cancelar están fuera de las pestañas pero visibles -->
+                <div class="footer-buttons">
+                    <button class="btn btn-cancel">CANCELAR</button>
+                    <button class="btn btn-save">GUARDAR</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Función para cambiar de solapa
+        function switchTab(tabId) {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const pageTitle = document.querySelector('.page-title-main');
+
+            // 1. Quitar el estado activo a todos los botones y ocultar el contenido
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // 2. Activar el botón y contenido seleccionados
+            const activeTabButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+            const activeTabContent = document.getElementById(tabId);
+            
+            if (activeTabButton && activeTabContent) {
+                activeTabButton.classList.add('active');
+                activeTabContent.classList.remove('hidden');
+                
+                // 3. Opcional: Actualizar el título principal de la página
+                pageTitle.textContent = activeTabButton.textContent;
+            }
+        }
+
+        // Configuración inicial al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            // Asignar listeners a los botones de solapa
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Establecer la solapa predeterminada (DATOS PROMOCION)
+            switchTab('datos-promocion');
+
+            // --- Funcionalidad Adicional para UX ---
+
+            // 1. Alternar días de la semana
+            document.querySelectorAll('.btn-day').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    button.classList.toggle('active');
+                });
+            });
+
+            // 2. Deshabilitar/Habilitar inputs de hora con el switch "Todo el día"
+            const todoElDiaSwitch = document.getElementById('todo-el-dia');
+            const timeInputs = document.querySelectorAll('.time-input-group input');
+            
+            const toggleTimeInputs = (isDisabled) => {
+                 timeInputs.forEach(input => {
+                    input.disabled = isDisabled;
+                    // Se puede añadir una clase para cambiar el estilo si están deshabilitados
+                    input.style.backgroundColor = isDisabled ? '#eeeeee' : 'white';
+                });
+            };
+
+            if (todoElDiaSwitch) {
+                toggleTimeInputs(todoElDiaSwitch.checked);
+
+                todoElDiaSwitch.addEventListener('change', (e) => {
+                    toggleTimeInputs(e.target.checked);
+                });
+            }
+            
+            // 3. Simulación de la funcionalidad de "AGREGAR SKU" (solo para demostrar la estructura)
+            const addSkuButton = document.querySelector('.btn-add-sku-relation');
+            const skuListContainer = document.getElementById('sku-list-container');
+            
+            const createSkuRelationRow = () => {
+                const newRow = document.createElement('div');
+                newRow.classList.add('sku-relation-form');
+                
+                // Usamos una plantilla simple para la nueva fila
+                newRow.innerHTML = `
+                    <div class="sku-relation-group" style="flex: 2;">
+                        <label>Tipo</label>
+                        <select class="form-control">
+                            <option value="smart_pedidos">Smart_Pedidos</option>
+                            <option value="smart_cloud">Smart_Cloud</option>
+                            <option value="smart_loyalty">Smart_Loyalty</option>
+                        </select>
+                        <span class="input-icon caret"><i class="fas fa-caret-down"></i></span>
+                        <span class="sku-relation-info">Tipo de sku.</span>
+                    </div>
+
+                    <div class="sku-relation-group" style="flex: 3;">
+                        <label>Código</label>
+                        <input type="text" class="form-control" placeholder="Código sku relacionado al item." value="SKU-AGREGADO-${Math.floor(Math.random() * 1000)}">
+                        <span class="sku-relation-info">Código sku relacionado al item.</span>
+                    </div>
+                    
+                    <button class="btn-delete-relation" title="Eliminar relación">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+                
+                // Añadir listener de eliminación
+                const deleteButton = newRow.querySelector('.btn-delete-relation');
+                deleteButton.addEventListener('click', () => {
+                    newRow.remove();
+                });
+                
+                return newRow;
+            };
+
+            if (addSkuButton) {
+                addSkuButton.addEventListener('click', () => {
+                    const newRow = createSkuRelationRow();
+                    skuListContainer.appendChild(newRow);
+                });
+            }
+            
+            // Añadir funcionalidad de eliminación a la fila de ejemplo inicial (si existe)
+            const initialDeleteButton = document.querySelector('.sku-relation-form .btn-delete-relation');
+            const initialRelationForm = document.querySelector('.sku-relation-form');
+            if(initialDeleteButton) {
+                 initialDeleteButton.addEventListener('click', () => {
+                    // Mover la fila inicial al contenedor de lista o simplemente dejarla como ejemplo
+                    // Para este ejemplo, solo simularemos que se limpia el contenido si se elimina la primera fila.
+                    // En una aplicación real, esta fila inicial debería ser dinámica o una plantilla.
+                    alert("Simulación: Esta fila de ejemplo se mantendrá, pero en una app real se eliminaría o se convertiría en un elemento de lista.");
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
