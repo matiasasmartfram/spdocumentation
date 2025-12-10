@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCloud - Edición Lista de Precios</title>
+    <!-- Iconos Material Design -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4a148c; /* SmartCloud Purple */
+            --primary-light: #7c43bd;
+            --bg-color: #f4f6f8;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --input-border: #ccc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            background-color: #fff;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+        .sidebar-header {
+            height: 60px;
+            background-color: #2c0e57;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .menu-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            color: #555;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .menu-item:hover { background-color: #f0f0f0; }
+        .menu-item.active {
+            background-color: #f3e5f5;
+            color: var(--primary-color);
+            border-right: 3px solid var(--primary-color);
+        }
+        .menu-item i { margin-right: 12px; font-size: 20px; }
+        .submenu { padding-left: 48px; font-size: 13px; color: #666; display: none; }
+        .menu-item.active + .submenu { display: block; }
+        .submenu div { padding: 8px 0; cursor: pointer; }
+        .submenu div:hover { color: var(--primary-color); }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* TOP NAVBAR */
+        .navbar {
+            height: 50px;
+            background-color: #2c0e57;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 20px;
+            color: white;
+            font-size: 12px;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .avatar {
+            width: 30px;
+            height: 30px;
+            background-color: #7c43bd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            background-color: #fff;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .breadcrumb {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #333;
+        }
+        .page-desc {
+            font-size: 13px;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        /* TABS */
+        .tabs-container {
+            background-color: #fff;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tab {
+            display: inline-block;
+            padding: 16px 0;
+            margin-right: 32px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+        }
+        .tab.active {
+            color: var(--primary-color);
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        /* CONTENT AREA */
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        
+        .card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* FORMS */
+        .form-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            width: 200px;
+            flex-shrink: 0;
+        }
+        .form-row {
+            display: flex;
+            margin-bottom: 24px;
+        }
+        .form-fields {
+            flex: 1;
+        }
+        .input-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            background: white;
+            padding: 0 4px;
+            z-index: 1;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 12px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            border-width: 2px;
+            padding: 11px 11px; /* compensate border */
+        }
+        .form-control:disabled {
+            background-color: #f9f9f9;
+            color: #999;
+        }
+        
+        .two-col {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* GRID (PRICES TAB) */
+        .grid-toolbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0 8px;
+            background: white;
+            width: 300px;
+        }
+        .search-box input {
+            border: none;
+            outline: none;
+            padding: 8px;
+            width: 100%;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        tr:hover { background-color: #f9f9f9; }
+        
+        .price-input {
+            width: 80px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: right;
+        }
+        .status-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* FOOTER ACTIONS */
+        .footer-actions {
+            background: #fff;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-group {
+            position: relative;
+            display: inline-flex;
+        }
+        .btn-main {
+            background-color: #5e35b1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px 0 0 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .btn-split {
+            background-color: #4527a0;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            border-left: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-main:hover, .btn-split:hover { opacity: 0.9; }
+        
+        .dropdown-menu {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 200px;
+            display: none;
+            z-index: 100;
+            margin-bottom: 5px;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+        }
+        .dropdown-item:hover { background-color: #f5f5f5; }
+        .dropdown-divider { border-top: 1px solid #eee; margin: 4px 0; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- NAV -->
+        <div class="navbar">
+            <span>ES</span>
+            <i class="material-icons" style="font-size: 16px; margin: 0 10px;">expand_more</i>
+            <div class="user-profile">
+                <div style="text-align: right;">
+                    <div style="font-weight: 500;">Matias Avila</div>
+                    <div style="opacity: 0.7;">03/12/2025 12:47</div>
+                </div>
+                <div class="avatar">MA</div>
+            </div>
+        </div>
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="breadcrumb">← Volver a Listas de Precios de Venta</div>
+            <div class="page-title">Venta Açai PEYA</div>
+            <div class="page-desc">Agregue o modifique una lista de precios de venta.</div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs-container">
+            <div class="tab active" onclick="switchTab('general')">GENERAL</div>
+            <div class="tab" onclick="switchTab('precios')">PRECIOS</div>
+        </div>
+
+        <!-- TAB CONTENT: GENERAL -->
+        <div id="tab-general" class="content-scroll">
+            <div class="card">
+                <!-- Datos Generales -->
+                <div class="form-row">
+                    <div class="form-section-title">Datos Generales</div>
+                    <div class="form-fields">
+                        <div class="input-group" style="width: 150px;">
+                            <label>Código</label>
+                            <input type="text" class="form-control" value="2" disabled>
+                            <div style="font-size: 11px; color: #888; margin-top: 4px;">Identificador lista de precios.</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Nombre*</label>
+                            <input type="text" class="form-control" value="Venta Açai PEYA">
+                            <div style="font-size: 11px; color: #888; margin-top: 4px;">Nombre de la lista de precios.</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Descripción*</label>
+                            <textarea class="form-control" rows="3">Venta Açai PEYA</textarea>
+                            <div style="font-size: 11px; color: #888; margin-top: 4px;">Texto libre para ampliar características.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EVOLUCIÓN: CANAL COMERCIAL (NUEVO) -->
+                <div class="form-row">
+                    <div class="form-section-title">Canal Comercial</div>
+                    <div class="form-fields">
+                        <div class="two-col">
+                            <!-- Nivel 1: Clasificación -->
+                            <div class="input-group" style="flex: 1;">
+                                <label>Clasificación del Canal*</label>
+                                <select class="form-control" id="channelClassification" onchange="updateSubChannels()">
+                                    <option value="">Seleccione...</option>
+                                    <option value="Minorista">Minorista</option>
+                                    <option value="Mayorista">Mayorista</option>
+                                    <option value="Plataformas" selected>Plataformas Delivery</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Nivel 2: Sub-Canal (Dinámico) -->
+                            <div class="input-group" style="flex: 1;">
+                                <label>Plataforma / Sub-Canal*</label>
+                                <select class="form-control" id="subChannel">
+                                    <!-- Options will be populated by JS -->
+                                </select>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #888; margin-top: -10px;">Seleccione si es Venta Interna o Externa y especifique la plataforma.</div>
+                    </div>
+                </div>
+
+                <!-- Regionalización -->
+                <div class="form-row">
+                    <div class="form-section-title">Regionalización</div>
+                    <div class="form-fields">
+                        <div class="two-col">
+                            <div class="input-group" style="flex: 1;">
+                                <label>Escriba el país*</label>
+                                <div style="position: relative;">
+                                    <input type="text" class="form-control" value="Paraguay">
+                                    <i class="material-icons" style="position: absolute; right: 10px; top: 10px; color: #666;">search</i>
+                                </div>
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <label>Escriba tipo de Moneda*</label>
+                                <div style="position: relative;">
+                                    <input type="text" class="form-control" value="Paraguayan guaraní">
+                                    <i class="material-icons" style="position: absolute; right: 10px; top: 10px; color: #666;">search</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Costos -->
+                <div class="form-row">
+                    <div class="form-section-title">Costos</div>
+                    <div class="form-fields">
+                        <div class="input-group">
+                            <label>Lista de costos*</label>
+                            <div style="position: relative;">
+                                <input type="text" class="form-control" value="1 | Costo Açai">
+                                <i class="material-icons" style="position: absolute; right: 30px; top: 10px; color: #666;">close</i>
+                                <i class="material-icons" style="position: absolute; right: 8px; top: 10px; color: #666;">search</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Suscripción -->
+                 <div class="form-row">
+                    <div class="form-section-title">Suscripción</div>
+                    <div class="form-fields">
+                        <div class="input-group">
+                            <label>Lista de precios</label>
+                            <div style="position: relative;">
+                                <input type="text" class="form-control" placeholder="Ingrese un código o descripción">
+                                <i class="material-icons" style="position: absolute; right: 8px; top: 10px; color: #666;">search</i>
+                            </div>
+                            <div style="font-size: 11px; color: #ff9800; margin-top: 4px;">
+                                <i class="material-icons" style="font-size:10px; vertical-align:middle;">warning</i> 
+                                Al suscribirse, la edición manual desincronizará el ítem de la lista madre.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT: PRECIOS -->
+        <div id="tab-precios" class="content-scroll hidden">
+            <div class="grid-toolbar">
+                <div class="search-box">
+                    <i class="material-icons" style="color: #999;">search</i>
+                    <input type="text" placeholder="Buscar por Nombre o Código">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button style="border:1px solid #ddd; background:white; padding: 8px; border-radius:4px;"><i class="material-icons">filter_list</i></button>
+                    <button style="border:1px solid #ddd; background:white; padding: 8px; border-radius:4px; font-weight:bold; color:#5e35b1;">+ AGREGAR ITEM</button>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Item</th>
+                            <th>Grupo</th>
+                            <th style="text-align: right;">Precio Neto</th>
+                            <th style="text-align: right;">Imp. Int</th>
+                            <th style="text-align: right;">Tasas %</th>
+                            <th style="text-align: right;">Publicado</th>
+                            <th style="text-align: right;">Nuevo Precio</th>
+                            <th>Activo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>18</td>
+                            <td>
+                                <div>Agua 500 ml</div>
+                                <small style="color:#999;">SKU: 18</small>
+                            </td>
+                            <td>Agua</td>
+                            <td style="text-align: right;">4761,90</td>
+                            <td style="text-align: right;">0,00</td>
+                            <td style="text-align: right;">5,00</td>
+                            <td style="text-align: right; font-weight: bold;">5000,00</td>
+                            <td style="text-align: right;">
+                                <input type="text" class="price-input" value="5000,00">
+                            </td>
+                            <td><span class="status-badge">Sí</span></td>
+                            <td>
+                                <i class="material-icons" style="font-size:18px; color:#666; cursor:pointer;">edit</i>
+                                <i class="material-icons" style="font-size:18px; color:#666; cursor:pointer;">delete</i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>19</td>
+                            <td>Agua Con Gas</td>
+                            <td>Agua</td>
+                            <td style="text-align: right;">4761,90</td>
+                            <td style="text-align: right;">0,00</td>
+                            <td style="text-align: right;">5,00</td>
+                            <td style="text-align: right; font-weight: bold;">5000,00</td>
+                            <td style="text-align: right;">
+                                <input type="text" class="price-input" value="5000,00">
+                            </td>
+                            <td><span class="status-badge">Sí</span></td>
+                            <td>
+                                <i class="material-icons" style="font-size:18px; color:#666; cursor:pointer;">edit</i>
+                                <i class="material-icons" style="font-size:18px; color:#666; cursor:pointer;">delete</i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>103</td>
+                            <td>Açaí + helado 1/2kg</td>
+                            <td>Copas y Vasos</td>
+                            <td style="text-align: right;">62857,14</td>
+                            <td style="text-align: right;">0,00</td>
+                            <td style="text-align: right;">5,00</td>
+                            <td style="text-align: right; font-weight: bold;">66000,00</td>
+                            <td style="text-align: right;">
+                                <input type="text" class="price-input" value="66000,00">
+                            </td>
+                            <td><span class="status-badge">Sí</span></td>
+                            <td>
+                                <i class="material-icons" style="font-size:18px; color:#666; cursor:pointer;">edit</i>
+                                <i class="material-icons" style="font-size:18px; color:#666; cursor:pointer;">delete</i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-actions">
+            <div class="btn-group">
+                <button class="btn-main">Guardar</button>
+                <button class="btn-split" onclick="toggleDropdown()"><i class="material-icons" style="font-size: 16px;">arrow_drop_down</i></button>
+                <div class="dropdown-menu" id="saveDropdown">
+                    <div class="dropdown-item">Guardar y continuar</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" style="font-weight: 500;">Guardar y Publicar</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. LOGICA DE TABS
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            // Hide all contents
+            document.getElementById('tab-general').classList.add('hidden');
+            document.getElementById('tab-precios').classList.add('hidden');
+            
+            // Activate selected
+            if(tabName === 'general') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('tab-general').classList.remove('hidden');
+            } else {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('tab-precios').classList.remove('hidden');
+            }
+        }
+
+        // 2. LOGICA DE CANALES (EVOLUCION)
+        const channelData = {
+            'Minorista': ['Venta Salón / Mostrador'],
+            'Mayorista': ['Gastronómico', 'Corner', 'Store', 'Parador', 'FoodTruck'],
+            'Plataformas': ['SmartPedidos - PedidosYa', 'SmartPedidos - Rappi', 'SmartPedidos - UberEats']
+        };
+
+        function updateSubChannels() {
+            const classification = document.getElementById('channelClassification').value;
+            const subChannelSelect = document.getElementById('subChannel');
+            
+            // Clear current options
+            subChannelSelect.innerHTML = '';
+            
+            if(classification && channelData[classification]) {
+                channelData[classification].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subChannelSelect.appendChild(option);
+                });
+                
+                // Simular selección predeterminada si es el caso de uso
+                if(classification === 'Plataformas') {
+                    subChannelSelect.value = 'SmartPedidos - PedidosYa';
+                }
+            } else {
+                const option = document.createElement('option');
+                option.textContent = 'Seleccione Clasificación primero';
+                subChannelSelect.appendChild(option);
+            }
+        }
+
+        // 3. LOGICA DROPDOWN
+        function toggleDropdown() {
+            const dd = document.getElementById('saveDropdown');
+            dd.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.btn-split') && !event.target.matches('.btn-split i')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // Inicializar canales al cargar
+        updateSubChannels();
+    </script>
+</body>
+</html>
