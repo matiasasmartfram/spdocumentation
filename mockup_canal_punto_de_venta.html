@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCloud - Editar Punto de Venta</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #5e35b1; /* SmartCloud Purple */
+            --primary-light: #7c43bd;
+            --bg-color: #f4f6f8;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --error-color: #d32f2f;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER SIMPLE (Simulado) */
+        .top-nav {
+            padding: 20px 40px;
+            border-bottom: 1px solid #eee;
+        }
+        .back-link {
+            font-size: 12px;
+            color: #666;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .page-subtitle {
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* TABS SUPERIORES */
+        .nav-tabs {
+            display: flex;
+            padding: 0 40px;
+            margin-top: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .nav-item.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        /* STEPPER (CIRCULOS) */
+        .stepper-container {
+            padding: 30px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 150px;
+        }
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 8px;
+            z-index: 2;
+        }
+        .step.active .step-circle {
+            background-color: #6a40bf; /* Color lila del screenshot */
+        }
+        .step-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+        .step.active .step-label {
+            color: #333;
+            font-weight: bold;
+        }
+        /* Linea conectora */
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            width: 100%;
+            height: 1px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        .step:last-child::after { display: none; }
+        .step.active::after { background-color: #d1c4e9; }
+
+        /* FORMULARIO */
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px;
+            width: 100%;
+            padding-bottom: 100px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            background: white;
+            padding: 0 4px;
+            z-index: 1;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            border-width: 2px;
+            padding: 13px 11px;
+        }
+        .form-control:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+
+        /* NUEVA SECCION: GESTOR DE LISTAS */
+        .price-manager {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fafafa;
+            margin-top: 10px;
+        }
+        
+        .add-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .btn-add {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-add:hover { background-color: #4527a0; }
+        .btn-add:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* TABLA DE LISTAS ASIGNADAS */
+        .lists-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .lists-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: #f0f0f0;
+            font-size: 12px;
+            color: #555;
+            font-weight: 600;
+        }
+        .lists-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+        .lists-table tr:last-child td { border-bottom: none; }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-minorista { background-color: #e1bee7; color: #4a148c; }
+        .badge-plataforma { background-color: #ffcc80; color: #e65100; }
+        .badge-mayorista { background-color: #b3e5fc; color: #01579b; }
+
+        .btn-delete {
+            color: #d32f2f;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* FOOTER BUTTONS */
+        .footer-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .btn-cancel {
+            background-color: #7e57c2; /* Color lila boton cancel del screenshot */
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+        .btn-next {
+            background-color: #5e35b1;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 13px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .btn-waiting {
+            background-color: #e0e0e0;
+            color: #999;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 13px;
+            border: none;
+            margin-top: 10px;
+            float: right;
+            clear: both;
+        }
+
+        /* ERROR TOAST */
+        .error-msg {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="top-nav">
+        <div class="back-link">
+            <i class="material-icons" style="font-size: 16px; margin-right: 5px;">arrow_back</i>
+            Volver a Franquicias
+        </div>
+        <div class="page-title">San Pedro</div>
+        <div class="page-subtitle">Modifique datos de la Franquicia.</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="nav-tabs">
+        <div class="nav-item">DATOS FRANQUICIA</div>
+        <div class="nav-item">UBICACIÓN GEOGRAFICA</div>
+        <div class="nav-item">DATOS FISCALES</div>
+        <div class="nav-item active">PUNTOS DE VENTA</div>
+        <div class="nav-item">CÓDIGOS RELACIONADOS</div>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper-container">
+        <div class="step active">
+            <div class="step-circle"><i class="material-icons" style="font-size: 16px;">info</i></div>
+            <div class="step-label">Datos Pos</div>
+        </div>
+        <div class="step">
+            <div class="step-circle"><i class="material-icons" style="font-size: 16px;">grid_view</i></div>
+            <div class="step-label">Códigos Relacionados</div>
+        </div>
+        <div class="step">
+            <div class="step-circle"><i class="material-icons" style="font-size: 16px;">code</i></div>
+            <div class="step-label">Integraciones</div>
+        </div>
+        <div class="step">
+            <div class="step-circle"><i class="material-icons" style="font-size: 16px;">delete</i></div>
+            <div class="step-label">Cierre de turno</div>
+        </div>
+        <div class="step">
+            <div class="step-circle"><i class="material-icons" style="font-size: 16px;">payments</i></div>
+            <div class="step-label">Métodos de Pago</div>
+        </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-container">
+        <div class="section-title">Editar Punto de Venta: POS1</div>
+
+        <!-- Campos Básicos (Igual al original) -->
+        <div class="input-group">
+            <label>Nombre de Punto de Venta*</label>
+            <input type="text" class="form-control" value="POS1">
+        </div>
+
+        <div class="input-group">
+            <label>Descripción de Punto de Venta</label>
+            <input type="text" class="form-control" value="POS1">
+        </div>
+
+        <!-- NUEVA SECCIÓN: GESTOR DE LISTAS -->
+        <div style="margin-top: 30px; margin-bottom: 10px;">
+            <label style="font-size: 13px; color: #555; font-weight: bold;">Configuración de Listas de Precios</label>
+            <p style="font-size: 12px; color: #777; margin-bottom: 10px;">Asigne las listas de precios disponibles para este POS. Recuerde: Solo una lista Minorista permitida.</p>
+        </div>
+
+        <div class="price-manager">
+            <!-- Fila de Agregado -->
+            <div class="add-row">
+                <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Canal*</label>
+                    <select class="form-control" id="selectCanal" onchange="handleCanalChange()">
+                        <option value="">Seleccione...</option>
+                        <option value="Minorista">Minorista</option>
+                        <option value="Plataformas">Plataformas</option>
+                        <option value="Mayorista">Mayorista</option>
+                    </select>
+                </div>
+
+                <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Sub-Canal / Plataforma</label>
+                    <select class="form-control" id="selectSubCanal" disabled>
+                        <option value="default">N/A</option>
+                    </select>
+                </div>
+
+                <div class="input-group" style="flex: 1.5; margin-bottom: 0;">
+                    <label>Lista de Precios*</label>
+                    <select class="form-control" id="selectLista">
+                        <option value="">Seleccione Lista...</option>
+                        <!-- Se llena dinámicamente -->
+                    </select>
+                </div>
+
+                <button class="btn-add" onclick="addPriceList()" title="Agregar Lista">
+                    <i class="material-icons">add</i>
+                </button>
+            </div>
+            <div id="errorMsg" class="error-msg" style="margin-bottom: 10px; text-align: center;"></div>
+
+            <!-- Tabla de Listas -->
+            <table class="lists-table">
+                <thead>
+                    <tr>
+                        <th>Canal</th>
+                        <th>Sub-Canal</th>
+                        <th>Lista de Precios</th>
+                        <th>Moneda</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="listsTableBody">
+                    <!-- Filas dinámicas -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-buttons">
+            <button class="btn-cancel">CANCEL</button>
+            <button class="btn-next">SIGUIENTE</button>
+        </div>
+        <div style="text-align: right;">
+            <button class="btn-waiting">Aguarde..</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATOS SIMULADOS ---
+        const availableLists = [
+            { id: 1, name: "Venta Salón General", currency: "Paraguayan guaraní", type: "Minorista" },
+            { id: 2, name: "Venta Açai PEYA", currency: "Paraguayan guaraní", type: "Plataformas" },
+            { id: 3, name: "Venta Rappi Promo", currency: "Paraguayan guaraní", type: "Plataformas" },
+            { id: 4, name: "Mayorista Gastronómico", currency: "USD", type: "Mayorista" },
+            { id: 5, name: "Mayorista Corner", currency: "USD", type: "Mayorista" }
+        ];
+
+        const platforms = ["PedidosYa", "Rappi", "UberEats", "MercadoLibre"];
+        const mayoristaTypes = ["Gastronómico", "Corner", "Store"];
+
+        // --- ESTADO INICIAL ---
+        // Simulamos que ya tiene una lista minorista cargada
+        let assignedLists = [
+            { 
+                id: 1, 
+                canal: "Minorista", 
+                subCanal: "Salón", 
+                listaName: "Venta Salón General", 
+                moneda: "Paraguayan guaraní" 
+            }
+        ];
+
+        // --- FUNCIONES ---
+
+        function init() {
+            renderTable();
+        }
+
+        function handleCanalChange() {
+            const canal = document.getElementById('selectCanal').value;
+            const subCanalSelect = document.getElementById('selectSubCanal');
+            const listaSelect = document.getElementById('selectLista');
+            
+            // Reset selects
+            subCanalSelect.innerHTML = '';
+            listaSelect.innerHTML = '<option value="">Seleccione Lista...</option>';
+            subCanalSelect.disabled = false;
+
+            // Lógica de SubCanal
+            if (canal === 'Minorista') {
+                subCanalSelect.innerHTML = '<option value="Salón">Salón</option>';
+                subCanalSelect.disabled = true;
+                filterLists('Minorista');
+            } else if (canal === 'Plataformas') {
+                platforms.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p;
+                    subCanalSelect.appendChild(opt);
+                });
+                filterLists('Plataformas');
+            } else if (canal === 'Mayorista') {
+                mayoristaTypes.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    subCanalSelect.appendChild(opt);
+                });
+                filterLists('Mayorista');
+            } else {
+                subCanalSelect.innerHTML = '<option value="default">N/A</option>';
+                subCanalSelect.disabled = true;
+            }
+        }
+
+        function filterLists(type) {
+            const listaSelect = document.getElementById('selectLista');
+            const filtered = availableLists.filter(l => l.type === type);
+            
+            filtered.forEach(l => {
+                const opt = document.createElement('option');
+                opt.value = l.id;
+                opt.textContent = l.name;
+                opt.dataset.currency = l.currency; // Guardamos moneda en data attribute
+                listaSelect.appendChild(opt);
+            });
+        }
+
+        function addPriceList() {
+            const canal = document.getElementById('selectCanal').value;
+            const subCanal = document.getElementById('selectSubCanal').value;
+            const listaId = document.getElementById('selectLista').value;
+            const listaText = document.getElementById('selectLista').options[document.getElementById('selectLista').selectedIndex]?.text;
+            const moneda = document.getElementById('selectLista').options[document.getElementById('selectLista').selectedIndex]?.dataset.currency;
+            const errorDiv = document.getElementById('errorMsg');
+
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            if (!canal || !listaId) return;
+
+            // --- REGLAS DE NEGOCIO (VALIDACIÓN) ---
+
+            // 1. Regla Minorista: Solo 1 permitida
+            if (canal === 'Minorista') {
+                const exists = assignedLists.find(l => l.canal === 'Minorista');
+                if (exists) {
+                    showError("Error: Solo se permite asignar UNA lista de precios Minorista por POS.");
+                    return;
+                }
+            }
+
+            // 2. Regla Plataformas: Solo 1 por Plataforma (SubCanal)
+            if (canal === 'Plataformas') {
+                const exists = assignedLists.find(l => l.canal === 'Plataformas' && l.subCanal === subCanal);
+                if (exists) {
+                    showError(`Error: Ya existe una lista asignada para la plataforma ${subCanal}. Elimínela antes de asignar otra.`);
+                    return;
+                }
+            }
+
+            // 3. Validación General: No duplicar la misma lista exacta
+            const duplicate = assignedLists.find(l => l.id == listaId);
+            if (duplicate) {
+                showError("Error: Esta lista de precios ya está asignada.");
+                return;
+            }
+
+            // --- AGREGAR ---
+            assignedLists.push({
+                id: listaId,
+                canal: canal,
+                subCanal: subCanal,
+                listaName: listaText,
+                moneda: moneda
+            });
+
+            renderTable();
+            // Reset simple
+            document.getElementById('selectLista').value = "";
+        }
+
+        function deleteList(index) {
+            if(confirm('¿Está seguro de quitar esta lista de precios del POS?')) {
+                assignedLists.splice(index, 1);
+                renderTable();
+            }
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('listsTableBody');
+            tbody.innerHTML = '';
+
+            assignedLists.forEach((item, index) => {
+                let badgeClass = '';
+                if(item.canal === 'Minorista') badgeClass = 'badge-minorista';
+                else if(item.canal === 'Plataformas') badgeClass = 'badge-plataforma';
+                else badgeClass = 'badge-mayorista';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge ${badgeClass}">${item.canal}</span></td>
+                    <td>${item.subCanal}</td>
+                    <td>${item.listaName}</td>
+                    <td style="color: #777;">${item.moneda}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-delete" onclick="deleteList(${index})">
+                            <i class="material-icons">delete</i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Iniciar
+        init();
+    </script>
+</body>
+</html>
