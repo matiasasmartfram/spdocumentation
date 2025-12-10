@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCloud - Multimedia Item</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #5e35b1;
+            --primary-light: #7c43bd;
+            --bg-color: #f4f6f8;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --info-bg: #e3f2fd;
+            --info-text: #0d47a1;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER & NAV (Estándar SmartCloud) */
+        .top-nav { padding: 20px 40px; border-bottom: 1px solid #eee; }
+        .back-link { font-size: 12px; color: #666; text-decoration: none; display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; }
+        .page-title { font-size: 28px; font-weight: bold; color: #333; margin-bottom: 5px; }
+        .page-subtitle { font-size: 14px; color: #777; }
+
+        .nav-tabs { display: flex; padding: 0 40px; margin-top: 20px; border-bottom: 1px solid #ddd; }
+        .nav-item { padding: 10px 20px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; text-transform: uppercase; margin-right: 10px; }
+        .nav-item.active { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            width: 100%;
+            padding-bottom: 100px;
+        }
+
+        /* INFO BOX (Texto legal del screenshot original) */
+        .legal-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* AREA DE CARGA (FORMULARIO EXPANDIDO) */
+        .upload-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 30px;
+        }
+
+        .upload-preview {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .preview-box {
+            width: 100%;
+            height: 180px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fafafa;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .preview-box img { width: 100%; height: 100%; object-fit: contain; }
+        .preview-placeholder { text-align: center; color: #999; font-size: 12px; }
+        
+        .upload-form { flex: 1; }
+
+        .form-row { margin-bottom: 20px; }
+        .input-label { display: block; font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500; }
+        .form-control {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none;
+        }
+        .form-control:focus { border-color: var(--primary-color); }
+
+        /* SECCION DE ASIGNACION DE CANALES (CORE DEL REQUERIMIENTO) */
+        .assignment-section {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .assignment-header { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #444; }
+        
+        .assignment-controls { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 10px; }
+        
+        .tech-specs-box {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #1976d2;
+            display: none; /* Oculto por defecto */
+        }
+
+        /* CHIPS / TAGS */
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .channel-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        .channel-tag.peya { background-color: #ffecb3; color: #ff6f00; border: 1px solid #ffca28; }
+        .channel-tag.rappi { background-color: #ffccbc; color: #d84315; border: 1px solid #ffab91; }
+        .channel-tag.minorista { background-color: #e1bee7; color: #6a1b9a; border: 1px solid #ce93d8; }
+        
+        .remove-tag { margin-left: 8px; cursor: pointer; font-weight: bold; opacity: 0.6; }
+        .remove-tag:hover { opacity: 1; }
+
+        /* BOTONES */
+        .btn { padding: 10px 20px; border-radius: 4px; border: none; cursor: pointer; font-weight: 500; font-size: 13px; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-outline { background-color: transparent; border: 1px solid #ccc; color: #555; margin-right: 10px; }
+        .btn-add-tag { background-color: #4caf50; color: white; height: 38px; display: flex; align-items: center; padding: 0 15px; }
+
+        /* TABLA DE LISTADO */
+        .resource-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #eee; }
+        .resource-table th { text-align: left; padding: 12px; background: #fafafa; font-size: 12px; color: #666; border-bottom: 1px solid #eee; }
+        .resource-table td { padding: 15px 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .thumb-img { width: 60px; height: 60px; object-fit: contain; border: 1px solid #eee; border-radius: 4px; padding: 2px; }
+        
+        .action-btn { font-size: 11px; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: none; margin-right: 5px; }
+        .btn-delete { background: #ffebee; color: #c62828; }
+        .btn-main { background: #e8eaf6; color: #3f51b5; }
+        .is-main { background: #3f51b5; color: white; }
+
+        /* FOOTER FLOTANTE */
+        .footer-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
+            padding: 15px 40px; border-top: 1px solid #ddd; display: flex; justify-content: flex-end;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="top-nav">
+        <div class="back-link"><i class="material-icons" style="font-size: 16px; margin-right: 5px;">arrow_back</i> Volver a Items</div>
+        <div class="page-title">Açaí 200ml Con Granola</div>
+        <div class="page-subtitle">Agregue o modifique un ítem al catalogo.</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="nav-tabs">
+        <div class="nav-item">GENERAL</div>
+        <div class="nav-item">COMPOSICIÓN</div>
+        <div class="nav-item active">MULTIMEDIA</div>
+        <div class="nav-item">SKU</div>
+        <div class="nav-item">LISTAS DE PRECIOS</div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="main-container">
+        
+        <div class="legal-text">
+            <strong>Recursos Multimedia del Item:</strong><br>
+            Puedes agregar hasta 10 recursos multimedia. Puedes subir un archivo de Imagen o Video de hasta 5MB. 
+            Asigna cada imagen a uno o varios canales para asegurar que se visualicen correctamente en cada plataforma.
+        </div>
+
+        <!-- FORMULARIO DE CARGA (SIMULANDO ESTADO "AGREGAR") -->
+        <div class="upload-card">
+            <!-- Columna Izq: Preview -->
+            <div class="upload-preview">
+                <div class="preview-box">
+                    <img src="https://via.placeholder.com/150?text=Açaí+Bowl" alt="Preview">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <label style="font-size: 12px; display: flex; align-items: center; cursor: pointer;">
+                        <input type="radio" name="sourceType" checked> Archivo
+                    </label>
+                    <label style="font-size: 12px; display: flex; align-items: center; cursor: pointer;">
+                        <input type="radio" name="sourceType"> Link
+                    </label>
+                </div>
+            </div>
+
+            <!-- Columna Der: Datos y Asignación -->
+            <div class="upload-form">
+                <div class="form-row">
+                    <label class="input-label">Nombre o descripción corta*</label>
+                    <input type="text" class="form-control" value="Açaí Bowl - Foto Producto">
+                </div>
+
+                <!-- ZONA DE ASIGNACIÓN INTELIGENTE -->
+                <div class="assignment-section">
+                    <div class="assignment-header">Asignar a Canales y Plataformas</div>
+                    
+                    <div class="assignment-controls">
+                        <div style="flex: 1;">
+                            <label class="input-label">Canal</label>
+                            <select class="form-control" id="channelSelect" onchange="updateSubChannels()">
+                                <option value="">Seleccione...</option>
+                                <option value="Minorista">Minorista (Salón)</option>
+                                <option value="Plataformas">Plataformas Delivery</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label class="input-label">Plataforma / Sub-Canal</label>
+                            <select class="form-control" id="subChannelSelect" onchange="showSpecs()">
+                                <option value="">-</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-add-tag" onclick="addTag()">
+                            <i class="material-icons">add</i> ASIGNAR
+                        </button>
+                    </div>
+
+                    <!-- CAJA DE REQUISITOS TÉCNICOS (FEEDBACK VISUAL) -->
+                    <div id="specsBox" class="tech-specs-box">
+                        <i class="material-icons">info</i>
+                        <span id="specsText">Seleccione una plataforma para ver los requisitos.</span>
+                    </div>
+
+                    <!-- LISTA DE TAGS (RELACIONES N a N) -->
+                    <div class="tags-container" id="tagsList">
+                        <!-- Tags se agregan aquí dinámicamente -->
+                        <div class="channel-tag minorista">
+                            Minorista - Salón <span class="remove-tag" onclick="this.parentElement.remove()">×</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn btn-outline">CANCELAR</button>
+                    <button class="btn btn-primary">CONFIRMAR CARGA</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTADO DE IMAGENES EXISTENTES -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="font-size: 16px; color: #333;">Imágenes Cargadas (2/10)</h3>
+            <button class="btn btn-outline" style="font-size: 12px;">+ AGREGAR NUEVO RECURSO</button>
+        </div>
+
+        <table class="resource-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Vista</th>
+                    <th>Nombre</th>
+                    <th>Asignaciones (Canales)</th>
+                    <th style="text-align: right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Item 1 -->
+                <tr>
+                    <td><img src="https://via.placeholder.com/60/5e35b1/ffffff?text=SF" class="thumb-img"></td>
+                    <td>	Açaí Bowl - Foto Producto - Monorista</td>
+                    <td>
+                        <div class="tags-container" style="margin-top: 0; gap: 4px;">
+                            <span class="channel-tag minorista" style="font-size: 10px; padding: 2px 8px;">Minorista</span>
+                        </div>
+                    </td>
+                    <td style="text-align: right;">
+                      <button class="action-btn ">MODIFICAR</button>
+                        <button class="action-btn btn-delete">ELIMINAR</button>
+                    </td>
+                </tr>
+                <!-- Item 2 -->
+                <tr>
+                    <td><img src="https://via.placeholder.com/60/ff6f00/ffffff?text=Bowl" class="thumb-img"></td>
+                    <td>Açaí Bowl - Foto Producto</td>
+                    <td>
+                        <div class="tags-container" style="margin-top: 0; gap: 4px;">
+                            <span class="channel-tag peya" style="font-size: 10px; padding: 2px 8px;">PedidosYa</span>
+                            <span class="channel-tag rappi" style="font-size: 10px; padding: 2px 8px;">Rappi</span>
+                        </div>
+                    </td>
+                    <td style="text-align: right;">
+                      <button class="action-btn ">MODIFICAR</button>
+                        <button class="action-btn btn-delete">ELIMINAR</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-bar">
+        <button class="btn btn-primary">Guardar Cambios</button>
+    </div>
+
+    <script>
+        // DATOS DE REQUISITOS (SIMULADOS)
+        const specs = {
+            'PedidosYa': 'Formato: JPG/PNG. Resolución recomendada: 500x500px. Fondo blanco obligatorio.',
+            'Rappi': 'Formato: PNG Transparente. Resolución mínima: 1200x800px. Peso máx: 2MB.',
+            'UberEats': 'Formato: JPG. Relación de aspecto 16:9. Sin marcas de agua.',
+            'Salón': 'Formato libre. Se recomienda 800x800px para visualización en POS.'
+        };
+
+        const subChannels = {
+            'Minorista': ['Salón'],
+            'Plataformas': ['PedidosYa', 'Rappi', 'UberEats']
+        };
+
+        function updateSubChannels() {
+            const canal = document.getElementById('channelSelect').value;
+            const subSelect = document.getElementById('subChannelSelect');
+            const specsBox = document.getElementById('specsBox');
+            
+            subSelect.innerHTML = '<option value="">Seleccione...</option>';
+            specsBox.style.display = 'none';
+
+            if(canal && subChannels[canal]) {
+                subChannels[canal].forEach(sub => {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.textContent = sub;
+                    subSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function showSpecs() {
+            const sub = document.getElementById('subChannelSelect').value;
+            const specsBox = document.getElementById('specsBox');
+            const specsText = document.getElementById('specsText');
+
+            if(sub && specs[sub]) {
+                specsText.textContent = `Requisitos ${sub}: ${specs[sub]}`;
+                specsBox.style.display = 'flex';
+            } else {
+                specsBox.style.display = 'none';
+            }
+        }
+
+        function addTag() {
+            const canal = document.getElementById('channelSelect').value;
+            const sub = document.getElementById('subChannelSelect').value;
+            const container = document.getElementById('tagsList');
+
+            if(!canal || !sub) return;
+
+            // Evitar duplicados visuales simples
+            // (En prod validaríamos contra un array de objetos)
+            
+            let className = 'minorista';
+            if(sub === 'PedidosYa') className = 'peya';
+            if(sub === 'Rappi') className = 'rappi';
+
+            const tag = document.createElement('div');
+            tag.className = `channel-tag ${className}`;
+            tag.innerHTML = `${sub} <span class="remove-tag" onclick="this.parentElement.remove()">×</span>`;
+            
+            container.appendChild(tag);
+
+            // Reset inputs
+            document.getElementById('subChannelSelect').value = '';
+            document.getElementById('specsBox').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
