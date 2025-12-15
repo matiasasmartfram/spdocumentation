@@ -29,7 +29,7 @@
             flex-direction: column;
         }
 
-        /* HEADER & NAV (Estándar SmartCloud) */
+        /* HEADER & NAV */
         .top-nav { padding: 20px 40px; border-bottom: 1px solid #eee; }
         .back-link { font-size: 12px; color: #666; text-decoration: none; display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; }
         .page-title { font-size: 28px; font-weight: bold; color: #333; margin-bottom: 5px; }
@@ -46,17 +46,21 @@
             padding: 30px 40px;
             width: 100%;
             padding-bottom: 100px;
+            overflow-y: auto;
         }
 
-        /* INFO BOX (Texto legal del screenshot original) */
         .legal-text {
             font-size: 12px;
             color: #666;
             margin-bottom: 20px;
             line-height: 1.5;
+            background: #fff3e0;
+            padding: 10px;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
         }
 
-        /* AREA DE CARGA (FORMULARIO EXPANDIDO) */
+        /* AREA DE CARGA */
         .upload-card {
             background: #fff;
             border: 1px solid #e0e0e0;
@@ -89,7 +93,6 @@
             overflow: hidden;
         }
         .preview-box img { width: 100%; height: 100%; object-fit: contain; }
-        .preview-placeholder { text-align: center; color: #999; font-size: 12px; }
         
         .upload-form { flex: 1; }
 
@@ -100,7 +103,7 @@
         }
         .form-control:focus { border-color: var(--primary-color); }
 
-        /* SECCION DE ASIGNACION DE CANALES (CORE DEL REQUERIMIENTO) */
+        /* SECCION DE ASIGNACION */
         .assignment-section {
             background-color: #f9f9f9;
             border: 1px solid #eee;
@@ -123,11 +126,13 @@
             align-items: center;
             gap: 10px;
             border-left: 4px solid #1976d2;
-            display: none; /* Oculto por defecto */
+            display: none;
+            transition: all 0.3s ease;
         }
 
         /* CHIPS / TAGS */
-        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; min-height: 30px; }
+        
         .channel-tag {
             display: inline-flex;
             align-items: center;
@@ -135,12 +140,13 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 500;
-            background-color: #e0e0e0;
             color: #333;
+            transition: all 0.2s;
         }
-        .channel-tag.peya { background-color: #ffecb3; color: #ff6f00; border: 1px solid #ffca28; }
-        .channel-tag.rappi { background-color: #ffccbc; color: #d84315; border: 1px solid #ffab91; }
+        /* Colores por Canal */
         .channel-tag.minorista { background-color: #e1bee7; color: #6a1b9a; border: 1px solid #ce93d8; }
+        .channel-tag.plataforma { background-color: #ffcc80; color: #e65100; border: 1px solid #ffb74d; }
+        .channel-tag.mayorista { background-color: #b3e5fc; color: #0277bd; border: 1px solid #81d4fa; }
         
         .remove-tag { margin-left: 8px; cursor: pointer; font-weight: bold; opacity: 0.6; }
         .remove-tag:hover { opacity: 1; }
@@ -150,23 +156,24 @@
         .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-outline { background-color: transparent; border: 1px solid #ccc; color: #555; margin-right: 10px; }
         .btn-add-tag { background-color: #4caf50; color: white; height: 38px; display: flex; align-items: center; padding: 0 15px; }
+        .btn-add-tag:hover { background-color: #43a047; }
 
-        /* TABLA DE LISTADO */
+        /* TABLA */
         .resource-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #eee; }
         .resource-table th { text-align: left; padding: 12px; background: #fafafa; font-size: 12px; color: #666; border-bottom: 1px solid #eee; }
         .resource-table td { padding: 15px 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
         .thumb-img { width: 60px; height: 60px; object-fit: contain; border: 1px solid #eee; border-radius: 4px; padding: 2px; }
         
-        .action-btn { font-size: 11px; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: none; margin-right: 5px; }
+        .action-btn { font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; border: none; margin-left: 5px; font-weight: 500; }
         .btn-delete { background: #ffebee; color: #c62828; }
-        .btn-main { background: #e8eaf6; color: #3f51b5; }
-        .is-main { background: #3f51b5; color: white; }
+        .btn-edit { background: #e3f2fd; color: #1565c0; }
 
-        /* FOOTER FLOTANTE */
+        /* FOOTER */
         .footer-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
             padding: 15px 40px; border-top: 1px solid #ddd; display: flex; justify-content: flex-end;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
         }
     </style>
 </head>
@@ -192,14 +199,13 @@
     <div class="main-container">
         
         <div class="legal-text">
-            <strong>Recursos Multimedia del Item:</strong><br>
-            Puedes agregar hasta 10 recursos multimedia. Puedes subir un archivo de Imagen o Video de hasta 5MB. 
-            Asigna cada imagen a uno o varios canales para asegurar que se visualicen correctamente en cada plataforma.
+            <i class="material-icons" style="font-size: 14px; vertical-align: middle;">lightbulb</i>
+            <strong>Gestión de Multimedia:</strong> Carga una imagen y asígnala a múltiples canales. El sistema validará los requisitos técnicos de cada plataforma automáticamente.
         </div>
 
-        <!-- FORMULARIO DE CARGA (SIMULANDO ESTADO "AGREGAR") -->
+        <!-- FORMULARIO DE CARGA -->
         <div class="upload-card">
-            <!-- Columna Izq: Preview -->
+            <!-- Preview -->
             <div class="upload-preview">
                 <div class="preview-box">
                     <img src="https://via.placeholder.com/150?text=Açaí+Bowl" alt="Preview">
@@ -214,14 +220,14 @@
                 </div>
             </div>
 
-            <!-- Columna Der: Datos y Asignación -->
+            <!-- Formulario -->
             <div class="upload-form">
                 <div class="form-row">
                     <label class="input-label">Nombre o descripción corta*</label>
                     <input type="text" class="form-control" value="Açaí Bowl - Foto Producto">
                 </div>
 
-                <!-- ZONA DE ASIGNACIÓN INTELIGENTE -->
+                <!-- ZONA DE ASIGNACIÓN -->
                 <div class="assignment-section">
                     <div class="assignment-header">Asignar a Canales y Plataformas</div>
                     
@@ -230,8 +236,9 @@
                             <label class="input-label">Canal</label>
                             <select class="form-control" id="channelSelect" onchange="updateSubChannels()">
                                 <option value="">Seleccione...</option>
-                                <option value="Minorista">Minorista (Salón)</option>
-                                <option value="Plataformas">Plataformas Delivery</option>
+                                <option value="Minorista">Minorista</option>
+                                <option value="Plataformas Delivery">Plataformas Delivery</option>
+                                <option value="Mayorista">Mayorista</option>
                             </select>
                         </div>
                         <div style="flex: 1;">
@@ -241,36 +248,35 @@
                             </select>
                         </div>
                         <button class="btn btn-add-tag" onclick="addTag()">
-                            <i class="material-icons">add</i> ASIGNAR
+                            <i class="material-icons" style="font-size: 16px; margin-right: 5px;">add_circle</i> ASIGNAR
                         </button>
                     </div>
 
-                    <!-- CAJA DE REQUISITOS TÉCNICOS (FEEDBACK VISUAL) -->
+                    <!-- Feedback Técnico -->
                     <div id="specsBox" class="tech-specs-box">
                         <i class="material-icons">info</i>
                         <span id="specsText">Seleccione una plataforma para ver los requisitos.</span>
                     </div>
 
-                    <!-- LISTA DE TAGS (RELACIONES N a N) -->
+                    <!-- Tags Agregados -->
                     <div class="tags-container" id="tagsList">
-                        <!-- Tags se agregan aquí dinámicamente -->
-                        <div class="channel-tag minorista">
-                            Minorista - Salón <span class="remove-tag" onclick="this.parentElement.remove()">×</span>
+                        <!-- Ejemplo inicial -->
+                        <div class="channel-tag minorista" data-value="Salón">
+                            Minorista - Salón <span class="remove-tag" onclick="removeTag(this)">×</span>
                         </div>
                     </div>
                 </div>
 
                 <div style="margin-top: 20px; text-align: right;">
-                    <button class="btn btn-outline">CANCELAR</button>
-                    <button class="btn btn-primary">CONFIRMAR CARGA</button>
+                    <button class="btn btn-outline">LIMPIAR</button>
+                    <button class="btn btn-primary">AGREGAR IMAGEN</button>
                 </div>
             </div>
         </div>
 
-        <!-- LISTADO DE IMAGENES EXISTENTES -->
+        <!-- LISTADO -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h3 style="font-size: 16px; color: #333;">Imágenes Cargadas (2/10)</h3>
-            <button class="btn btn-outline" style="font-size: 12px;">+ AGREGAR NUEVO RECURSO</button>
         </div>
 
         <table class="resource-table">
@@ -286,29 +292,31 @@
                 <!-- Item 1 -->
                 <tr>
                     <td><img src="https://via.placeholder.com/60/5e35b1/ffffff?text=SF" class="thumb-img"></td>
-                    <td>	Açaí Bowl - Foto Producto - Monorista</td>
+                    <td>Açaí Bowl - Foto Producto - Minorista</td>
                     <td>
-                        <div class="tags-container" style="margin-top: 0; gap: 4px;">
-                            <span class="channel-tag minorista" style="font-size: 10px; padding: 2px 8px;">Minorista</span>
+                        <div class="tags-container" style="margin-top: 0; gap: 4px; min-height: auto;">
+                            <span class="channel-tag minorista" style="font-size: 10px; padding: 2px 8px;">Minorista - Salón</span>
+                            <span class="channel-tag minorista" style="font-size: 10px; padding: 2px 8px;">Minorista - Ambulante</span>
                         </div>
                     </td>
                     <td style="text-align: right;">
-                      <button class="action-btn ">MODIFICAR</button>
+                        <button class="action-btn btn-edit">MODIFICAR</button>
                         <button class="action-btn btn-delete">ELIMINAR</button>
                     </td>
                 </tr>
                 <!-- Item 2 -->
                 <tr>
                     <td><img src="https://via.placeholder.com/60/ff6f00/ffffff?text=Bowl" class="thumb-img"></td>
-                    <td>Açaí Bowl - Foto Producto</td>
+                    <td>Açaí Bowl - Foto Producto - Delivery</td>
                     <td>
-                        <div class="tags-container" style="margin-top: 0; gap: 4px;">
-                            <span class="channel-tag peya" style="font-size: 10px; padding: 2px 8px;">PedidosYa</span>
-                            <span class="channel-tag rappi" style="font-size: 10px; padding: 2px 8px;">Rappi</span>
+                        <div class="tags-container" style="margin-top: 0; gap: 4px; min-height: auto;">
+                            <span class="channel-tag plataforma" style="font-size: 10px; padding: 2px 8px;">Plataformas - PedidosYa</span>
+                            <span class="channel-tag plataforma" style="font-size: 10px; padding: 2px 8px;">Plataformas - Rappi</span>
+                            <span class="channel-tag mayorista" style="font-size: 10px; padding: 2px 8px;">Mayorista - Food Truck</span>
                         </div>
                     </td>
                     <td style="text-align: right;">
-                      <button class="action-btn ">MODIFICAR</button>
+                        <button class="action-btn btn-edit">MODIFICAR</button>
                         <button class="action-btn btn-delete">ELIMINAR</button>
                     </td>
                 </tr>
@@ -323,29 +331,39 @@
     </div>
 
     <script>
-        // DATOS DE REQUISITOS (SIMULADOS)
-        const specs = {
-            'PedidosYa': 'Formato: JPG/PNG. Resolución recomendada: 500x500px. Fondo blanco obligatorio.',
-            'Rappi': 'Formato: PNG Transparente. Resolución mínima: 1200x800px. Peso máx: 2MB.',
-            'UberEats': 'Formato: JPG. Relación de aspecto 16:9. Sin marcas de agua.',
-            'Salón': 'Formato libre. Se recomienda 800x800px para visualización en POS.'
+        // --- 1. DEFINICIÓN DE DATOS (TAXONOMÍA) ---
+        const channelData = {
+            'Minorista': ['Salón', 'Ambulante'],
+            'Plataformas Delivery': ['PedidosYa', 'Rappi', 'UberEats'],
+            'Mayorista': ['Gastronómico', 'Corner', 'Store', 'Food Truck']
         };
 
-        const subChannels = {
-            'Minorista': ['Salón'],
-            'Plataformas': ['PedidosYa', 'Rappi', 'UberEats']
+        // --- 2. ESPECIFICACIONES TÉCNICAS (SIMULADAS) ---
+        const specs = {
+            'Salón': 'Formato libre. Recomendado 800x800px.',
+            'Ambulante': 'Optimizado para móvil. Máx 500KB.',
+            'PedidosYa': 'Fondo Blanco obligatorio. JPG/PNG. 500x500px.',
+            'Rappi': 'Fondo Transparente (PNG). Mínimo 1200x800px.',
+            'UberEats': 'Relación aspecto 16:9. Alta resolución.',
+            'Gastronómico': 'Alta calidad para impresión de menú.',
+            'Corner': 'Formato cuadrado. Sin texto en imagen.',
+            'Store': 'Banner horizontal.',
+            'Food Truck': 'Optimizado para pantallas digitales.'
         };
+
+        // --- 3. FUNCIONES DE LÓGICA ---
 
         function updateSubChannels() {
             const canal = document.getElementById('channelSelect').value;
             const subSelect = document.getElementById('subChannelSelect');
             const specsBox = document.getElementById('specsBox');
             
+            // Reset
             subSelect.innerHTML = '<option value="">Seleccione...</option>';
             specsBox.style.display = 'none';
 
-            if(canal && subChannels[canal]) {
-                subChannels[canal].forEach(sub => {
+            if(canal && channelData[canal]) {
+                channelData[canal].forEach(sub => {
                     const opt = document.createElement('option');
                     opt.value = sub;
                     opt.textContent = sub;
@@ -360,7 +378,7 @@
             const specsText = document.getElementById('specsText');
 
             if(sub && specs[sub]) {
-                specsText.textContent = `Requisitos ${sub}: ${specs[sub]}`;
+                specsText.textContent = `Requisitos para ${sub}: ${specs[sub]}`;
                 specsBox.style.display = 'flex';
             } else {
                 specsBox.style.display = 'none';
@@ -374,22 +392,35 @@
 
             if(!canal || !sub) return;
 
-            // Evitar duplicados visuales simples
-            // (En prod validaríamos contra un array de objetos)
-            
-            let className = 'minorista';
-            if(sub === 'PedidosYa') className = 'peya';
-            if(sub === 'Rappi') className = 'rappi';
+            // VALIDACIÓN: Evitar duplicados
+            // Buscamos si ya existe un tag con el mismo valor (subcanal)
+            const existingTags = Array.from(container.children).map(tag => tag.dataset.value);
+            if(existingTags.includes(sub)) {
+                alert(`El canal ${sub} ya ha sido asignado a esta imagen.`);
+                return;
+            }
 
+            // DETERMINAR ESTILO SEGÚN CANAL
+            let cssClass = 'minorista';
+            if(canal === 'Plataformas Delivery') cssClass = 'plataforma';
+            if(canal === 'Mayorista') cssClass = 'mayorista';
+
+            // CREAR ELEMENTO
             const tag = document.createElement('div');
-            tag.className = `channel-tag ${className}`;
-            tag.innerHTML = `${sub} <span class="remove-tag" onclick="this.parentElement.remove()">×</span>`;
+            tag.className = `channel-tag ${cssClass}`;
+            tag.dataset.value = sub; // Guardamos el valor para validación
+            tag.innerHTML = `${canal} - ${sub} <span class="remove-tag" onclick="removeTag(this)">×</span>`;
             
             container.appendChild(tag);
 
-            // Reset inputs
+            // RESETEAR INPUTS PARA SEGUIR AGREGANDO
             document.getElementById('subChannelSelect').value = '';
             document.getElementById('specsBox').style.display = 'none';
+        }
+
+        function removeTag(element) {
+            // El elemento es el span 'x', su padre es el div del tag
+            element.parentElement.remove();
         }
     </script>
 </body>
