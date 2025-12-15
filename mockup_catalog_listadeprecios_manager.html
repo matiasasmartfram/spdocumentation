@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+​<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -345,7 +345,7 @@
 </head>
 <body>
 
-    
+  
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
@@ -365,7 +365,7 @@
         <!-- HEADER -->
         <div class="page-header">
             <div class="breadcrumb">← Volver a Listas de Precios de Venta</div>
-            <div class="page-title">Venta Açai PEYA</div>
+            <div class="page-title">Venta PedidosYa</div>
             <div class="page-desc">Agregue o modifique una lista de precios de venta.</div>
         </div>
 
@@ -390,13 +390,13 @@
 
                         <div class="input-group">
                             <label>Nombre*</label>
-                            <input type="text" class="form-control" value="Venta Açai PEYA">
+                            <input type="text" class="form-control" value="Venta PedidosYa">
                             <div style="font-size: 11px; color: #888; margin-top: 4px;">Nombre de la lista de precios.</div>
                         </div>
 
                         <div class="input-group">
                             <label>Descripción*</label>
-                            <textarea class="form-control" rows="3">Venta Açai PEYA</textarea>
+                            <textarea class="form-control" rows="3">Venta PedidosYa</textarea>
                             <div style="font-size: 11px; color: #888; margin-top: 4px;">Texto libre para ampliar características.</div>
                         </div>
                     </div>
@@ -414,7 +414,7 @@
                                     <option value="">Seleccione...</option>
                                     <option value="Minorista">Minorista</option>
                                     <option value="Mayorista">Mayorista</option>
-                                    <option value="Plataformas" selected>Plataformas Delivery</option>
+                                    <option value="Plataformas Delivery" selected>Plataformas Delivery</option>
                                 </select>
                             </div>
                             
@@ -460,7 +460,7 @@
                         <div class="input-group">
                             <label>Lista de costos*</label>
                             <div style="position: relative;">
-                                <input type="text" class="form-control" value="1 | Costo Açai">
+                                <input type="text" class="form-control" value="1 | Costo Venta">
                                 <i class="material-icons" style="position: absolute; right: 30px; top: 10px; color: #666;">close</i>
                                 <i class="material-icons" style="position: absolute; right: 8px; top: 10px; color: #666;">search</i>
                             </div>
@@ -610,11 +610,11 @@
             }
         }
 
-        // 2. LOGICA DE CANALES (EVOLUCION)
+        // 2. LOGICA DE CANALES (EVOLUCION - ACTUALIZADO SEGÚN POS MOCKUP)
         const channelData = {
-            'Minorista': ['Venta Salón / Mostrador'],
-            'Mayorista': ['Gastronómico', 'Corner', 'Store', 'Parador', 'FoodTruck'],
-            'Plataformas': ['SmartPedidos - PedidosYa', 'SmartPedidos - Rappi', 'SmartPedidos - UberEats']
+            'Minorista': ['Salón', 'Ambulante'],
+            'Mayorista': ['Gastronómico', 'Corner', 'Store', 'Food Truck'],
+            'Plataformas Delivery': ['PedidosYa', 'Rappi', 'UberEats']
         };
 
         function updateSubChannels() {
@@ -633,8 +633,8 @@
                 });
                 
                 // Simular selección predeterminada si es el caso de uso
-                if(classification === 'Plataformas') {
-                    subChannelSelect.value = 'SmartPedidos - PedidosYa';
+                if(classification === 'Plataformas Delivery') {
+                    subChannelSelect.value = 'PedidosYa';
                 }
             } else {
                 const option = document.createElement('option');
