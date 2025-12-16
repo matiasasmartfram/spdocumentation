@@ -1056,60 +1056,7 @@
     }
 ]</code></pre>
 
-                    <h3>Mapeo de Transformación</h3>
-                    <p>SmartCloud debe implementar un adaptador que transforme la respuesta actual del servicio de
-                        Promociones (GetByPOSCode) al nuevo formato relations.</p>
-
-                    <p><strong>Fuente de Datos (Actual):</strong></p>
-<pre><code class="language-json">// Fragmento de respuesta GetByPOSCode 
-{ 
-    "id": 2, 
-    "name": "Combo 1 Peya", 
-    "groups": [ 
-        { 
-            "name": "Hamburgesa", 
-            "amount": 1, // Cantidad requerida 
-            "details": [ 
-                { "articleId": 9 }, // Referencia al Item 
-                { "articleId": 8 } 
-            ], 
-            "promotionGroupApply": [ 
-                { "promotionValue": 16900 } // Precio del grupo 
-            ] 
-        } 
-    ] 
-}</code></pre>
-
-                    <p><strong>Reglas de Transformación:</strong></p>
-                    <ul>
-                        <li><strong>promoId:</strong> Mapear directo desde id (2).</li>
-                        <li><strong>name / description:</strong> Mapear directo.</li>
-                        <li><strong>price:</strong>
-                            <ul>
-                                <li>Si la promo es FixedPrice (Precio Fijo Total), sumar los promotionValue de los
-                                    grupos o tomar el precio cabecera si existiera.</li>
-                                <li>En el ejemplo: El grupo "Hamburguesa" define el precio base (16900) y los otros
-                                    grupos (Acompañamiento, Bebida) tienen valor 0. El precio final es 16900.</li>
-                            </ul>
-                        </li>
-                        <li><strong>groups (Array):</strong>
-                            <ul>
-                                <li>Iterar sobre groups del origen.</li>
-                                <li><strong>min / max:</strong> Derivar de amount (en este caso min=1, max=1).</li>
-                                <li><strong>options:</strong> Iterar sobre details. Por cada articleId, buscar el Name
-                                    correspondiente en el maestro de artículos y generar el objeto { itemId, name }.
-                                </li>
-                            </ul>
-                        </li>
-                        <li><strong>Filtrado por Lista de Precios:</strong>
-                            <ul>
-                                <li>El servicio actual devuelve todas las promos del POS.</li>
-                                <li><strong>Nuevo Requisito:</strong> El proceso de publicación debe filtrar este array
-                                    verificando el array appliesTo. Solo incluir la promo si priceListId coincide con la
-                                    lista que se está publicando o si include: true aplica globalmente (null</li>
-                            </ul>
-                        </li>
-                    </ul>
+                  
 
                 </section>
             </div>
