@@ -1,878 +1,937 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Especificación de Interfaz de Datos: SmartCloud Catalog API</title>
-    
-    <!-- Estilos para el resaltado de sintaxis (Colores del código) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
-
+    <title>Documentación de Integración: SmartCloud ↔ SmartPedidos</title>
     <style>
-        :root {
-            --primary-color: #0366d6;
-            --text-color: #24292e;
-            --bg-color: #ffffff;
-            --code-bg: #f6f8fa;
-            --border-color: #e1e4e8;
-            --warning-bg: #fff5b1;
-            --header-bg: #f0f6fc;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
+        /* RESET & BASICS */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
-        /* Enlaces generales */
-        a {
-            color: var(--primary-color);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Títulos */
-        h1, h2, h3, h4 {
-            margin-top: 24px;
-            margin-bottom: 16px;
-            font-weight: 600;
-            line-height: 1.25;
-            color: #1f2328;
-        }
-
-        h1 { font-size: 2.5em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; }
-        h2 { font-size: 1.75em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; margin-top: 50px; }
-        h3 { font-size: 1.4em; margin-top: 30px; }
-        h4 { font-size: 1.1em; color: #444; }
-
-        /* Índice */
-        .toc {
-            background-color: var(--code-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 40px;
-        }
-        .toc h2 { margin-top: 0; border-bottom: none; font-size: 1.5em; }
-        .toc ul { list-style-type: none; padding-left: 0; }
-        .toc ul li { margin-bottom: 8px; }
-        .toc ul ul { padding-left: 20px; margin-top: 5px; }
-
-        /* Tablas */
-        table {
-            border-collapse: collapse;
+        /* LAYOUT */
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
             width: 100%;
-            margin: 20px 0;
-            display: block;
-            overflow-x: auto;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .layout-container {
+            display: flex;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+        }
+
+        /* SIDEBAR (TOC) */
+        .sidebar {
+            width: 300px;
+            background-color: #fff;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #444;
+            font-size: 0.9rem;
+            display: block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #f0f4f8;
+            color: #0056b3;
+        }
+
+        .sidebar .sub-item {
+            padding-left: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            overflow-y: auto;
+            background-color: #fff;
+            max-width: 100%;
+            scroll-behavior: smooth;
+        }
+
+        .content-wrapper {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        /* TYPOGRAPHY */
+        h1 {
+            font-size: 2.2rem;
+            color: #111;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: #34495e;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: #555;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #444;
+        }
+
+        strong {
+            color: #000;
+            font-weight: 700;
+        }
+
+        /* LISTS */
+        ul, ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
         th, td {
-            border: 1px solid var(--border-color);
-            padding: 10px 15px;
+            border: 1px solid #ddd;
+            padding: 10px;
             text-align: left;
             vertical-align: top;
         }
 
         th {
-            background-color: var(--header-bg);
+            background-color: #f4f6f8;
             font-weight: 600;
+            color: #333;
         }
 
-        tr:nth-child(even) {
-            background-color: #fafbfc;
+        tr:hover {
+            background-color: #f9f9f9;
         }
 
-        /* Ajustes para el bloque de código Prism */
-        pre[class*="language-"] {
+        /* CODE BLOCKS (VS CODE STYLE) */
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
             border-radius: 6px;
-            margin: 1.5em 0;
-            font-size: 85%;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            position: relative;
+            border-left: 4px solid #007acc;
         }
 
-        code[class*="language-"], pre[class*="language-"] {
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        code {
+            font-family: inherit;
         }
 
-        /* Bloques especiales */
-        .metadata {
-            background-color: var(--code-bg);
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 30px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .highlight {
+        /* HTTP METHOD BADGES */
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-weight: bold;
-            color: #d73a49;
+            font-size: 0.8em;
+            color: white;
+            margin-right: 10px;
+        }
+        .get { background-color: #61affe; }
+        .post { background-color: #49cc90; }
+
+        /* SYNTAX HIGHLIGHTING COLORS */
+        .json-key { color: #9cdcfe; }      
+        .json-string { color: #ce9178; }   
+        .json-number { color: #b5cea8; }   
+        .json-boolean { color: #569cd6; }  
+        .json-null { color: #569cd6; }     
+        .json-comment { color: #6a9955; }  
+
+        /* UTILS */
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 3rem 0;
+        }
+        
+        .alert {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
         }
 
-        .note {
-            background-color: #fffbdd;
-            padding: 10px;
-            border-left: 5px solid #d29922;
-            margin: 10px 0;
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .layout-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+                padding: 1rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            header {
+                position: relative;
+            }
+
+            .layout-container {
+                margin-top: 0;
+                height: auto;
+            }
         }
-
-        ul, ol { padding-left: 25px; }
-        li { margin-bottom: 5px; }
-
-        /* Scroll suave */
-        html { scroll-behavior: smooth; }
-
     </style>
 </head>
+
 <body>
 
-<div class="container">
+    <header>
+        <h1>Sincronización de Catálogo</h1>
+    </header>
 
-    <!-- Título Principal -->
-    <h1>Especificación de Interfaz de Datos: SmartCloud Catalog API</h1>
-
-    <!-- Metadatos -->
-    <div class="metadata">
-        <p><strong>Versión del Documento:</strong> 1.0</p>
-        <p><strong>Módulo:</strong> Listas de Precios y Catálogo de Productos</p>
-        <p><strong>Audiencia:</strong> Integradores Middleware (SmartPedidos)</p>
-    </div>
-
-    <!-- Índice -->
-    <div class="toc">
-        <h2>Índice de Contenido</h2>
-        <ul>
-            <li><a href="#section-1">1. Obtención del PriceList</a>
-                <ul>
-                    <li><a href="#section-1-2">1.2. Estructura del Objeto de Respuesta</a></li>
-                    <li><a href="#section-1-3">1.3. Lógica de Composición (Recetas y Modificadores)</a></li>
-                    <li><a href="#section-1-4">1.4. Diagrama de Flujo de Datos (Lógica de Lectura)</a></li>
-                </ul>
-            </li>
-            <li><a href="#section-2">2. Armado de Promociones</a>
-                <ul>
-                    <li><a href="#section-2-1">2.1. Obtención de Promociones</a></li>
-                    <li><a href="#section-2-2">2.2. Estructura del Objeto Promoción (Nivel Raíz)</a></li>
-                    <li><a href="#section-2-3">2.3. Lógica de Grupos (Estructura del Combo)</a></li>
-                    <li><a href="#section-2-4">2.4. Lógica de Precios (Contexto de Lista)</a></li>
-                    <li><a href="#section-2-5">2.5. Diagrama de Flujo de Datos (Procesamiento de Promociones)</a></li>
-                </ul>
-            </li>
-            <li><a href="#section-3">3. Gestión de Imágenes</a>
-                <ul>
-                    <li><a href="#section-3-1">3.1. Requisitos Técnicos de la Imagen (Normativa PedidosYa)</a></li>
-                    <li><a href="#section-3-2">3.2. Opción A: Enriquecimiento en PriceList (Integrada)</a></li>
-                    <li><a href="#section-3-3">3.3. Opción B: Dedicado (Desacoplada)</a></li>
-                </ul>
-            </li>
-            <li><a href="#section-4">4. Consolidación y Publicación de Catálogo (Push Notification)</a>
-                <ul>
-                    <li><a href="#section-4-1">4.1. Objetivo y Contexto del Negocio</a></li>
-                    <li><a href="#section-4-2">4.2. Flujo de Proceso de Publicación</a></li>
-                    <li><a href="#section-4-3">4.3. Especificación del JSON Unificado (Payload)</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-
-    <!-- Contenido -->
-
-    <h2 id="section-1">1. Obtención del PriceList</h2>
-    <p>Para sincronizar el catálogo, el integrador debe consultar el endpoint de "Precios por Lista". Este endpoint devuelve la configuración de venta vigente (precios y disponibilidad) junto con la definición estructural de los productos.</p>
-
-    <h3>Definición del Endpoint</h3>
-    <ul>
-        <li><strong>Método:</strong> GET</li>
-        <li><strong>URL:</strong> https://smartfran-cloud-catalog-stg.azurewebsites.net/api/v1/PriceLists/GetPrices/{PriceListId}</li>
-        <li><strong>Parámetros:</strong>
+    <div class="layout-container">
+        <!-- SIDEBAR INDEX -->
+        <nav class="sidebar">
+            <h3>Índice de Contenidos</h3>
             <ul>
-                <li>{PriceListId}: ID numérico de la lista de precios a sincronizar (Ej: 2).</li>
-            </ul>
-        </li>
-    </ul>
-
-    <h3>Headers Requeridos</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Header</th>
-
-                <th>Descripción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>TraceKey</td>
-
-                <td>Identificador de traza para debugging.</td>
-            </tr>
-            <tr>
-                <td>TenantId</td>
-
-                <td>Identificador del cliente/restaurante en SmartCloud.</td>
-            </tr>
-            <tr>
-                <td>Authorization</td>
-
-                <td>Token de seguridad JWT.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <hr>
-
-    <h2 id="section-1-2">1.2. Estructura del Objeto de Respuesta</h2>
-    <p>El endpoint retorna un <strong>Array de Objetos</strong>. Cada objeto representa una entrada en la lista de precios. La información está normalizada en dos niveles: <strong>Contexto de Venta</strong> (Raíz) y <strong>Definición de Producto</strong> (Anidado).</p>
-
-    <h3>A. Nivel Raíz: Contexto de Venta</h3>
-    <p><em>Estos atributos definen "cómo se vende" el producto en esta lista específica.</em></p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Atributo</th>
-                <th>Tipo de Dato</th>
-                <th>Importancia</th>
-                <th>Descripción y Regla de Negocio para Integrador</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>publishedPrice</td>
-                <td>Float</td>
-                <td><strong>ALTA</strong></td>
-                <td>El precio final de venta al público para esta lista. Este es el valor que debe mostrarse en la App de Delivery.</td>
-            </tr>
-            <tr>
-                <td>enabled</td>
-                <td>Boolean</td>
-                <td><strong>ALTA</strong></td>
-                <td>Indica si el producto está habilitado para la venta en esta lista. ⚠️ <strong>Regla:</strong> Si es false, el producto debe desactivarse o no importarse.</td>
-            </tr>
-            <tr>
-                <td>isKds</td>
-                <td>Boolean</td>
-                <td>Media</td>
-                <td>Indica si el producto impacta en el sistema de cocina (Kitchen Display System). Útil para saber si es un producto físico o un concepto.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h3>B. Nivel item: Definición</h3>
-    <p><em>Ubicación: root.item. Estos atributos definen "qué es" el producto.</em></p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Atributo</th>
-                <th>Tipo de Dato</th>
-                <th>Descripción y Regla de Negocio para Integrador</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>skus</td>
-                <td>Array</td>
-                <td>
-                    Buscar el objeto donde <code>skuType.name == "SKU_SmartPedidos"</code> para obtener el SKU en el atributo “code”:
-<pre><code>"skus": [
-{
-"id": 132,
-"code": "181", //ATRIBUTO A TENER EN CUENTA PARA DETERMINAR SKU
-"skuType": {
-"id": 11,
-"name": "SKU_SmartPedidos",
-"description": "SKU SmartPedidos"
-},
-"itemId": 18 // ESTE ES EL ID DEL ITEM EN SMARTCLOUD, POR LO GENERAL COINCIDE CON SMARTPEDIDOS PERO JUSTO EN ESTE ITEM NO.
-}
-],</code></pre>
-                </td>
-            </tr>
-            <tr>
-                <td>name</td>
-                <td>String</td>
-                <td>Nombre comercial del producto. Usar tal cual viene.</td>
-            </tr>
-            <tr>
-                <td>description</td>
-                <td>String</td>
-                <td>Descripción detallada.</td>
-            </tr>
-            <tr>
-                <td>defaultImage</td>
-                <td>String</td>
-                <td>URL de la imagen. <strong>Nota:</strong> Puede venir null.</td>
-            </tr>
-            <tr>
-                <td>group</td>
-                <td>Object</td>
-                <td>
-                    Objeto de categorización.<br>
-                    <strong>Regla:</strong> Utilizar <code>item.group.name</code> para crear las <strong>Categorías/Secciones</strong> en la plataforma de delivery (Ej: "Hamburguesas", "Bebidas"). Ignorar categoryId numérico para nombres visibles.
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <hr>
-
-    <h2 id="section-1-3">1.3. Lógica de Composición (Recetas y Modificadores)</h2>
-    <p><em>Ubicación: root.item.composition</em></p>
-    <p>SmartCloud envía la estructura técnica del producto (su receta). El integrador (SmartPedidos) <strong>DEBE</strong> procesar el array <code>composition.items</code> para determinar qué opciones mostrar al usuario final.</p>
-    <p>El comportamiento de cada componente se dicta por la combinación de los flags <code>optional</code> y <code>extra</code>.</p>
-
-    <h3>Matriz de Interpretación de Componentes</h3>
-    <p>El integrador debe iterar sobre cada elemento de <code>composition.items</code> y aplicar la siguiente lógica estricta:</p>
-
-    <h4>CASO 1: Componentes "Extras"</h4>
-    <ul>
-        <li><strong>Condición:</strong> extra: true</li>
-        <li><strong>Significado:</strong> Es un producto adicional que se vende por separado pero se sugiere con este producto (Ej: Extra Cheddar, Extra Carne).</li>
-        <li><strong>Comportamiento Esperado en SmartPedidos:</strong>
-            <ol>
-                <li>Debe interpretarse como un <strong>Modificador de Agregado</strong>.</li>
-                <li><strong>Precio:</strong> El precio NO viene en el nodo composición. SmartPedidos debe buscar el <code>item.id</code> de este componente en el Nivel Raíz del JSON general y usar su <code>publishedPrice</code>.</li>
-                <li><strong>UI:</strong> Mostrar con el nombre original y sumar precio.</li>
-            </ol>
-        </li>
-    </ul>
-
-    <h4>CASO 2: Componentes "Opcionales"</h4>
-    <ul>
-        <li><strong>Condición:</strong> optional: true AND extra: false</li>
-        <li><strong>Significado:</strong> Es un ingrediente estándar de la receta que el cliente puede decidir quitar (Ej: Cebolla, Tomate, Salsas).</li>
-        <li><strong>Comportamiento Esperado en SmartPedidos:</strong>
-            <ol>
-                <li>Debe interpretarse como un <strong>Modificador de Opcional</strong>.</li>
-                <li><strong>Precio:</strong> 0.00 (Eliminar no descuenta precio).</li>
-            </ol>
-        </li>
-    </ul>
-
-    <h4>CASO 3: Componentes "Base de Receta" (IGNORAR)</h4>
-    <ul>
-        <li><strong>Condición:</strong> optional: false AND extra: false</li>
-        <li><strong>Significado:</strong> Parte fundamental e inalterable de la receta (Ej: Pan, Carne cruda, Sal).</li>
-        <li><strong>Comportamiento Esperado en SmartPedidos:</strong>
-            <ol>
-                <li><strong>IGNORAR.</strong> Estos items no deben ser visibles para el cliente final en la plataforma de delivery. Solo sirven para el control de stock interno de SmartCloud.</li>
-            </ol>
-        </li>
-    </ul>
-
-    <hr>
-
-    <h2 id="section-1-4">1.4. Diagrama de Flujo de Datos (Lógica de Lectura)</h2>
-    <p>Para procesar correctamente un item recibido de SmartCloud, siga este pseudocódigo:</p>
-    <ol>
-        <li><strong>Leer Objeto Raíz:</strong>
-            <ul>
-                <li>Si enabled == false -> <strong>Descartar</strong>.</li>
-                <li>Obtener itemId, publishedPrice, item.name item.description.</li>
-                <li>Determinar Categoría usando item.group.name.</li>
-            </ul>
-        </li>
-        <li><strong>Procesar Composición (item.composition.items):</strong>
-            <ul>
-                <li><em>Si composition es null -> El producto es simple (sin modificadores).</em></li>
-                <li><em>Si tiene items -> Iterar:</em>
+                <li>
+                    <a href="#section-1">1. Obtención del PriceList</a>
                     <ul>
-                        <li>¿Es extra == true? -> <strong>Crear Grupo "Extras"</strong>. (Buscar precio en raíz).</li>
-                        <li>¿Es optional == true? -> <strong>Crear Grupo "Ingredientes"</strong>. (Configurar como removible, precio 0).</li>
-                        <li>¿Es optional == false? -> <strong>Ocultar/Ignorar</strong>.</li>
+                        <li><a href="#sec-1-def" class="sub-item">Definición Endpoint</a></li>
+                        <li><a href="#sec-1-2" class="sub-item">1.2. Estructura Respuesta</a></li>
+                        <li><a href="#sec-1-3" class="sub-item">1.3. Lógica Composición</a></li>
+                        <li><a href="#sec-1-4" class="sub-item">1.4. Flujo de Datos</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#section-2">2. Armado de Promociones</a>
+                    <ul>
+                        <li><a href="#sec-2-1" class="sub-item">2.1. Obtención</a></li>
+                        <li><a href="#sec-2-2" class="sub-item">2.2. Estructura Promoción</a></li>
+                        <li><a href="#sec-2-3" class="sub-item">2.3. Lógica Grupos</a></li>
+                        <li><a href="#sec-2-4" class="sub-item">2.4. Lógica Precios</a></li>
+                        <li><a href="#sec-2-5" class="sub-item">2.5. Flujo Datos Promos</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#section-3">3. Especificación Técnica</a>
+                    <ul>
+                        <li><a href="#sec-3-1" class="sub-item">3.1. Estructura General</a></li>
+                        <li><a href="#sec-3-2" class="sub-item">3.2. Contexto y Ruteo</a></li>
+                        <li><a href="#sec-3-3" class="sub-item">3.3. Productos Unitarios</a></li>
+                        <li><a href="#sec-3-4" class="sub-item">3.4. Relaciones</a></li>
                     </ul>
                 </li>
             </ul>
-        </li>
-        <li><strong>Validar Imagen:</strong>
-            <ul>
-                <li>Si defaultImage es null -> Asignar imagen genérica según Categoría.</li>
-            </ul>
-        </li>
-    </ol>
+        </nav>
 
-    <h2 id="section-2">2. Armado de Promociones</h2>
-    <p>Este módulo permite sincronizar combos, promos y descuentos configurados en SmartCloud. El integrador debe combinar esta estructura con los datos obtenidos previamente en GetPrices para construir el producto final en la plataforma de Delivery.</p>
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <div class="content-wrapper">
 
-    <h2 id="section-2-1">2.1. Obtención de Promociones</h2>
-    <p>SmartPedidos debe consultar el endpoint de Promociones por Código de Punto de Venta (POS Code).</p>
+                <!-- SECCIÓN 1 -->
+                <section id="section-1">
+                    <h2>1. Obtención del PriceList</h2>
+                    <p>Para sincronizar el catálogo, el integrador debe consultar el endpoint de "Precios por Lista". Este endpoint devuelve la configuración de venta vigente (precios y disponibilidad) junto con la definición estructural de los productos.</p>
 
-    <h3>Definición del Endpoint</h3>
-    <ul>
-        <li><strong>Método:</strong> GET</li>
-        <li><strong>URL:</strong> https://smartfran-cloud-business-stg.azurewebsites.net/api/v1/Promotion/GetByPOSCode</li>
-        <li><strong>Parámetros (Query String):</strong>
-            <ul>
-                <li>posCode: Código único del punto de venta (Ej: 1A7CF47D7A5B49CF9DFF66CC38BE56E7).</li>
-            </ul>
-        </li>
-    </ul>
-
-    <h3>Headers Requeridos</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Header</th>
-                <th>Descripción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>TraceKey</td>
-                <td>Identificador de traza.</td>
-            </tr>
-            <tr>
-                <td>TenantId</td>
-                <td>Identificador del cliente.</td>
-            </tr>
-            <tr>
-                <td>Authorization</td>
-                <td>Token de seguridad JWT.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <hr>
-
-    <h2 id="section-2-2">2.2. Estructura del Objeto Promoción (Nivel Raíz)</h2>
-    <p>Cada objeto del array representa una "Promoción" o "Combo".</p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Atributo</th>
-                <th>Tipo</th>
-                <th>Descripción y Regla de Negocio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>id</td>
-                <td>Integer</td>
-                <td>ID interno de SmartCloud. <strong>NO USAR</strong> como identificador de venta.</td>
-            </tr>
-            <tr>
-                <td>name</td>
-                <td>String</td>
-                <td>Nombre del Combo (Ej: "Combo 1").</td>
-            </tr>
-            <tr>
-                <td>description</td>
-                <td>String</td>
-                <td>Descripción comercial.</td>
-            </tr>
-            <tr>
-                <td>relationCodes</td>
-                <td>Array</td>
-                <td>
-                    <strong>IMPORTANTE</strong>. Contiene la definición del SKU para integración.<br>
-                    Utilizar Atributo “<strong>code</strong>” para <strong>skuTypeId == 6 (SKU_SmartPedidos)</strong>
-                </td>
-            </tr>
-            <tr>
-                <td>validSince...</td>
-                <td>Date/Int</td>
-                <td>Reglas de vigencia (Fechas y Minutos del día). El integrador debe validar si la promo está activa antes de enviarla.</td>
-            </tr>
-            <tr>
-                <td>monday...sunday</td>
-                <td>Boolean</td>
-                <td>Disponibilidad semanal. Si es false, la promo no debe mostrarse ese día.</td>
-            </tr>
-            <tr>
-                <td>groups</td>
-                <td>Array</td>
-                <td>Define la estructura del combo (Pasos de selección). Ver sección 2.3.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <hr>
-
-    <h2 id="section-2-3">2.3. Lógica de Grupos (Estructura del Combo)</h2>
-    <p><em>Ubicación: root.groups</em></p>
-    <p>Un Combo en SmartCloud se compone de "Pasos" o "Grupos" de selección (Ej: Paso 1: Elegir Burger, Paso 2: Elegir Bebida).</p>
-    <p>SmartPedidos debe transformar cada elemento de groups en un <strong>Grupo de Opciones (Modifier Group)</strong> en la plataforma de Delivery.</p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Atributo</th>
-                <th>Tipo</th>
-                <th>Regla de Negocio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>name</td>
-                <td>String</td>
-                <td>Nombre del paso de selección (Ej: "Hamburguesa", "Bebida").</td>
-            </tr>
-            <tr>
-                <td>amount</td>
-                <td>Integer</td>
-                <td>Cantidad de items que el usuario debe seleccionar en este paso. <strong>Relacion:</strong> Para configurar en Delivery como Min: {amount}, Max: {amount}.</td>
-            </tr>
-            <tr>
-                <td>details</td>
-                <td>Array</td>
-                <td>Lista de productos disponibles para elegir en este grupo.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h3>Enlace con PriceList (details)</h3>
-    <p>Dentro de <code>groups.details</code>, el atributo clave es <code>articleId</code>.</p>
-    <div class="note">
-        <p>⚠️ IMPORTANTE</p>
-        <p>El articleId en <em>Promotion</em> es equivalente al itemId en <em>PriceList</em>.</p>
-    </div>
-    <p>Para renderizar la opción, el integrador <strong>DEBE</strong> buscar este ID en la data cacheada de GetPrices para obtener:</p>
-    <ol>
-        <li>Nombre del producto.</li>
-        <li>Imagen (si existe).</li>
-        <li><strong>Sus Modificadores:</strong> Si el articleId corresponde a una Hamburguesa que tiene modificadores (Ej: "Sin Cebolla", "Extra Cheddar" definidos en el Paso 1.3), <strong>estos deben heredarse y permitirse dentro del combo</strong>.</li>
-    </ol>
-
-    <hr>
-
-    <h2 id="section-2-4">2.4. Lógica de Precios (Contexto de Lista)</h2>
-    <p><em>Ubicación: root.groups.promotionGroupApply</em></p>
-    <p>El precio de la promoción <strong>no es fijo en la raíz</strong>. Se define dinámicamente sumando los valores de los componentes seleccionados según la lista de precios activa.</p>
-
-    <h3>Algoritmo de Precios:</h3>
-    <ol>
-        <li><strong>Contexto:</strong> El integrador sabe que está operando sobre una lista de precios específica (Ej: PriceListId: 2 de la Fase 1).</li>
-        <li><strong>Filtrado:</strong> Dentro de cada grupo, en promotionGroupApply, buscar el objeto donde promotionApply.priceListId == 2.</li>
-        <li><strong>Valor:</strong> Leer promotionValue.</li>
-    </ol>
-
-    <h3>Interpretación de promotionValue:</h3>
-    <ul>
-        <li><strong>Si type == "FixedPrice":</strong>
-            <p>El promotionValue es el precio que se cobra por ese grupo.</p>
-            <ul>
-                <li><em>Ejemplo Combo 1:</em>
+                    <h3 id="sec-1-def">Definición del Endpoint</h3>
+                    <p><span class="method get">GET</span> <code>https://smartfran-cloud-catalog-stg.azurewebsites.net/api/v1/PriceLists/GetPrices/{PriceListId}</code></p>
+                    
+                    <h4>Parámetros:</h4>
                     <ul>
-                        <li>Grupo Hamburguesa: Valor 16900.</li>
-                        <li>Grupo Bebida: Valor 0.</li>
-                        <li><strong>Precio Base del Combo:</strong> $16.900.</li>
+                        <li><code>{PriceListId}</code>: ID numérico de la lista de precios a sincronizar (Ej: 2).</li>
                     </ul>
-                </li>
-            </ul>
-        </li>
-        <li><strong>Si type == "PercentDiscount" (Ver Promo ID 6):</strong>
-            <p>El promotionValue es un porcentaje de descuento sobre el precio original del item.</p>
-            <ul>
-                <li><em>Calculo:</em> Buscar el precio original del item en GetPrices y aplicar el % de descuento.</li>
-            </ul>
-        </li>
-    </ul>
 
-    <hr>
+                    <h4>Headers Requeridos</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Header</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TraceKey</td>
+                                <td>Identificador de traza para debugging.</td>
+                            </tr>
+                            <tr>
+                                <td>TenantId</td>
+                                <td>Identificador del cliente/restaurante en SmartCloud.</td>
+                            </tr>
+                            <tr>
+                                <td>Authorization</td>
+                                <td>Token de seguridad JWT.</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-    <h2 id="section-2-5">2.5. Diagrama de Flujo de Datos (Procesamiento de Promociones)</h2>
-    <p>Para construir un Combo válido para SmartPedidos, siga estrictamente estos pasos:</p>
-    <ol>
-        <li><strong>Validar Vigencia:</strong> Chequear fechas (validToDate) y días habilitados (monday, etc.). Si venció, descartar.</li>
-        <li><strong>Obtener Identidad (SKU):</strong>
-            <ul>
-                <li>Iterar sobre el array relationCodes.</li>
-                <li>Buscar el objeto donde <strong>skuTypeId == 6</strong>.</li>
-                <li>Extraer el valor del atributo <strong>code</strong> (Ej: "10001").</li>
-                <li>⚠️ <strong>Regla:</strong> Este valor code será el <strong>SKU / external_id</strong> único que utilizará SmartPedidos para identificar la promoción.</li>
-            </ul>
-        </li>
-        <li><strong>Construir Grupos (Iterar root.groups):</strong>
-            <ul>
-                <li>Crear un "Grupo de Opciones" en Delivery con el groups.name.</li>
-                <li>Definir obligatoriedad basada en groups.amount.</li>
-                <li><strong>Determinar Precio del Grupo:</strong>
-                    <ul>
-                        <li>Buscar en promotionGroupApply el priceListId coincidente (Ej: 2).</li>
-                        <li>Guardar promotionValue.</li>
-                    </ul>
-                </li>
-            </ul>
-        </li>
-        <li><strong>Poblar Opciones del Grupo (Iterar details):</strong>
-            <ul>
-                <li>Por cada articleId:
-                    <ul>
-                        <li>Buscar el item completo en el JSON de GetPrices.</li>
-                        <li>Usar Nombre de GetPrices.</li>
-                        <li>Asignar el precio determinado en el paso 3.</li>
-                        <li><strong>IMPORTANTE:</strong> Si el item de GetPrices tiene modificadores (removibles/extras), adjuntarlos a la opción dentro del combo.</li>
-                    </ul>
-                </li>
-            </ul>
-        </li>
-    </ol>
+                    <h3 id="sec-1-2">1.2. Estructura del Objeto de Respuesta</h3>
+                    <p>El endpoint retorna un Array de Objetos. Cada objeto representa una entrada en la lista de precios. La información está normalizada en dos niveles: Contexto de Venta (Raíz) y Definición de Producto (Anidado).</p>
 
-    <h2 id="section-3">3. Gestión de Imágenes</h2>
-    <p>Las imágenes deben ser tratadas como recursos específicos para el canal de Plataformas de delivery.</p>
-    <p>SmartCloud puede ofrecer dos estrategias para la sincronización de imágenes. Se debe implementar <strong>UNA</strong> de las siguientes opciones.</p>
+                    <h4>A. Nivel Raíz: Contexto de Venta</h4>
+                    <p>Estos atributos definen "cómo se vende" el producto en esta lista específica.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Atributo</th>
+                                <th>Tipo de Dato</th>
+                                <th>Importancia</th>
+                                <th>Descripción y Regla de Negocio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>publishedPrice</td>
+                                <td>Float</td>
+                                <td>ALTA</td>
+                                <td>El precio final de venta al público para esta lista. Este es el valor que debe mostrarse en la App de Delivery.</td>
+                            </tr>
+                            <tr>
+                                <td>enabled</td>
+                                <td>Boolean</td>
+                                <td>ALTA</td>
+                                <td>Indica si el producto está habilitado para la venta en esta lista. ⚠️ <strong>Regla:</strong> Si es false, el producto debe desactivarse o no importarse.</td>
+                            </tr>
+                            <tr>
+                                <td>isKds</td>
+                                <td>Boolean</td>
+                                <td>Media</td>
+                                <td>Indica si el producto impacta en el sistema de cocina (Kitchen Display System). Útil para saber si es un producto físico o un concepto.</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-    <h2 id="section-3-1">3.1. Requisitos Técnicos de la Imagen (Normativa PedidosYa)</h2>
-    <p>Independientemente de la estrategia de implementación, toda imagen servida por SmartCloud hacia SmartPedidos debe cumplir con:</p>
-    <ul>
-        <li><strong>Relación de Aspecto:</strong> 4:3 (Horizontal).</li>
-        <li><strong>Resolución Mínima:</strong> 1440x1080 px.</li>
-        <li><strong>Formato:</strong> JPG o PNG.</li>
-        <li><strong>Contenido:</strong> Fondo blanco puro, producto centrado, sin marcas de agua.</li>
-        <li><strong>Contexto:</strong> SmartCloud debe asegurar que la imagen devuelta corresponde al clasificador "Plataformas de Pedidos/PedidosYa" y no a imágenes de Web.</li>
-    </ul>
-
-    <hr>
-
-    <h2 id="section-3-2">3.2. Opción A: Enriquecimiento en PriceList (Integrada)</h2>
-    <p>Esta opción utiliza el endpoint documentado en el <strong>Punto 1 (GetPrices)</strong>.</p>
-    <ul>
-        <li><strong>Mecanismo:</strong> SmartCloud popula el atributo defaultImage dentro del objeto item en la respuesta de GetPrices.</li>
-    </ul>
-
-    <hr>
-
-    <h2 id="section-3-3">3.3. Opción B: Dedicado (Desacoplada)</h2>
-    <p>Esta opción habilita un recurso específico para obtener masivamente las URLs de las imágenes, filtradas por la lista de precios activa.</p>
-
-    <h3>Estructura de Respuesta (Payload)</h3>
-    <p>El endpoint retorna un array plano de objetos, conteniendo las claves de enlace y la URL pública.</p>
-
-<pre><code class="language-json">[
-    {
-        "itemId": 5,
-        "sku": "5",
-        "imageUrl": "https://cdn.smartcloud.com/images/tenants/kt76igzny9ql/products/5_peya.jpg"
+                    <h4>B. Nivel item: Definición</h4>
+                    <p>Ubicación: <code>root.item</code>. Estos atributos definen "qué es" el producto.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Atributo</th>
+                                <th>Tipo de Dato</th>
+                                <th>Descripción y Regla de Negocio para Integrador</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>skus</td>
+                                <td>Array</td>
+                                <td>
+                                    Buscar el objeto donde <code>skuType.name == "SKU_SmartPedidos"</code> para obtener el SKU en el atributo “code”:
+<pre><code class="language-json">"skus": [
+  {
+    "id": 132,
+    "code": "181", //ATRIBUTO A TENER EN CUENTA PARA DETERMINAR SKU
+    "skuType": {
+      "id": 11,
+      "name": "SKU_SmartPedidos",
+      "description": "SKU SmartPedidos"
     },
-    {
-        "itemId": 20,
-        "sku": "20",
-        "imageUrl": "https://cdn.smartcloud.com/images/tenants/kt76igzny9ql/products/20_peya.jpg"
-    }
+    "itemId": 18 // ID DEL ITEM EN SMARTCLOUD
+  }
 ]</code></pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>name</td>
+                                <td>String</td>
+                                <td>Nombre comercial del producto. Usar tal cual viene.</td>
+                            </tr>
+                            <tr>
+                                <td>description</td>
+                                <td>String</td>
+                                <td>Descripción detallada.</td>
+                            </tr>
+                            <tr>
+                                <td>defaultImage</td>
+                                <td>String</td>
+                                <td>URL de la imagen. Nota: Puede venir null.</td>
+                            </tr>
+                            <tr>
+                                <td>group</td>
+                                <td>Object</td>
+                                <td>Objeto de categorización. <br><strong>Regla:</strong> Utilizar <code>item.group.name</code> para crear las Categorías/Secciones en la plataforma de delivery (Ej: "Hamburguesas", "Bebidas"). Ignorar categoryId numérico para nombres visibles.</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-    <h3>Diccionario de Datos</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Atributo</th>
-                <th>Tipo</th>
-                <th>Descripción y Regla de Negocio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>itemId</strong></td>
-                <td>Integer</td>
-                <td><strong>ID de Enlace Principal.</strong> Corresponde al itemId recibido en GetPrices.</td>
-            </tr>
-            <tr>
-                <td>sku</td>
-                <td>String</td>
-                <td><strong>Código SmartPedidos.</strong> Corresponde al código (atributo code dentro de skus en GetPrices).</td>
-            </tr>
-            <tr>
-                <td>imageUrl</td>
-                <td>String</td>
-                <td><strong>URL Pública.</strong> Enlace directo al recurso (CDN).</td>
-            </tr>
-        </tbody>
-    </table>
+                    <h3 id="sec-1-3">1.3. Lógica de Composición (Recetas y Modificadores)</h3>
+                    <p>Ubicación: <code>root.item.composition</code></p>
+                    <p>SmartCloud envía la estructura técnica del producto (su receta). El integrador (SmartPedidos) DEBE procesar el array <code>composition.items</code> para determinar qué opciones mostrar al usuario final.</p>
+                    <p>El comportamiento de cada componente se dicta por la combinación de los flags <code>optional</code> y <code>extra</code>.</p>
 
-    <h3>Flujo de Integración (Opción B)</h3>
-    <ol>
-        <li>El Integrador consume GetPrices/{id} (Obtiene productos y precios).</li>
-        <li>El Integrador consume GetImagesByPriceList/{id} (Obtiene URLs).</li>
-        <li>El Integrador realiza un <strong>Match</strong> de listas:
-            <ul>
-                <li>Itera sobre los productos de GetPrices.</li>
-                <li>Busca el itemId correspondiente en el array de imágenes.</li>
-                <li>Si encuentra coincidencia -> Asigna imageUrl al producto de salida.</li>
-                <li>Si no encuentra coincidencia -> Asigna imagen genérica para evitar rechazo en PedidosYa.</li>
-            </ul>
-        </li>
-    </ol>
+                    <h4>Matriz de Interpretación de Componentes</h4>
+                    <p>El integrador debe iterar sobre cada elemento de <code>composition.items</code> y aplicar la siguiente lógica estricta:</p>
 
-    <h2 id="section-4">4. Consolidación y Publicación de Catálogo (Push Notification)</h2>
-    <p>En este modelo SmartCloud "notifica" (PUSH) una actualización masiva del catálogo.</p>
+                    <div class="alert">
+                        <strong>CASO 1: Componentes "Extras"</strong><br>
+                        <strong>Condición:</strong> <code>extra: true</code><br>
+                        <strong>Significado:</strong> Es un producto adicional que se vende por separado pero se sugiere con este producto (Ej: Extra Cheddar, Extra Carne).<br>
+                        <strong>Comportamiento Esperado en SmartPedidos:</strong>
+                        <ul>
+                            <li>Debe interpretarse como un Modificador de Agregado.</li>
+                            <li><strong>Precio:</strong> El precio NO viene en el nodo composición. SmartPedidos debe buscar el <code>item.id</code> de este componente en el Nivel Raíz del JSON general y usar su <code>publishedPrice</code>.</li>
+                            <li><strong>UI:</strong> Mostrar con el nombre original y sumar precio.</li>
+                        </ul>
+                    </div>
 
-    <h2 id="section-4-1">4.1. Objetivo y Contexto del Negocio</h2>
-    <p>El objetivo es automatizar la distribución de cambios de precios y productos. Se busca unificar la experiencia de modo que cuando un administrador en SmartCloud presione <strong>"Publicar Lista de Precios"</strong>, el sistema automáticamente compile toda la información necesaria (Items + Promos + Imágenes de la Plataforma) y la envíe a SmartPedidos para impactar en las tiendas correspondientes.</p>
+                    <div class="alert">
+                        <strong>CASO 2: Componentes "Opcionales"</strong><br>
+                        <strong>Condición:</strong> <code>optional: true</code> AND <code>extra: false</code><br>
+                        <strong>Significado:</strong> Es un ingrediente estándar de la receta que el cliente puede decidir quitar (Ej: Cebolla, Tomate, Salsas).<br>
+                        <strong>Comportamiento Esperado en SmartPedidos:</strong>
+                        <ul>
+                            <li>Debe interpretarse como un Modificador de Opcional.</li>
+                            <li><strong>Precio:</strong> 0.00 (Eliminar no descuenta precio).</li>
+                        </ul>
+                    </div>
 
-    <h3>Requerimientos de Evolución para SmartCloud (Backend & UI)</h3>
-    <p>Para lograr este payload unificado, SmartCloud debe implementar las siguientes lógicas:</p>
-    <ol>
-        <li><strong>Tipificación de Listas de Precio:</strong> Agregar en la configuración de la Lista (UI "General") la capacidad de asignar <strong>Canal</strong> (Ej: Delivery) y <strong>SubCanal</strong> (Ej: PedidosYa, Rappi). Esto permite saber qué formato de catálogo generar.</li>
-        <li><strong>Imágenes por Plataforma:</strong> En el módulo Multimedia (UI "Multimedia"), habilitar el selector de <strong>Plataforma</strong> para que el sistema pueda filtrar: <em>"Si la lista es de PedidosYa, buscar la imagen taggeada como PedidosYa"</em>.</li>
-        <li><strong>Promociones en Lista:</strong> Vincular las Promociones/Combos a las Listas de Precio de forma explícita o calculada, para enviarlas junto con los items individuales.</li>
-        <li><strong>Resolución de Sucursales (Branch Logic):</strong> Al publicar una lista, SmartCloud debe identificar qué POS utilizan esa lista y extraer sus BranchId (ID de SmartPedidos) para incluirlos en la cabecera del mensaje.</li>
-    </ol>
+                    <div class="alert">
+                        <strong>CASO 3: Componentes "Base de Receta" (IGNORAR)</strong><br>
+                        <strong>Condición:</strong> <code>optional: false</code> AND <code>extra: false</code><br>
+                        <strong>Significado:</strong> Parte fundamental e inalterable de la receta (Ej: Pan, Carne cruda, Sal).<br>
+                        <strong>Comportamiento Esperado en SmartPedidos:</strong>
+                        <ul>
+                            <li>IGNORAR. Estos items no deben ser visibles para el cliente final en la plataforma de delivery. Solo sirven para el control de stock interno de SmartCloud.</li>
+                        </ul>
+                    </div>
 
-    <hr>
+                    <h3 id="sec-1-4">1.4. Diagrama de Flujo de Datos (Lógica de Lectura)</h3>
+                    <p>Para procesar correctamente un item recibido de SmartCloud, siga este pseudocódigo:</p>
+                    <ol>
+                        <li><strong>Leer Objeto Raíz:</strong>
+                            <ul>
+                                <li>Si <code>enabled == false</code> -> Descartar.</li>
+                                <li>Obtener <code>itemId</code>, <code>publishedPrice</code>, <code>item.name</code> <code>item.description</code>.</li>
+                                <li>Determinar Categoría usando <code>item.group.name</code>.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Procesar Composición (item.composition.items):</strong>
+                            <ul>
+                                <li>Si composition es null -> El producto es simple (sin modificadores).</li>
+                                <li>Si tiene items -> Iterar:
+                                    <ul>
+                                        <li>¿Es <code>extra == true</code>? -> Crear Grupo "Extras". (Buscar precio en raíz).</li>
+                                        <li>¿Es <code>optional == true</code>? -> Crear Grupo "Ingredientes". (Configurar como removible, precio 0).</li>
+                                        <li>¿Es <code>optional == false</code>? -> Ocultar/Ignorar.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><strong>Validar Imagen:</strong>
+                            <ul>
+                                <li>Si <code>defaultImage</code> es null -> Asignar imagen genérica según Categoría.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </section>
 
-    <h2 id="section-4-2">4.2. Flujo de Proceso de Publicación</h2>
-    <ol>
-        <li><strong>Disparador:</strong> Usuario hace clic en "Publicar" sobre la "Lista Venta Cordoba" (ID: 2).</li>
-        <li><strong>Resolución de Contexto (SmartCloud):</strong>
-            <ul>
-                <li>Identifica Plataforma: PedidosYa (PlatformId: 1).</li>
-                <li>Identifica Sucursales Afectadas: Busca POS asociados a la Lista 2 -> Obtiene BranchIds: [5542, 3365, 3258].</li>
-            </ul>
-        </li>
-        <li><strong>Compilación de Datos:</strong>
-            <ul>
-                <li><strong>Items:</strong> Obtiene items habilitados de la lista. Resuelve la imagen correcta (Opción A o B del punto 3 integradas aquí: se prioriza la imagen clasificada para la plataforma).</li>
-                <li><strong>Promos:</strong> Obtiene combos válidos. Calcula el precio final del combo para esta lista específica.</li>
-            </ul>
-        </li>
-        <li><strong>Envío (Webhook):</strong> SmartCloud realiza un POST al endpoint de Ingesta de SmartPedidos con el JSON unificado.</li>
-    </ol>
+                <div class="divider"></div>
 
-    <hr>
+                <!-- SECCIÓN 2 -->
+                <section id="section-2">
+                    <h2>2. Armado de Promociones</h2>
+                    <p>Este módulo permite sincronizar combos, promos y descuentos configurados en SmartCloud. El integrador debe combinar esta estructura con los datos obtenidos previamente en GetPrices para construir el producto final en la plataforma de Delivery.</p>
 
-    <h2 id="section-4-3">4.3. Especificación del JSON Unificado (Payload)</h2>
-    <p>Este JSON es el <strong>entregable final</strong> que recibe SmartPedidos. Contiene la "verdad absoluta" del catálogo para las tiendas indicadas.</p>
+                    <h3 id="sec-2-1">2.1. Obtención de Promociones</h3>
+                    <p>SmartPedidos debe consultar el endpoint de Promociones por Código de Punto de Venta (POS Code).</p>
+                    <p><span class="method get">GET</span> <code>https://smartfran-cloud-business-stg.azurewebsites.net/api/v1/Promotion/GetByPOSCode</code></p>
 
-    <h3>Estructura General</h3>
-    <p>El objeto encapsula items y promociones, distinguiéndolos por una clave contenedora (item o promo). Las imágenes ya vienen resueltas (sin necesidad de buscar en otro lado).</p>
+                    <h4>Parámetros (Query String):</h4>
+                    <ul>
+                        <li><code>posCode</code>: Código único del punto de venta (Ej: 1A7CF47D7A5B49CF9DFF66CC38BE56E7).</li>
+                    </ul>
+                    
+                    <h4>Headers Requeridos</h4>
+                    <table>
+                        <thead>
+                            <tr><th>Header</th><th>Descripción</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>TraceKey</td><td>Identificador de traza.</td></tr>
+                            <tr><td>TenantId</td><td>Identificador del cliente.</td></tr>
+                            <tr><td>Authorization</td><td>Token de seguridad JWT.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 id="sec-2-2">2.2. Estructura del Objeto Promoción (Nivel Raíz)</h3>
+                    <p>Cada objeto del array representa una "Promoción" o "Combo".</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Atributo</th>
+                                <th>Tipo</th>
+                                <th>Descripción y Regla de Negocio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>id</td>
+                                <td>Integer</td>
+                                <td>ID interno de SmartCloud. NO USAR como identificador de venta.</td>
+                            </tr>
+                            <tr>
+                                <td>name</td>
+                                <td>String</td>
+                                <td>Nombre del Combo (Ej: "Combo 1").</td>
+                            </tr>
+                            <tr>
+                                <td>description</td>
+                                <td>String</td>
+                                <td>Descripción comercial.</td>
+                            </tr>
+                            <tr>
+                                <td>relationCodes</td>
+                                <td>Array</td>
+                                <td>
+                                    <strong>IMPORTANTE.</strong> Contiene la definición del SKU para integración.<br>
+                                    Utilizar Atributo “code” para <code>skuTypeId == 6</code> (SKU_SmartPedidos)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>validSince...</td>
+                                <td>Date/Int</td>
+                                <td>Reglas de vigencia (Fechas y Minutos del día). El integrador debe validar si la promo está activa antes de enviarla.</td>
+                            </tr>
+                            <tr>
+                                <td>monday...sunday</td>
+                                <td>Boolean</td>
+                                <td>Disponibilidad semanal. Si es false, la promo no debe mostrarse ese día.</td>
+                            </tr>
+                            <tr>
+                                <td>groups</td>
+                                <td>Array</td>
+                                <td>Define la estructura del combo (Pasos de selección). Ver sección 2.3.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 id="sec-2-3">2.3. Lógica de Grupos (Estructura del Combo)</h3>
+                    <p>Ubicación: <code>root.groups</code></p>
+                    <p>Un Combo en SmartCloud se compone de "Pasos" o "Grupos" de selección (Ej: Paso 1: Elegir Burger, Paso 2: Elegir Bebida). SmartPedidos debe transformar cada elemento de groups en un Grupo de Opciones (Modifier Group) en la plataforma de Delivery.</p>
+
+                    <table>
+                        <thead>
+                            <tr><th>Atributo</th><th>Tipo</th><th>Regla de Negocio</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>name</td>
+                                <td>String</td>
+                                <td>Nombre del paso de selección (Ej: "Hamburguesa", "Bebida").</td>
+                            </tr>
+                            <tr>
+                                <td>amount</td>
+                                <td>Integer</td>
+                                <td>Cantidad de items que el usuario debe seleccionar en este paso. Relacion: Para configurar en Delivery como Min: {amount}, Max: {amount}.</td>
+                            </tr>
+                            <tr>
+                                <td>details</td>
+                                <td>Array</td>
+                                <td>Lista de productos disponibles para elegir en este grupo.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Enlace con PriceList (details)</h4>
+                    <p>Dentro de <code>groups.details</code>, el atributo clave es <code>articleId</code>.</p>
+                    <p class="alert">⚠️ <strong>IMPORTANTE</strong><br>El <code>articleId</code> en Promotion es equivalente al <code>itemId</code> en PriceList.</p>
+                    <p>Para renderizar la opción, el integrador DEBE buscar este ID en la data cacheada de GetPrices para obtener:</p>
+                    <ul>
+                        <li>Nombre del producto.</li>
+                        <li>Imagen (si existe).</li>
+                        <li><strong>Sus Modificadores:</strong> Si el articleId corresponde a una Hamburguesa que tiene modificadores (Ej: "Sin Cebolla", "Extra Cheddar" definidos en el Paso 1.3), estos deben heredarse y permitirse dentro del combo.</li>
+                    </ul>
+
+                    <h3 id="sec-2-4">2.4. Lógica de Precios (Contexto de Lista)</h3>
+                    <p>Ubicación: <code>root.groups.promotionGroupApply</code></p>
+                    <p>El precio de la promoción no es fijo en la raíz. Se define dinámicamente sumando los valores de los componentes seleccionados según la lista de precios activa.</p>
+                    
+                    <h4>Algoritmo de Precios:</h4>
+                    <ol>
+                        <li><strong>Contexto:</strong> El integrador sabe que está operando sobre una lista de precios específica (Ej: PriceListId: 2 de la Fase 1).</li>
+                        <li><strong>Filtrado:</strong> Dentro de cada grupo, en <code>promotionGroupApply</code>, buscar el objeto donde <code>promotionApply.priceListId == 2</code>.</li>
+                        <li><strong>Valor:</strong> Leer <code>promotionValue</code>.</li>
+                    </ol>
+
+                    <h4>Interpretación de promotionValue:</h4>
+                    <ul>
+                        <li><strong>Si type == "FixedPrice":</strong> El promotionValue es el precio que se cobra por ese grupo.
+                            <br><em>Ejemplo Combo 1:</em>
+                            <ul>
+                                <li>Grupo Hamburguesa: Valor 16900.</li>
+                                <li>Grupo Bebida: Valor 0.</li>
+                                <li>Precio Base del Combo: $16.900.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Si type == "PercentDiscount" (Ver Promo ID 6):</strong> El promotionValue es un porcentaje de descuento sobre el precio original del item.
+                            <br><em>Calculo:</em> Buscar el precio original del item en GetPrices y aplicar el % de descuento.
+                        </li>
+                    </ul>
+
+                    <h3 id="sec-2-5">2.5. Diagrama de Flujo de Datos (Procesamiento de Promociones)</h3>
+                    <p>Para construir un Combo válido para SmartPedidos, siga estrictamente estos pasos:</p>
+                    <ol>
+                        <li><strong>Validar Vigencia:</strong> Chequear fechas (validToDate) y días habilitados (monday, etc.). Si venció, descartar.</li>
+                        <li><strong>Obtener Identidad (SKU):</strong>
+                            <ul>
+                                <li>Iterar sobre el array <code>relationCodes</code>.</li>
+                                <li>Buscar el objeto donde <code>skuTypeId == 6</code>.</li>
+                                <li>Extraer el valor del atributo <code>code</code> (Ej: "10001").</li>
+                                <li>⚠️ <strong>Regla:</strong> Este valor <code>code</code> será el SKU / external_id único que utilizará SmartPedidos para identificar la promoción.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Construir Grupos (Iterar root.groups):</strong>
+                            <ul>
+                                <li>Crear un "Grupo de Opciones" en Delivery con el <code>groups.name</code>.</li>
+                                <li>Definir obligatoriedad basada en <code>groups.amount</code>.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Determinar Precio del Grupo:</strong>
+                            <ul>
+                                <li>Buscar en <code>promotionGroupApply</code> el priceListId coincidente (Ej: 2).</li>
+                                <li>Guardar <code>promotionValue</code>.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Poblar Opciones del Grupo (Iterar details):</strong>
+                            <ul>
+                                <li>Por cada <code>articleId</code>:</li>
+                                <li>Buscar el item completo en el JSON de GetPrices.</li>
+                                <li>Usar Nombre de GetPrices.</li>
+                                <li>Asignar el precio determinado en el paso 3.</li>
+                                <li><strong>IMPORTANTE:</strong> Si el item de GetPrices tiene modificadores (removibles/extras), adjuntarlos a la opción dentro del combo.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </section>
+
+                <div class="divider"></div>
+
+                <!-- SECCIÓN 3 -->
+                <section id="section-3">
+                    <h2>3. Especificación Técnica Detallada</h2>
+                    <p>Este JSON es el entregable final que SmartPedidos espera recibir. Contiene la Lista de Precios (Items) + Las Promociones/Combos</p>
+
+                    <h3 id="sec-3-1">3.1. Estructura General del JSON</h3>
+                    <p>El payload se divide en tres secciones: Cabecera (context), Productos Unitarios (catalog) y Relaciones (relations).</p>
 
 <pre><code class="language-json">{
-  "traceKey": "guid-generado-por-evento",
+  "traceKey": "guid-evento-12345",
   "publishDate": "2025-11-30T10:00:00Z",
-  "context": {
+  "context": { (Ver detalle 1.2)
     "priceListId": 2,
     "platformId": 1,
     "platformName": "PedidosYa",
-    "targetBranchIds": [
-      5542,
-      3365,
-      2835
-    ]
+    "targetBranchIds": [ 5542, 3365, 2835 ]
   },
   "catalog": [
-    // --- OBJETO TIPO ITEM ---
-    {
-      "type": "item",
-      "data": {
-         "id": 18,
-            "name": "Agua 500 ml",
-            "description": "Agua 500ml",
-            "forSale": true,
-            "unitForPackage": 0,
-            "unitaryItem": null,
-            "unitaryItemQuantity": 0,
-            "rawMaterialQuantity": 0.000,
-            "bussinessUnit": 0.00,
-            "fractional": false,
-            "generic": null,
-            "composition": {
-                "id": 168,
-                "items": [],
-                "generic": []
-            },
-            "group": {
-                "id": 5,
-                "name": "Agua",
-                "description": "Bebidas -Agua",
-                "subCategoryId": 4,
-                "subCategoryName": "Bebidas",
-                "categoryId": 2,
-                "categoryName": "Bebidas",
-                "isKds": false
-        },
-  ...
-      }
-    },
-
-    // --- OBJETO TIPO PROMOCIÓN ---
-    {
-      "type": "promo",
-      "data": {
-        "id": 3,
-        "cloudCodeId": "3c6316e2-b51e-4813-8518-9ff536c2e17f",
-        "deleted": false,
-        "name": "Combo 1",
-        "description": "Combo 1 (burger, gaseosa o agua y side a elección)",
-        "quantity": 0,
-        "imageUrl": null,
-        "validSinceDate": "2025-09-25T00:00:00+00:00",
-        "validToDate": "2030-01-01T00:00:00+00:00",
-        "monday": true,
-        "tuesday": true,
-        "wednesday": true,
-        "thursday": true,
-        "friday": true,
-        "saturday": true,
-        "sunday": true,
-        "holiday": true,
-        "validSinceMinute": 0,
-        "validToMinute": 1440,
-        "groups": [
-            {
-                "name": "Hamburguesa",
-                "id": 130,
-                "amount": 1,
-                "details": [
-                    {
-                        "id": 671,
-                        "articleId": 60
-                    },
-                      {
-                        "id": 672,
-                        "articleId": 9
-                    }
-        ...
-            }
-            // ... resto de grupos
-        ]
-      }
-    }
+    // Array de Items Unitarios (Ver detalle 1.3)
+  ],
+  "relations": [
+    // Array de Promos y Combos (Ver detalle 1.4)
   ]
 }</code></pre>
 
-    <h3>Diccionario de Datos del Payload Unificado</h3>
-    <ol>
-        <li><strong>context</strong>:
-            <ul>
-                <li><strong>platformId</strong>: Entero. Define la lógica de mapeo en SmartPedidos (1=PeYa, 2=Rappi).</li>
-                <li><strong>targetBranchIds</strong>: Array de Enteros. Son los IDs de Sucursal en SmartPedidos que deben actualizarse. SmartCloud los obtiene de la relación POS -> BranchId.</li>
-            </ul>
-        </li>
-        <li><strong>catalog</strong>: Array polimórfico.
-            <ul>
-                <li><strong>type</strong>: String ("item" | "promo"). Discriminador para que el parser sepa qué estructura leer.</li>
-                <li><strong>data</strong>: Objeto. Contiene la carga útil.
+                    <h3 id="sec-3-2">3.2. Contexto y Ruteo (context)</h3>
+                    <p>Esta sección es para el enrutamiento del mensaje. Define qué plataforma recibe la data y a qué sucursales específicas debe impactar.</p>
+
+                    <h4>Estructura del Objeto JSON</h4>
+<pre><code class="language-json">"context": {
+  "priceListId": 2,
+  "platformId": 1,            // Mapeado según tabla interna (Ej: 1 = PedidosYa)
+  "platformName": "PedidosYa", // String legible
+  "targetBranchIds": [ 5129, 5542 ] // IDs de SmartPedidos de los POS afectados
+}</code></pre>
+
+                    <h4>3.2.1. Mapeo de Plataformas (platformId y platformName)</h4>
+                    <p>El backend de SmartCloud debe implementar un Enum o Diccionario Estático para traducir el SubCanal seleccionado en la UI (Punto 2.1) a los códigos internos requeridos por la API de SmartPedidos.</p>
+
+                    <p><strong>Tabla de Referencia (Hardcoded):</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SubCanal (SmartCloud UI)</th>
+                                <th>platformName (JSON)</th>
+                                <th>platformId (JSON)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>PedidosYa</td><td>PedidosYa</td><td>1</td></tr>
+                            <tr><td>Rappi</td><td>Rappi</td><td>2</td></tr>
+                            <tr><td>Uber Eats</td><td>UberEats</td><td>4</td></tr>
+                            <tr><td>PaD</td><td>PaD</td><td>5</td></tr>
+                            <tr><td>Croni</td><td>Croni</td><td>6</td></tr>
+                            <tr><td>PediGrido</td><td>PediGrido</td><td>7</td></tr>
+                            <tr><td>Mercado Pago</td><td>MercadoPago</td><td>8</td></tr>
+                            <tr><td>Glovo</td><td>Glovo</td><td>9</td></tr>
+                            <tr><td>Toque</td><td>Toque</td><td>11</td></tr>
+                            <tr><td>I+D</td><td>I+D</td><td>12</td></tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Regla de Desarrollo:</strong> Si se agrega una nueva integración en el futuro, se debe actualizar esta tabla de mapeo en el backend de SmartCloud antes de habilitar el SubCanal en la UI.</p>
+
+                    <h4>3.2.2. Resolución de targetBranchIds</h4>
+                    <p>Este array debe contener los IDs de autenticación ("User") que identifican a cada sucursal dentro del ecosistema de SmartPedidos.</p>
+                    <p><strong>Fuente de Datos:</strong></p>
                     <ul>
-                        <li>Si es <strong>Item</strong>: Sigue la estructura depurada del <strong><a href="#section-1">Punto 1</a></strong>, pero con la imageUrl ya inyectada (filtrada por el tag de plataforma).</li>
-                        <li>Si es <strong>Promo</strong>: Sigue la estructura del <strong><a href="#section-2">Punto 2</a></strong>, pero con el price calculado y la imageUrl inyectada.</li>
+                        <li>Módulo: Franquicias > Puntos de Venta > Pestaña "Integraciones".</li>
+                        <li>Campo Objetivo: El valor del input "User" ubicado dentro del bloque/toggle activado de Smart Pedidos.</li>
                     </ul>
-                </li>
-            </ul>
-        </li>
-        <li><strong>Gestión de Imágenes</strong>:
-            <ul>
-                <li>En este JSON unificado, <strong>NO</strong> se envían arrays separados de imágenes. SmartCloud debe resolver la URL correcta antes de generar el JSON e insertarla en el atributo imageUrl de cada objeto data. Esto simplifica drásticamente el trabajo de SmartPedidos.</li>
-            </ul>
-        </li>
-    </ol>
 
-</div>
-<!-- Scripts para el resaltado de sintaxis -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+                    <h4>Algoritmo de Resolución (Paso a Paso):</h4>
+                    <ol>
+                        <li><strong>Disparador:</strong> El usuario presiona "Publicar" en la Lista de Precios (ej: ID 2).</li>
+                        <li><strong>Identificación de Alcance (Query 1):</strong>
+                            <ul>
+                                <li>Buscar en la base de datos todos los Puntos de Venta (POS) que tengan asignada la PriceListId = 2 en su configuración de "Datos Pos".</li>
+                                <li>Resultado: Lista de objetos POS.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Extracción de Credenciales (Query 2):</strong>
+                            <ul>
+                                <li>Para cada POS de la lista anterior, consultar su configuración de Integraciones.</li>
+                                <li>Verificar si el toggle "Usar Smart Pedidos" está true.</li>
+                                <li>Si está activo, leer el valor del campo "User" (Ej: 5129).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Inyección:</strong>
+                            <ul>
+                                <li>Agregar el valor 5129 al array targetBranchIds.</li>
+                                <li>Repetir para todos los POS encontrados.</li>
+                            </ul>
+                        </li>
+                    </ol>
 
+                    <p><strong>Ejemplo de Flujo de Datos:</strong></p>
+                    <p>Escenario: La "Lista Córdoba" se usa en 2 locales.</p>
+                    <ul>
+                        <li>Local A (Centro): En Integraciones > Smart Pedidos > User tiene el valor 5129.</li>
+                        <li>Local B (Cerro): En Integraciones > Smart Pedidos > User tiene el valor 5542.</li>
+                    </ul>
+                    <p><strong>Resultado en JSON:</strong></p>
+<pre><code class="language-json">"targetBranchIds": [ 5129, 5542 ]</code></pre>
+                    <p>Si un POS usa la lista de precios pero NO tiene activa la integración con SmartPedidos (o el campo User está vacío), ese POS debe ser omitido del array targetBranchIds para evitar errores de ruteo.</p>
+
+                    <h3 id="sec-3-3">3.3. Productos Unitarios (catalog)</h3>
+                    <p>Esta sección contiene el inventario de productos en la Lista de Precios <code>/api/v1/PriceLists/GetPrices/{PriceListId}</code>. A diferencia del endpoint mencionado que retorna un array plano, el JSON de integración requiere una para estandarizar el contenido.</p>
+
+                    <h4>3.3.1. Estructura del Objeto</h4>
+                    <p>Cada elemento del array catalog debe ser un objeto con dos propiedades obligatorias que no existen en el modelo original:</p>
+                    <ul>
+                        <li><code>type</code>: Identificador de tipo de objeto. Para esta sección, el valor fijo es "item".</li>
+                        <li><code>data</code>: Objeto contenedor donde se vuelcan las propiedades del producto.</li>
+                    </ul>
+                    <p><strong>Esquema de Transformación:</strong></p>
+
+<pre><code class="language-json">// Destino (Payload Unificado)
+"catalog": [
+  //item 1
+  {
+    "type": "item",       // Nuevo campo discriminador
+    "data": { ... }       // Aquí van los datos mapeados de GetPrices del item
+  },
+  //item 2
+  {
+    "type": "item",       // Nuevo campo discriminador
+    "data": { ... }       // Aquí van los datos mapeados de GetPrices del item
+  }
+]</code></pre>
+
+                    <h4>3.3.2. Construcción del Objeto data</h4>
+                    <p>La todos los campos (name, description, publishedPrice, enabled) se copian directamente del objeto item original. Sin embargo, los siguientes campos requieren una lógica específica:</p>
+                    
+                    <h4>A. Nuevo Atributo: imageUrl (Resolución Dinámica)</h4>
+                    <p>El backend debe calcular este campo teniendo en cuenta las modificaiones solicitadas en “Gestion Multimedia de Imagenes (Link):</p>
+                    <ol>
+                        <li>Leer el platformId del contexto (Ej: Id: 1 == "PedidosYa").</li>
+                        <li>Buscar en la colección de multimedia del ítem la imagen que tenga el tag coincidente (Ej: Id: 1).</li>
+                        <li>Resultado: Inyectar la URL encontrada en <code>data.imageUrl</code>.</li>
+                    </ol>
+
+                    <h4>B. Ejemplo de JSON Resultante</h4>
+<pre><code class="language-json">"catalog": [
+    {
+      "type": "item",
+      "data": {
+        // Campos directos de GetPrices
+        "itemId": 19,
+        "name": "Agua Con Gas",
+        "publishedPrice": 5000.00,
+        "enabled": true,
+        // Campos Nuevos
+        "imageUrl": "https://cdn.smartcloud.com/images/peya/agua_gas_4x3.jpg", // Resuelto por Tag
+      },
+      {
+      "type": "item",
+      "data": {
+        // Campos directos de GetPrices
+        "itemId": 20,
+        "name": "Agua Sin Gas",
+        "publishedPrice": 5000.00,
+        "enabled": true,
+        // Campos Nuevos
+        "imageUrl": "https://cdn.smartcloud.com/images/peya/agua_4x3.jpg", // Resuelto por Tag
+      }
+    }
+]</code></pre>
+
+                    <h3 id="sec-3-4">3.4. Relaciones y Promociones (relations)</h3>
+                    <p>Esta sección contiene las estructuras compuestas (Combos, Menús). El backend debe construir este array dinámicamente, obteniendo información de endpoints internos para generar el listado final.</p>
+
+                    <h4>3.4.1. Lógica de Agregación y Filtrado (Backend)</h4>
+                    <p>El servicio de publicación debe ejecutar la siguiente secuencia lógica para poblar este array:</p>
+                    <ul>
+                        <li><strong>Obtener Contexto:</strong> Leer el priceListId que se está publicando (Ej: 2) desde el contexto del evento.</li>
+                        <li><strong>Consultar Universo de Promociones:</strong> Ejemplo:<code>/business/promotions/</code> para obtener el listado.</li>
+                        <li><strong>Filtrado:</strong> Iterar sobre las promociones y seleccionar únicamente aquellas que tengan asignado el priceListId (Ej: 2) actual en su configuración.</li>
+                        <li><strong>Estandarización de Formato:</strong>
+                            <ul>
+                                <li>La data de la promoción seleccionada debe formatearse siguiendo el esquema del endpoint <code>/api/v1/Promotion/GetByPOSCode</code>.</li>
+                                <li>Se deben aplicar las transformaciones de Imagen.</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>3.4.2. Estructura del Array relations</h4>
+                    <p>El array relations es una colección de objetos. Cada objeto representa UNA promoción individual y debe estar encapsulado con el discriminador de tipo.</p>
+
+                    <p><strong>Esquema del Array:</strong></p>
+<pre><code class="language-json">"relations": [
+  // Promoción 1
+  {
+    "type": "promo",       // Discriminador fijo
+    "data": { ... }        // Estructura idéntica a GetByPOSCode (Transformada)
+  },
+  // Promoción 2
+  {
+    "type": "promo",
+    "data": { ... }
+  },
+  // Promoción N...
+  {
+    "type": "promo",
+    "data": { ... }
+  }
+]</code></pre>
+
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Syntax Highlighting Script for JSON
+        document.addEventListener('DOMContentLoaded', () => {
+            const codeBlocks = document.querySelectorAll('code.language-json');
+
+            codeBlocks.forEach(block => {
+                let html = block.innerHTML;
+
+                // Regex for JSON syntax highlighting
+                // Strings
+                html = html.replace(/"([^"]*)"/g, '<span class="json-string">"$1"</span>');
+                // Keys
+                html = html.replace(/<span class="json-string">"([^"]*)"<\/span>:/g, '<span class="json-key">"$1"</span>:');
+                // Numbers
+                html = html.replace(/\b(\d+)\b/g, '<span class="json-number">$1</span>');
+                // Booleans and Null
+                html = html.replace(/\b(true|false)\b/g, '<span class="json-boolean">$1</span>');
+                html = html.replace(/\b(null)\b/g, '<span class="json-null">$1</span>');
+                // Comments (Simple single line //)
+                html = html.replace(/(\/\/.*)/g, '<span class="json-comment">$1</span>');
+
+                block.innerHTML = html;
+            });
+        });
+    </script>
 </body>
 </html>
