@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integración de Catálogo: SmartCloud ↔ SmartPedidos</title>
+    <style>
+        /* RESET & BASICS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* LAYOUT */
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .layout-container {
+            display: flex;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+        }
+
+        /* SIDEBAR (TOC) */
+        .sidebar {
+            width: 300px;
+            background-color: #fff;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #444;
+            font-size: 0.9rem;
+            display: block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #f0f4f8;
+            color: #0056b3;
+        }
+
+        .sidebar .sub-item {
+            padding-left: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            overflow-y: auto;
+            background-color: #fff;
+            max-width: 100%;
+            scroll-behavior: smooth;
+        }
+
+        .content-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* TYPOGRAPHY */
+        h1 {
+            font-size: 2.2rem;
+            color: #111;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-top: 3rem; /* Más espacio para separar secciones principales */
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: #34495e;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: #555;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #444;
+        }
+
+        strong {
+            color: #000;
+            font-weight: 700;
+        }
+
+        /* LISTS */
+        ul,
+        ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f6f8;
+            font-weight: 600;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* CODE BLOCKS (VS CODE STYLE) */
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            position: relative;
+            border-left: 4px solid #007acc;
+        }
+
+        code {
+            font-family: inherit;
+        }
+
+        /* SYNTAX HIGHLIGHTING COLORS */
+        .json-key { color: #9cdcfe; }      /* Light Blue */
+        .json-string { color: #ce9178; }   /* Orange/Coral */
+        .json-number { color: #b5cea8; }   /* Light Green */
+        .json-boolean { color: #569cd6; }  /* Blue */
+        .json-null { color: #569cd6; }     /* Blue */
+        .json-comment { color: #6a9955; }  /* Green */
+
+        /* UTILS */
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 3rem 0;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e1ecf4;
+            color: #39739d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .layout-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+                padding: 1rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            header {
+                position: relative;
+            }
+
+            .layout-container {
+                margin-top: 0;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Integración de Catálogo: SmartCloud ↔ SmartPedidos</h1>
+    </header>
+
+    <div class="layout-container">
+        <!-- SIDEBAR INDEX -->
+        <nav class="sidebar">
+            <h3>Índice de Contenidos</h3>
+            <ul>
+                <li>
+                    <a href="#obj-context">1. Objetivo y Contexto</a>
+                    <ul>
+                        <li><a href="#req-smartcloud" class="sub-item">1.1. Requerimientos SmartCloud</a></li>
+                        <li><a href="#flow" class="sub-item">1.2. Flujo de Proceso</a></li>
+                        <li><a href="#json-spec" class="sub-item">1.3. Especificación JSON Unificado</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#req-detailed">2. Requerimientos</a>
+                    <ul>
+                        <li><a href="#det-2-1" class="sub-item">2.1. Tipificación Listas</a></li>
+                        <li><a href="#det-2-2" class="sub-item">2.2. Gestión Multimedia</a></li>
+                        <li><a href="#det-2-3" class="sub-item">2.3. Integración Promociones</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#spec-tech">3. Especificación Técnica Detallada</a>
+                    <ul>
+                        <li><a href="#det-3-1" class="sub-item">3.1. Estructura General</a></li>
+                        <li><a href="#det-3-2" class="sub-item">3.2. Contexto y Ruteo</a></li>
+                        <li><a href="#det-3-3" class="sub-item">3.3. Productos Unitarios</a></li>
+                        <li><a href="#det-3-4" class="sub-item">3.4. Relaciones y Promociones</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+            <div class="content-wrapper">
+
+                <section id="intro">
+                    <h1>Integración de Catálogo: SmartCloud ↔ SmartPedidos</h1>
+                    <p>Este documento define la arquitectura de integración y el contrato de datos para la
+                        sincronización automática de catálogos.</p>
+                </section>
+
+                <!-- SECCIÓN 1 -->
+                <section id="obj-context">
+                    <h2>1. Objetivo y Contexto del Negocio</h2>
+                    <p>El objetivo es automatizar la distribución de cambios de precios y productos. Se busca unificar
+                        la experiencia de modo que cuando un administrador en SmartCloud presione <strong>"Publicar
+                            Lista de Precios"</strong>, el sistema automáticamente compile toda la información necesaria
+                        y la envíe a SmartPedidos.</p>
+
+                    <h3 id="req-smartcloud">1.1. Requerimientos para SmartCloud</h3>
+                    <p>Para lograr este payload unificado, SmartCloud debe contar con las siguientes lógicas de negocio:
+                    </p>
+                    <ul>
+                        <li><strong>Tipificación de Listas de Precio:</strong> Capacidad de asignar
+                            <strong>Canal</strong> (Ej: Delivery) y <strong>SubCanal</strong> (Ej: PedidosYa) en la
+                            configuración de la lista.
+                        </li>
+                        <li><strong>Imágenes por Plataforma:</strong> Selector de <strong>Plataforma</strong> en el
+                            módulo Multimedia para filtrar la imagen correcta (Ej: Tag "PedidosYa" con fondo blanco
+                            4:3).</li>
+                    </ul>
+
+                    <h3 id="flow">1.2. Flujo de Proceso de Publicación</h3>
+                    <p>El proceso es un modelo <strong>PUSH</strong> disparado por evento:</p>
+                    <ol>
+                        <li><strong>Disparador:</strong> Usuario hace clic en "Publicar" sobre una Lista de Precios.
+                        </li>
+                        <li><strong>Resolución de Contexto:</strong> SmartCloud identifica la Plataforma (Ej: PedidosYa)
+                            y los <strong>BranchIds</strong> afectados.</li>
+                        <li><strong>Compilación de Datos:</strong>
+                            <ul>
+                                <li><strong>Catalog:</strong> Obtiene items habilitados y resuelve sus
+                                    <strong>imageUrl</strong> según el tag de plataforma.
+                                </li>
+                                <li><strong>Relations:</strong> Obtiene los combos válidos y calcula sus precios
+                                    finales.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Envío:</strong> SmartCloud realiza un <strong>POST</strong> al webhook de
+                            SmartPedidos con el JSON unificado.</li>
+                    </ol>
+
+                    <h3 id="json-spec">1.3. Especificación del JSON Unificado (Payload)</h3>
+                    <p>Este JSON es el <strong>entregable final</strong>. Contiene la "verdad absoluta" del catálogo
+                        para las tiendas indicadas en la cabecera.</p>
+                    <p><strong>Cambio Estructural:</strong> Se separan los productos unitarios (catalog) de las
+                        estructuras compuestas/promocionales (relations).</p>
+
+                    <h4>Ejemplo de Estructura JSON</h4>
+<pre><code class="language-json">{
+    "traceKey": "guid-evento-12345",
+    "publishDate": "2025-11-30T10:00:00Z",
+    "context": {
+        "priceListId": 2,
+        "platformId": 1,
+        "platformName": "PedidosYa",
+        "targetBranchIds": [
+            5542,
+            3365,
+            2835
+        ]
+    },
+    "catalog": [
+        {
+            "type": "item",
+            "data": {
+                "itemId": 5,
+                "name": "Cerveza Corona",
+                "publishedPrice": 4000.00,
+                "enabled": true,
+                "imageUrl": "https://cdn.smartcloud.com/images/peya/corona_4x3.jpg",
+                "group": {
+                    "name": "Bebidas Con Alcohol"
+                },
+                "composition": null
+            }
+        },
+        {
+            "type": "item",
+            "data": {
+                "itemId": 165,
+                "name": "Mexicana",
+                "publishedPrice": 14900.00,
+                "enabled": true,
+                "imageUrl": "https://cdn.smartcloud.com/images/peya/mexicana_4x3.jpg",
+                "group": {
+                    "name": "Signature Burgers"
+                },
+                "composition": {
+                    "items": [
+                        {
+                            "id": 16,
+                            "name": "Extra Cheddar",
+                            "price": 1000.00,
+                            "type": "extra"
+                        },
+                        {
+                            "id": 74,
+                            "name": "S.Palta",
+                            "price": 0.00,
+                            "type": "removable"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "relations": [
+        {
+            "type": "promo",
+            "data": {
+                "promoId": 3,
+                "sku": "10001",
+                "name": "Combo 1",
+                "description": "Combo 1 (burger, gaseosa y side)",
+                "price": 16900.00,
+                "imageUrl": "https://cdn.smartcloud.com/images/peya/combo1_4x3.jpg",
+                "groups": [
+                    {
+                        "name": "Hamburguesa",
+                        "min": 1,
+                        "max": 1,
+                        "options": [
+                            {
+                                "itemId": 87,
+                                "name": "Bacon A Lo Tomi"
+                            },
+                            {
+                                "itemId": 60,
+                                "name": "Smack"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}</code></pre>
+
+                    <!-- Diccionario dejado bajo 1.3 como referencia -->
+                    <h4>Diccionario de Datos del Payload</h4>
+                    
+                    <h5>A. Cabecera (context)</h5>
+                    <p>Define el alcance de la actualización.</p>
+                    <ul>
+                        <li><strong>platformId:</strong> (Integer) ID interno de mapeo (1=PeYa, 2=Rappi).</li>
+                        <li><strong>targetBranchIds:</strong> (Array) Lista de IDs de sucursales de SmartPedidos donde
+                            impactará este catálogo.</li>
+                    </ul>
+
+                    <h5>B. Productos Unitarios (catalog)</h5>
+                    <p>Array que contiene <strong>únicamente</strong> objetos <code>type: "item"</code>.</p>
+                    <p>Representa el inventario de productos vendibles por sí mismos.</p>
+                    <ul>
+                        <li><strong>imageUrl:</strong> Debe venir populado con la URL pública final. SmartCloud
+                            <strong>debe haber realizado el filtrado previo</strong> seleccionando la imagen
+                            correspondiente a la plataforma del contexto.
+                        </li>
+                    </ul>
+
+                    <h5>C. Relaciones y Promociones (relations)</h5>
+                    <p>Array que contiene objetos <code>type: "promo"</code> o estructuras compuestas.</p>
+                    <p>Representa Combos, Descuentos o Menús que referencian a los items del <code>catalog</code> pero
+                        tienen lógica de agrupación y precios propia.</p>
+                </section>
+
+                <div class="divider"></div>
+
+                <!-- SECCIÓN 2 -->
+                <section id="req-detailed">
+                    <h2>2. Requerimientos para SmartCloud</h2>
+                    <p><strong>Solicitado por: Matias Avila</strong></p>
+
+                    <h3 id="det-2-1">2.1. Tipificación de Listas de Precios (Canal y SubCanal)</h3>
+                    <h4>Situación Actual</h4>
+                    <p>Las listas de precios poseen una clasificación genérica (un solo nivel) y la asignación al POS es
+                        restrictiva (relación 1 a 1).</p>
+
+                    <h4>Modificación Solicitada</h4>
+                    <p><strong>Jerarquía de Canales:</strong> Debe soportar dos niveles de clasificación:</p>
+                    <ul>
+                        <li><strong>Nivel 1 - Canal :</strong> Define el comportamiento inicial (Minorista, Mayorista,
+                            Plataformas).</li>
+                        <li><strong>Nivel 2 - SubCanal - :</strong> Define el destino específico dentro de cada Canal
+                            (PedidosYa, Salon, Ambulante…).</li>
+                    </ul>
+                    <p><strong>Asignación Múltiple en POS (1:N):</strong> Transformar la configuración del POS para
+                        permitir múltiples listas de precios simultáneas.</p>
+
+                    <h4>Justificación</h4>
+                    <p>Esta tipificación habilita la logica de ruteo y formato de Multimedia (Imagenes) entre otros.</p>
+
+                    <h4>Detalle Funcional y de Interfaz (UI/UX)</h4>
+                    <p>La implementación impacta en dos módulos clave del sistema:</p>
+
+                    <p><strong>A. Configuración de la Lista de Precios Manager</strong></p>
+                    <p>En la pestaña "General", en Canal Comercial, se habilita el selector de Sub-Canal con las
+                        siguientes opciones definidas:</p>
+                    <ul>
+                        <li>Canal - Minorista :
+                            <ul>
+                                <li>Sub Canal - Salón</li>
+                                <li>Sub Canal - Ambulante</li>
+                            </ul>
+                        </li>
+                        <li>Canal - Plataformas Delivery:
+                            <ul>
+                                <li>Sub Canal - PedidosYa</li>
+                                <li>Sub Canal - Rappi</li>
+                                <li>Sub Canal - UberEats</li>
+                            </ul>
+                        </li>
+                        <li>Canal - Mayorista:
+                            <ul>
+                                <li>Sub Canal - Gastronómico</li>
+                                <li>Sub Canal - Corner</li>
+                                <li>Sub Canal - Store</li>
+                                <li>Sub Canal - Food Truck</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p>🔗 <em><a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_listadeprecios_manager.html" target="_blank">Ver Mockup: SmartCloud - Edición Lista de Precios</a></em></p>
+                    <p>Nota: El mockup detalla la interacción de los selectores y visualización de los mismos.</p>
+
+                    <p><strong>B. Asignacion de la Lista de Precios POS (Editar Punto de Venta)</strong></p>
+                    <p>En la sección "Datos Pos", se reemplaza el campo único por un Configuración de Listas de Precios.
+                    </p>
+                    <ul>
+                        <li><strong>Selector Jerárquico:</strong> Flujo de selección Canal -> SubCanal -> Lista.</li>
+                        <li><strong>Grilla de Asignaciones:</strong> Tabla que visualiza todas las listas activas en el
+                            POS, mostrando claramente el Canal y SubCanal de cada una mediante badges identificatorios.
+                        </li>
+                        <li><strong>Regla de Unicidad de SubCanal:</strong> Un POS puede tener múltiples listas
+                            asignadas, pero nunca puede repetir la combinación {Canal + SubCanal}.</li>
+                        <li><strong>Mensaje de Error:</strong> "Ya existe una lista asignada para el Canal '{Canal}' y
+                            SubCanal '{SubCanal}'. Debe eliminar la existente antes de asignar una nueva."</li>
+                    </ul>
+                   <p>🔗 <em><a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_listadeprecios_POS.html" target="_blank">Ver Mockup: SmartCloud - Edición Lista de Precios POS</a></em></p>
+                    <p>Nota: El mockup muestra la visualizacion de asignaciones y los mensajes de validación.</p>
+
+                    <h3 id="det-2-2">2.2. Gestión de Multimedia de Imágenes</h3>
+                    <h4>Situación Actual</h4>
+                    <p>Existe una relación rígida de 1 a 1 entre Ítem e Imagen. El sistema no valida requisitos
+                        (resolución, fondo, formato), lo que provoca que una misma imagen se envíe a todos los canales.
+                    </p>
+
+                    <h4>Modificación Solicitada</h4>
+                    <ul>
+                        <li><strong>Relación 1 a N:</strong> Permitir la carga de múltiples imágenes por ítem,
+                            clasificadas mediante un sistema de etiquetas basado en la taxonomía de Canal y SubCanal
+                            definida en el punto 2.1.</li>
+                        <li><strong>Validación Mediante Observaciones:</strong> Desplegar alertas visuales con los
+                            requisitos técnicos específicos al momento de asignar una imagen a una plataforma.</li>
+                        <li><strong>Resolución Dinámica en Publicación:</strong> Al generar el JSON de la Lista de
+                            Precios, el sistema debe inyectar dinámicamente la URL de la imagen que coincida con el
+                            canal de destino.</li>
+                    </ul>
+
+                    <h4>Justificación</h4>
+                    <p>Garantiza que cada canal reciba el activo digital optimizado para su interfaz, evitando el
+                        rechazo masivo de catálogos por parte de plataformas externas debido a incumplimiento de
+                        estándares gráficos.</p>
+
+                    <h4>Detalle Funcional y de Interfaz</h4>
+                    <p>El módulo de Multimedia se rediseña para gestionar asignaciones múltiples:</p>
+
+                    <p><strong>A. Flujo de Carga y Asignación</strong></p>
+                    <ul>
+                        <li><strong>Carga:</strong> El usuario sube el archivo o ingresa la URL.</li>
+                        <li><strong>Asignación:</strong> Selecciona el Canal (ej: Plataformas Delivery) y SubCanal (ej:
+                            PedidosYa).</li>
+                        <li><strong>Feedback:</strong> Al seleccionar el SubCanal, el sistema muestra un cuadro
+                            informativo con las reglas de validación reducidas.<br>
+                            <em>Ejemplo Visual: "Requisitos PedidosYa: JPG/PNG, Mín 1440x1080px, Relación 4:3."</em>
+                        </li>
+                        <li><strong>Visualización:</strong> Las imágenes cargadas muestran Chips o etiquetas indicando a
+                            qué canales están asignadas.</li>
+                    </ul>
+                    <p>🔗 <em><a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_item_multimedia.html" target="_blank">Ver Mockup: SmartCloud - Edición Lista de Precios Multimedia</a></em></p>
+                    <p>Nota: El mockup ilustra la asignación de tags y la visualización de requisitos técnicos.</p>
+
+                    <h4>Regla importante: Atributo “imageUrl” en JSON</h4>
+                    <p>El atributo imageUrl del ítem se deberia resolver en el momento de la publicación (Push) o
+                        consulta (Pull) basándose en la configuración de la Lista de Precios.</p>
+                    <p><strong>Resolución:</strong></p>
+                    <ol>
+                        <li>El sistema identifica el SubCanal de la Lista de Precios que se está procesando (ej:
+                            PedidosYa).</li>
+                        <li>Busca en la colección de imágenes del ítem aquella que tenga el Tag correspondiente a ese
+                            SubCanal.</li>
+                        <li>Si encuentra coincidencia, inyecta esa URL específica en el payload.</li>
+                        <li>Si no encuentra coincidencia específica, utiliza la imagen marcada como "Default/Principal".
+                        </li>
+                    </ol>
+
+                    <p><strong>Ejemplo de Salida JSON (Payload):</strong></p>
+                    <p>Para una Lista de Precios configurada como "Plataformas Delivery -> PedidosYa":</p>
+<pre><code class="language-json">{ 
+    "itemId": 18, 
+    "name": "Hamburguesa Doble", 
+    "price": 12000, 
+    // Imagen resuelta por SmartCloud filtrando por tag de Sub-Canal "PedidosYa" 
+    "imageUrl": "https://cdn.smartcloud.com/images/pedidosya/burger_1440x1080_white_bg.jpg", 
+    "modifications": [...] 
+}</code></pre>
+
+                    <p>Para una Lista de Precios configurada como "Plataformas Delivery -> Rappi":</p>
+<pre><code class="language-json">{ 
+    "itemId": 18, 
+    "name": "Hamburguesa Doble", 
+    "price": 12000, 
+    // Imagen resuelta por SmartCloud filtrando por tag de Sub-Canal "Rappi" 
+    "imageUrl": "https://cdn.smartcloud.com/images/rappi/burger_4x3_white_bg.rappi.jpg", 
+    "modifications": [...] 
+}</code></pre>
+
+                    <p><strong>Caso: PedidosYa</strong></p>
+                    <p>Para el SubCanal "PedidosYa", el sistema debe instruir al usuario vía UI, al seleccionar
+                        Plataforma de Pedidos → Pedidos Ya:</p>
+                    <p><em>"Requisito Excluyente: Formato Horizontal (4:3), Mínimo 1440x1080px. Formatos
+                            JEPG/JPG/PNG."</em></p>
+
+                    <h3 id="det-2-3">2.3. Integración de Promociones y Combos</h3>
+                    <h4>Situación Actual</h4>
+                    <p>SmartCloud no relacion a los Ítems y a las Promociones en la Lista de Precios.</p>
+                    <ul>
+                        <li>Items: Se obtienen vía GetPrices (Lista de Precios).</li>
+                        <li>Promociones: Se obtienen vía GetByPOSCode (Lógica de POS).</li>
+                    </ul>
+                    <p>Esta separación obliga a realizar múltiples llamadas.</p>
+
+                    <h4>Modificación Solicitada (Backend SmartCloud)</h4>
+                    <p>El servicio de publicación de Lista de Precios debe actuar como un Agregador.</p>
+                    <p>Al publicar una Lista de Precios, debe:</p>
+                    <ol>
+                        <li><strong>Identificar Promociones Vinculadas:</strong> Buscar todas las promociones activas
+                            que tengan asignada la PriceList que se está publicando.</li>
+                        <li><strong>Transformar la Estructura:</strong> Convertir el modelo de datos interno de
+                            Promociones (basado en GetByPOSCode) al esquema simplificado relations del JSON unificado.
+                            <br><code>{ "type": "promo", "data": {...</code>
+                        </li>
+                        <li><strong>Inyectar en Payload:</strong> Anexar este array de promociones (objeto relations) al
+                            mismo JSON que contiene los ítems individuales.</li>
+                    </ol>
+                </section>
+
+                <div class="divider"></div>
+
+                <!-- SECCIÓN 3 -->
+                <section id="spec-tech">
+                    <h2>3. Especificación Técnica Detallada</h2>
+                    <p>Este JSON es el entregable final que SmartPedidos espera recibir. Contiene la Lista de Precios
+                        (Items) + Las Promociones/Combos</p>
+
+                    <h3 id="det-3-1">3.1. Estructura General del JSON</h3>
+                    <p>El payload se divide en tres secciones: Cabecera (context), Productos Unitarios (catalog) y
+                        Relaciones (relations).</p>
+<pre><code class="language-json">{
+  "traceKey": "guid-evento-12345",
+  "publishDate": "2025-11-30T10:00:00Z",
+  "context": { (Ver detalle 1.2)
+    "priceListId": 2,
+    "platformId": 1,
+    "platformName": "PedidosYa",
+    "targetBranchIds": [ 5542, 3365, 2835 ]
+  },
+  "catalog": [
+    // Array de Items Unitarios (Ver detalle 1.3)
+  ],
+  "relations": [
+    // Array de Promos y Combos (Ver detalle 1.4)
+  ]
+}</code></pre>
+
+                    <h3 id="det-3-2">3.2. Contexto y Ruteo (context)</h3>
+                    <p>Esta sección es para el enrutamiento del mensaje. Define qué plataforma recibe la data y a qué
+                        sucursales específicas debe impactar.</p>
+
+                    <h4>Estructura del Objeto JSON</h4>
+<pre><code class="language-json">"context": {
+  "priceListId": 2,
+  "platformId": 1,            // Mapeado según tabla interna (Ej: 1 = PedidosYa)
+  "platformName": "PedidosYa", // String legible
+  "targetBranchIds": [ 5129, 5542 ] // IDs de SmartPedidos de los POS afectados
+}</code></pre>
+
+                    <h4>3.2.1. Mapeo de Plataformas (platformId y platformName)</h4>
+                    <p>El backend de SmartCloud debe implementar un Enum o Diccionario Estático para traducir el
+                        SubCanal seleccionado en la UI (Punto 2.1) a los códigos internos requeridos por la API de
+                        SmartPedidos.</p>
+
+                    <p><strong>Tabla de Referencia (Hardcoded):</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SubCanal (SmartCloud UI)</th>
+                                <th>platformName (JSON)</th>
+                                <th>platformId (JSON)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>PedidosYa</td><td>PedidosYa</td><td>1</td></tr>
+                            <tr><td>Rappi</td><td>Rappi</td><td>2</td></tr>
+                            <tr><td>Uber Eats</td><td>UberEats</td><td>4</td></tr>
+                            <tr><td>PaD</td><td>PaD</td><td>5</td></tr>
+                            <tr><td>Croni</td><td>Croni</td><td>6</td></tr>
+                            <tr><td>PediGrido</td><td>PediGrido</td><td>7</td></tr>
+                            <tr><td>Mercado Pago</td><td>MercadoPago</td><td>8</td></tr>
+                            <tr><td>Glovo</td><td>Glovo</td><td>9</td></tr>
+                            <tr><td>Toque</td><td>Toque</td><td>11</td></tr>
+                            <tr><td>I+D</td><td>I+D</td><td>12</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Regla de Desarrollo: Si se agrega una nueva integración en el futuro, se debe actualizar esta
+                        tabla de mapeo en el backend de SmartCloud antes de habilitar el SubCanal en la UI.</p>
+
+                    <h4>3.2.2. Resolución de targetBranchIds</h4>
+                    <p>Este array debe contener los IDs de autenticación ("User") que identifican a cada sucursal dentro
+                        del ecosistema de SmartPedidos.</p>
+                    <p><strong>Fuente de Datos:</strong></p>
+                    <ul>
+                        <li>Módulo: Franquicias > Puntos de Venta > Pestaña "Integraciones".</li>
+                        <li>Campo Objetivo: El valor del input "User" ubicado dentro del bloque/toggle activado de Smart
+                            Pedidos.</li>
+                    </ul>
+
+                    <p><strong>Algoritmo de Resolución (Paso a Paso):</strong></p>
+                    <ol>
+                        <li>Disparador: El usuario presiona "Publicar" en la Lista de Precios (ej: ID 2).</li>
+                        <li>Identificación de Alcance (Query 1):
+                            <ul>
+                                <li>Buscar en la base de datos todos los Puntos de Venta (POS) que tengan asignada la
+                                    PriceListId = 2 en su configuración de "Datos Pos".</li>
+                                <li>Resultado: Lista de objetos POS.</li>
+                            </ul>
+                        </li>
+                        <li>Extracción de Credenciales (Query 2):
+                            <ul>
+                                <li>Para cada POS de la lista anterior, consultar su configuración de Integraciones.
+                                </li>
+                                <li>Verificar si el toggle "Usar Smart Pedidos" está true.</li>
+                                <li>Si está activo, leer el valor del campo "User" (Ej: 5129).</li>
+                            </ul>
+                        </li>
+                        <li>Inyección:
+                            <ul>
+                                <li>Agregar el valor 5129 al array targetBranchIds.</li>
+                                <li>Repetir para todos los POS encontrados.</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <p><strong>Ejemplo de Flujo de Datos:</strong></p>
+                    <p>Escenario: La "Lista Córdoba" se usa en 2 locales.</p>
+                    <ul>
+                        <li>Local A (Centro): En Integraciones > Smart Pedidos > User tiene el valor 5129.</li>
+                        <li>Local B (Cerro): En Integraciones > Smart Pedidos > User tiene el valor 5542.</li>
+                    </ul>
+                    <p>Resultado en JSON:</p>
+<pre><code class="language-json">"targetBranchIds": [ 5129, 5542 ]</code></pre>
+                    <p>Si un POS usa la lista de precios pero NO tiene activa la integración con SmartPedidos (o el
+                        campo User está vacío), ese POS debe ser omitido del array targetBranchIds para evitar errores
+                        de ruteo.</p>
+
+                    <h3 id="det-3-3">3.3. Productos Unitarios (catalog)</h3>
+                    <p>Esta sección contiene el inventario de productos en la Lista de Precios
+                        /api/v1/PriceLists/GetPrices/{PriceListId}. A diferencia del endpoint mencionado que retorna un
+                        array plano, el JSON de integración requiere una para estandarizar el contenido.</p>
+
+                    <h4>3.3.1. Estructura del Objeto</h4>
+                    <p>Cada elemento del array catalog debe ser un objeto con dos propiedades obligatorias que no
+                        existen en el modelo original:</p>
+                    <ul>
+                        <li>type: Identificador de tipo de objeto. Para esta sección, el valor fijo es "item".</li>
+                        <li>data: Objeto contenedor donde se vuelcan las propiedades del producto.</li>
+                    </ul>
+
+                    <p>Esquema de Transformación:</p>
+<pre><code class="language-json">// Destino (Payload Unificado)
+"catalog": [
+  //item 1
+  {
+    "type": "item",       // Nuevo campo discriminador
+    "data": { ... }       // Aquí van los datos mapeados de GetPrices del item
+  },
+  //item 2
+  {
+    "type": "item",       // Nuevo campo discriminador
+    "data": { ... }       // Aquí van los datos mapeados de GetPrices del item
+  }
+]</code></pre>
+
+                    <h4>3.3.2. Construcción del Objeto data</h4>
+                    <p>La todos los campos (name, description, publishedPrice, enabled) se copian directamente del
+                        objeto item original.
+                        Sin embargo, los siguientes campos requieren una lógica específica:</p>
+
+                    <p><strong>A. Nuevo Atributo: imageUrl (Resolución Dinámica)</strong></p>
+                    <p>El backend debe calcular este campo teniendo en cuenta las modificaiones solicitadas en “Gestion
+                        Multimedia de Imagenes (Link):</p>
+                    <ul>
+                        <li>Leer el platformId del contexto (Ej: Id: 1 == "PedidosYa").</li>
+                        <li>Buscar en la colección de multimedia del ítem la imagen que tenga el tag coincidente (Ej:
+                            Id: 1).</li>
+                        <li>Resultado: Inyectar la URL encontrada en data.imageUrl.</li>
+                    </ul>
+
+                    <p><strong>B.Ejemplo de JSON Resultante</strong></p>
+<pre><code class="language-json">"catalog": [
+    {
+      "type": "item",
+      "data": {
+        // Campos directos de GetPrices
+        "itemId": 19,
+        "name": "Agua Con Gas",
+        "publishedPrice": 5000.00,
+        "enabled": true,
+        // Campos Nuevos
+        "imageUrl": "https://cdn.smartcloud.com/images/peya/agua_gas_4x3.jpg", // Resuelto por Tag
+      },
+      {
+      "type": "item",
+      "data": {
+        // Campos directos de GetPrices
+        "itemId": 20,
+        "name": "Agua Sin Gas",
+        "publishedPrice": 5000.00,
+        "enabled": true,
+        // Campos Nuevos
+        "imageUrl": "https://cdn.smartcloud.com/images/peya/agua_4x3.jpg", // Resuelto por Tag
+      }
+    }
+]</code></pre>
+
+                    <h3 id="det-3-4">3.4. Relaciones y Promociones (relations)</h3>
+                    <p>Esta sección contiene las estructuras compuestas (Combos, Menús). El backend debe construir este
+                        array dinámicamente, obteniendo información de endpoints internos para generar el listado final.
+                    </p>
+
+                    <h4>3.4.1. Lógica de Agregación y Filtrado (Backend)</h4>
+                    <p>El servicio de publicación debe ejecutar la siguiente secuencia lógica para poblar este array:
+                    </p>
+                    <ul>
+                        <li>Obtener Contexto: Leer el priceListId que se está publicando (Ej: 2) desde el contexto del
+                            evento.</li>
+                        <li>Consultar Universo de Promociones: Ejemplo:/business/promotions/ para obtener el listado .
+                        </li>
+                        <li>Filtrado : Iterar sobre las promociones y seleccionar únicamente aquellas que tengan
+                            asignado el priceListId (Ej: 2) actual en su configuración.</li>
+                        <li>Estandarización de Formato:
+                            <ul>
+                                <li>La data de la promoción seleccionada debe formatearse siguiendo el esquema del
+                                    endpoint /api/v1/Promotion/GetByPOSCode.</li>
+                                <li>Se deben aplicar las transformaciones de Imagen.</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>3.4.2. Estructura del Array relations</h4>
+                    <p>El array relations es una colección de objetos. Cada objeto representa UNA promoción individual y
+                        debe estar encapsulado con el discriminador de tipo.</p>
+
+                    <p>Esquema del Array:</p>
+<pre><code class="language-json">"relations": [
+  // Promoción 1
+  {
+    "type": "promo",       // Discriminador fijo
+    "data": { ... }        // Estructura idéntica a GetByPOSCode (Transformada)
+  },
+  // Promoción 2
+  {
+    "type": "promo",
+    "data": { ... }
+  },
+  // Promoción N...
+  {
+    "type": "promo",
+    "data": { ... }
+  }
+]</code></pre>
+
+                    <h4>3.4.3. Ejemplo de JSON Resultante (Objeto Transformado)</h4>
+                    <p>A continuación se muestra cómo se ve un objeto dentro del array relations una vez procesado.
+                        Observar que data mantiene la estructura de GetByPOSCode pero con los valores (precios,
+                        imágenes, nombres) ya resueltos para la integración.</p>
+
+<pre><code class="language-json">"relations": [
+    {
+      "type": "promo",
+      "data": {
+        "id": 2,
+        "cloudCodeId": "e3387769-02dd-4a81-aa4c-340b6627e674",
+        "deleted": false,
+        "name": "Combo 1 Peya",
+        "description": "Combo 1 Peya",
+        "quantity": 1,
+        "imageUrl": null,
+        "validSinceDate": "2025-09-25T00:00:00+00:00",
+        "validToDate": "2027-04-30T00:00:00+00:00",
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "saturday": true,
+        "sunday": true,
+        "holiday": true,
+        "validSinceMinute": 0,
+        "validToMinute": 1440,
+        "groups": [
+            {
+                "name": "Hamburgesa",
+                "id": 163,
+                "amount": 1,
+                "details": [
+                    {
+                        "id": 809,
+                        "articleId": 9
+                    },
+                    {
+                        "id": 810,
+                        "articleId": 8
+                    }
+                ],
+                "promotionGroupApply": [
+                    {
+                        "promotionApplyId": 65,
+                        "promotionApply": {
+                            "include": true,
+                            "franchiseId": null,
+                            "franchiseeId": null,
+                            "cityId": null,
+                            "provinceId": null,
+                            "countryId": 11,
+                            "regionId": null,
+                            "priceListId": null
+                        },
+                        "promotionValue": 16900
+                    }
+                ],
+                "type": "FixedPrice",
+                "hasAdditionals": false,
+                "defaultArticleId": 0,
+                "multipleSelection": false
+            },
+            {
+                "name": "Acompañamiento",
+                "id": 164,
+                "amount": 1,
+                "details": [
+                    {
+                        "id": 811,
+                        "articleId": 12
+                    },
+                    {
+                        "id": 812,
+                        "articleId": 29
+                    }
+                ],
+                "promotionGroupApply": [
+                    {
+                        "promotionApplyId": 65,
+                        "promotionApply": {
+                            "include": true,
+                            "franchiseId": null,
+                            "franchiseeId": null,
+                            "cityId": null,
+                            "provinceId": null,
+                            "countryId": 11,
+                            "regionId": null,
+                            "priceListId": null
+                        },
+                        "promotionValue": 0
+                    }
+                ],
+                "type": "FixedPrice",
+                "hasAdditionals": false,
+                "defaultArticleId": 0,
+                "multipleSelection": false
+            },
+            {
+                "name": "Bebida",
+                "id": 165,
+                "amount": 1,
+                "details": [
+                    {
+                        "id": 813,
+                        "articleId": 4
+                    },
+                    {
+                        "id": 814,
+                        "articleId": 129
+                    }
+                ],
+                "promotionGroupApply": [
+                    {
+                        "promotionApplyId": 65,
+                        "promotionApply": {
+                            "include": true,
+                            "franchiseId": null,
+                            "franchiseeId": null,
+                            "cityId": null,
+                            "provinceId": null,
+                            "countryId": 11,
+                            "regionId": null,
+                            "priceListId": null
+                        },
+                        "promotionValue": 0
+                    }
+                ],
+                "type": "FixedPrice",
+                "hasAdditionals": false,
+                "defaultArticleId": 0,
+                "multipleSelection": false
+            }
+        ],
+        "appliesTo": [
+            {
+                "include": true,
+                "franchiseId": null,
+                "franchiseeId": null,
+                "cityId": null,
+                "provinceId": null,
+                "countryId": 11,
+                "regionId": null,
+                "priceListId": null
+            }
+        ],
+        "franchiseAppliesTo": [],
+        "suscriptions": [],
+        "createdDate": "2025-09-25T17:59:10.1880684+00:00",
+        "activatedDate": "2025-12-12T18:40:19.7666985+00:00",
+        "deactivatedDate": null,
+        "deactivatedNote": null,
+        "mandatoryForAll": true,
+        "promotionType": 1,
+        "relationCodes": []
+    },
+    {
+    "type": "promo",
+      "data": {....}
+    }
+]</code></pre>
+
+                    <h3>Mapeo de Transformación</h3>
+                    <p>SmartCloud debe implementar un adaptador que transforme la respuesta actual del servicio de
+                        Promociones (GetByPOSCode) al nuevo formato relations.</p>
+
+                    <p><strong>Fuente de Datos (Actual):</strong></p>
+<pre><code class="language-json">// Fragmento de respuesta GetByPOSCode 
+{ 
+    "id": 2, 
+    "name": "Combo 1 Peya", 
+    "groups": [ 
+        { 
+            "name": "Hamburgesa", 
+            "amount": 1, // Cantidad requerida 
+            "details": [ 
+                { "articleId": 9 }, // Referencia al Item 
+                { "articleId": 8 } 
+            ], 
+            "promotionGroupApply": [ 
+                { "promotionValue": 16900 } // Precio del grupo 
+            ] 
+        } 
+    ] 
+}</code></pre>
+
+                    <p><strong>Reglas de Transformación:</strong></p>
+                    <ul>
+                        <li><strong>promoId:</strong> Mapear directo desde id (2).</li>
+                        <li><strong>name / description:</strong> Mapear directo.</li>
+                        <li><strong>price:</strong>
+                            <ul>
+                                <li>Si la promo es FixedPrice (Precio Fijo Total), sumar los promotionValue de los
+                                    grupos o tomar el precio cabecera si existiera.</li>
+                                <li>En el ejemplo: El grupo "Hamburguesa" define el precio base (16900) y los otros
+                                    grupos (Acompañamiento, Bebida) tienen valor 0. El precio final es 16900.</li>
+                            </ul>
+                        </li>
+                        <li><strong>groups (Array):</strong>
+                            <ul>
+                                <li>Iterar sobre groups del origen.</li>
+                                <li><strong>min / max:</strong> Derivar de amount (en este caso min=1, max=1).</li>
+                                <li><strong>options:</strong> Iterar sobre details. Por cada articleId, buscar el Name
+                                    correspondiente en el maestro de artículos y generar el objeto { itemId, name }.
+                                </li>
+                            </ul>
+                        </li>
+                        <li><strong>Filtrado por Lista de Precios:</strong>
+                            <ul>
+                                <li>El servicio actual devuelve todas las promos del POS.</li>
+                                <li><strong>Nuevo Requisito:</strong> El proceso de publicación debe filtrar este array
+                                    verificando el array appliesTo. Solo incluir la promo si priceListId coincide con la
+                                    lista que se está publicando o si include: true aplica globalmente (null</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Syntax Highlighting Script for JSON
+        document.addEventListener('DOMContentLoaded', () => {
+            const codeBlocks = document.querySelectorAll('code.language-json');
+
+            codeBlocks.forEach(block => {
+                let html = block.innerHTML;
+
+                // Regex for JSON syntax highlighting
+                // Strings
+                html = html.replace(/"([^"]*)"/g, '<span class="json-string">"$1"</span>');
+                // Keys
+                html = html.replace(/<span class="json-string">"([^"]*)"<\/span>:/g, '<span class="json-key">"$1"</span>:');
+                // Numbers
+                html = html.replace(/\b(\d+)\b/g, '<span class="json-number">$1</span>');
+                // Booleans and Null
+                html = html.replace(/\b(true|false)\b/g, '<span class="json-boolean">$1</span>');
+                html = html.replace(/\b(null)\b/g, '<span class="json-null">$1</span>');
+                // Comments (Simple single line //)
+                html = html.replace(/(\/\/.*)/g, '<span class="json-comment">$1</span>');
+
+                block.innerHTML = html;
+            });
+        });
+    </script>
+</body>
+
+</html>
