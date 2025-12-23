@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latencias Operativas - SmartPedidos Monitor (v4.1)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <style>
+        :root {
+            --primary-text: #2c3e50;
+            --bg-body: #f4f6f8;
+            --bg-card: #ffffff;
+            
+            /* Paleta de Colores del Gráfico */
+            --color-external: #95a5a6; /* Gris */
+            --color-pos: #e67e22;      /* Naranja */
+            --color-sp-proc: #154360;  /* Azul Oscuro */
+            --color-sp-final: #5dade2; /* Azul Claro */
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            margin: 0;
+            padding: 20px;
+            color: var(--primary-text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 24px;
+        }
+
+        /* --- Header y Controles --- */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary-text); }
+
+        .controls { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+        
+        .control-group { display: flex; flex-direction: column; gap: 4px; }
+        
+        label { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; }
+        
+        select, input {
+            padding: 6px 10px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        /* --- Gráfico --- */
+        .chart-container { position: relative; height: 450px; width: 100%; margin-bottom: 30px; }
+
+        /* --- Leyenda de Definiciones --- */
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            background-color: #fcfcfc;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .legend-item { display: flex; align-items: flex-start; gap: 10px; }
+        
+        .dot {
+            width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; flex-shrink: 0;
+        }
+
+        .legend-content h4 { margin: 0 0 4px 0; font-size: 14px; color: var(--primary-text); }
+        .legend-content p { margin: 0; font-size: 12px; color: #666; line-height: 1.4; }
+
+        /* Mapeo de Colores */
+        .dot-ext { background-color: var(--color-external); }
+        .dot-pos { background-color: var(--color-pos); }
+        .dot-sp1 { background-color: var(--color-sp-proc); }
+        .dot-sp3 { background-color: var(--color-sp-final); }
+
+        .warning-msg { color: #e74c3c; font-size: 12px; display: none; margin-top: 5px;}
+        
+        .footer-stats {
+            margin-top: 15px; display: flex; gap: 20px; justify-content: center; font-size: 13px; color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>Monitor de Latencias Operativas</h1>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Plataforma</label>
+                    <select id="platformSelect" onchange="updateChart()">
+                        <option value="PedidosYa">PedidosYa</option>
+                        <option value="Rappi">Rappi</option>
+                        <option value="UberEats">Uber Eats</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Agrupación</label>
+                    <select id="granularitySelect" onchange="onGranularityChange()">
+                        <option value="15m">15 Minutos</option>
+                        <option value="30m">30 Minutos</option>
+                        <option value="1h">1 Hora</option>
+                        <option value="1d" selected>1 Día</option>
+                        <option value="7d">7 Días</option>
+                        <option value="30d">30 Días</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Desde</label>
+                    <input type="date" id="startDate" onchange="onDateChange()">
+                </div>
+                <div class="control-group">
+                    <label>Hasta</label>
+                    <input type="date" id="endDate" onchange="onDateChange()">
+                </div>
+            </div>
+            <div id="dateWarning" class="warning-msg">Rango de fechas insuficiente para esta agrupación.</div>
+        </div>
+
+        <!-- Gráfico -->
+        <div class="chart-container">
+            <canvas id="latencyChart"></canvas>
+        </div>
+
+        <!-- Leyenda / Definiciones de Usuario (Sin Queue) -->
+        <div class="legend-grid">
+            <!-- Externo -->
+            <div class="legend-item">
+                <div class="dot dot-ext"></div>
+                <div class="legend-content">
+                    <h4>Latencia Externa</h4>
+                    <p>Tiempo de la Plataforma en red/internet antes de llegar a SP.</p>
+                </div>
+            </div>
+
+            <!-- SmartPedidos 1 -->
+            <div class="legend-item">
+                <div class="dot dot-sp1"></div>
+                <div class="legend-content">
+                    <h4>Procesamiento SP</h4>
+                    <p>Tiempo que SP tarda en validar el request y dar el primer ACK.</p>
+                </div>
+            </div>
+
+            <!-- SmartPedidos 2 (Finalización) -->
+            <div class="legend-item">
+                <div class="dot dot-sp3"></div>
+                <div class="legend-content">
+                    <h4>Cierre SP</h4>
+                    <p>Tiempo que SP tarda en cerrar el circuito y notificar a la plataforma tras la respuesta del POS.</p>
+                </div>
+            </div>
+
+            <!-- POS -->
+            <div class="legend-item">
+                <div class="dot dot-pos"></div>
+                <div class="legend-content">
+                    <h4>Ejecución POS</h4>
+                    <p>Tiempo total que el POS retiene la orden.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-stats" id="metricsSummary"></div>
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN ---
+        let chart;
+        let rawData = {}; 
+        const TODAY = new Date('2025-12-18T00:00:00'); // Fecha simulada "Hoy"
+
+        const platformSelect = document.getElementById('platformSelect');
+        const granularitySelect = document.getElementById('granularitySelect');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const warningMsg = document.getElementById('dateWarning');
+        const summaryContainer = document.getElementById('metricsSummary');
+
+        // --- 1. GENERADOR DE DATOS (SIMULACIÓN - Queue Eliminado) ---
+        function generateSampleData() {
+            const platforms = ['PedidosYa', 'Rappi', 'UberEats'];
+            const startGenDate = new Date(TODAY);
+            startGenDate.setDate(startGenDate.getDate() - 95);
+
+            platforms.forEach(platform => {
+                rawData[platform] = [];
+                let currentDate = new Date(startGenDate);
+                
+                while (currentDate <= TODAY) {
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    // Simulamos horario comercial 09:00 a 23:00
+                    for (let h = 9; h <= 23; h++) {
+                        for (let m = 0; m < 60; m += 15) {
+                            if (Math.random() > 0.4) { // 60% prob de orden
+                                const minStr = (m < 10 ? '0' : '') + m;
+                                const hourStr = (h < 10 ? '0' : '') + h;
+                                const fullTimeStr = `${dateStr}T${hourStr}:${minStr}:00`;
+                                
+                                const factor = 1 + (Math.random() * 0.5 - 0.2); 
+                                
+                                rawData[platform].push({
+                                    timestamp: new Date(fullTimeStr),
+                                    // Métricas ajustadas (Sin Queue)
+                                    avg_externalDelay: Math.round(5100 * factor),     
+                                    avg_spProcessingTime: Math.round(453 * factor),   
+                                    // Queue eliminado
+                                    avg_posExecutionTime: Math.round(24400 * factor), 
+                                    avg_spFinalizationTime: Math.round(700 * factor), 
+                                    totalOrders: Math.round(15 * factor)
+                                });
+                            }
+                        }
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            });
+        }
+
+        // --- 2. CONTROLADORES DE FECHA ---
+        function setDates(start, end) {
+            startDateInput.value = start.toISOString().split('T')[0];
+            endDateInput.value = end.toISOString().split('T')[0];
+        }
+
+        function onGranularityChange() {
+            const gran = granularitySelect.value;
+            const end = new Date(TODAY);
+            let start = new Date(TODAY);
+
+            switch(gran) {
+                case '15m':
+                case '30m':
+                case '1h': start.setDate(end.getDate() - 0); break; // Hoy
+                case '1d': start.setDate(end.getDate() - 14); break; // 15 días
+                case '7d': start.setDate(end.getDate() - 60); break; // 2 meses
+                case '30d': start.setDate(end.getDate() - 90); break; // 3 meses
+            }
+            setDates(start, end);
+            updateChart();
+        }
+
+        function onDateChange() {
+            if (startDateInput.value > endDateInput.value) {
+                endDateInput.value = startDateInput.value;
+            }
+            updateChart();
+        }
+
+        // --- 3. AGREGACIÓN (LÓGICA CORE - Queue Eliminado) ---
+        function getBucketKey(dateObj, granularity) {
+            const y = dateObj.getFullYear();
+            const m = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+            const d = dateObj.getDate().toString().padStart(2, '0');
+            const h = dateObj.getHours().toString().padStart(2, '0');
+            const min = dateObj.getMinutes();
+
+            if (granularity === '15m') return `${y}-${m}-${d} ${h}:${min.toString().padStart(2,'0')}`;
+            if (granularity === '30m') return `${y}-${m}-${d} ${h}:${min < 30 ? '00' : '30'}`;
+            if (granularity === '1h') return `${y}-${m}-${d} ${h}:00`;
+            if (granularity === '1d') return `${d}/${m}`;
+            if (granularity === '7d') {
+                const day = dateObj.getDay();
+                const diff = dateObj.getDate() - day + (day === 0 ? -6 : 1);
+                const monday = new Date(dateObj);
+                monday.setDate(diff);
+                return `Sem ${monday.getDate()}/${monday.getMonth()+1}`;
+            }
+            if (granularity === '30d') {
+                const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+                return `${monthNames[dateObj.getMonth()]} ${y}`;
+            }
+        }
+
+        function aggregateData(data, granularity, startStr, endStr) {
+            const buckets = {};
+            const startDate = new Date(startStr);
+            const endDate = new Date(endStr + 'T23:59:59');
+
+            data.forEach(item => {
+                if (item.timestamp >= startDate && item.timestamp <= endDate) {
+                    const key = getBucketKey(new Date(item.timestamp), granularity);
+
+                    if (!buckets[key]) {
+                        // Eliminado sum_queue
+                        buckets[key] = { label: key, count: 0, sum_ext: 0, sum_proc: 0, sum_pos: 0, sum_final: 0, orders: 0 };
+                    }
+                    const b = buckets[key];
+                    b.count++;
+                    b.sum_ext += item.avg_externalDelay;
+                    b.sum_proc += item.avg_spProcessingTime;
+                    b.sum_pos += item.avg_posExecutionTime;
+                    b.sum_final += item.avg_spFinalizationTime;
+                    b.orders += item.totalOrders;
+                }
+            });
+
+            return Object.values(buckets).map(b => ({
+                label: b.label,
+                ext: Math.round(b.sum_ext / b.count),
+                proc: Math.round(b.sum_proc / b.count),
+                pos: Math.round(b.sum_pos / b.count),
+                final: Math.round(b.sum_final / b.count),
+                totalOrders: b.orders
+            }));
+        }
+
+        // --- 4. RENDERIZADO DEL GRÁFICO ---
+        function updateChart() {
+            const platform = platformSelect.value;
+            const granularity = granularitySelect.value;
+            const start = startDateInput.value;
+            const end = endDateInput.value;
+
+            // Validación simple de fechas
+            const diffTime = Math.abs(new Date(end) - new Date(start));
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            let showWarning = false;
+            if (granularity === '7d' && diffDays < 7) showWarning = true;
+            if (granularity === '30d' && diffDays < 28) showWarning = true;
+
+            warningMsg.style.display = showWarning ? 'block' : 'none';
+            if(showWarning) { if(chart) chart.destroy(); return; }
+
+            const chartDataArray = aggregateData(rawData[platform], granularity, start, end);
+            const labels = chartDataArray.map(d => d.label);
+
+            const c_proc = '#154360'; // Azul Oscuro
+            const c_final = '#5dade2';// Azul Claro
+            const c_pos = '#e67e22';  // Naranja
+            const c_ext = '#95a5a6';  // Gris
+
+            const datasets = [
+                // Orden de Apilado: De Abajo hacia Arriba
+                
+                // 1. SP Processing
+                {
+                    label: 'Procesamiento SP',
+                    data: chartDataArray.map(d => d.proc),
+                    backgroundColor: c_proc, stack: 'main'
+                },
+                
+                // 2. SP Finalization (Subimos este bloque para agrupar los azules)
+                {
+                    label: 'Cierre SP',
+                    data: chartDataArray.map(d => d.final),
+                    backgroundColor: c_final, stack: 'main'
+                },
+                
+                // 3. POS
+                {
+                    label: 'Ejecución POS',
+                    data: chartDataArray.map(d => d.pos),
+                    backgroundColor: c_pos, stack: 'main'
+                },
+                
+                // 4. Externo
+                {
+                    label: 'Latencia Externa',
+                    data: chartDataArray.map(d => d.ext),
+                    backgroundColor: c_ext, stack: 'main'
+                }
+            ];
+
+            const ctx = document.getElementById('latencyChart').getContext('2d');
+            if (chart) chart.destroy();
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { display: false },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            footer: (tooltipItems) => {
+                                let total = 0;
+                                tooltipItems.forEach(t => total += t.yLabel);
+                                return 'Duración Total: ' + total.toLocaleString() + ' ms';
+                            }
+                        }
+                    },
+                    scales: {
+                        xAxes: [{ 
+                            stacked: true, 
+                            gridLines: { display: false },
+                            ticks: { autoSkip: true, maxTicksLimit: 15 }
+                        }],
+                        yAxes: [{ 
+                            stacked: true,
+                            scaleLabel: { display: true, labelString: 'Milisegundos (ms)' }
+                        }]
+                    }
+                }
+            });
+
+            const totalO = chartDataArray.reduce((acc, curr) => acc + curr.totalOrders, 0);
+            summaryContainer.innerHTML = `<strong>Total Órdenes en vista:</strong> ${totalO.toLocaleString()}`;
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            generateSampleData();
+            onGranularityChange();
+        });
+    </script>
+</body>
+</html>
