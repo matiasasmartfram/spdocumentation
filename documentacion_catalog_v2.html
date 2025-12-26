@@ -375,79 +375,316 @@
         ]
     },
     "catalog": [
-        {
-            "type": "item",
-            "data": {
-                "itemId": 5,
-                "name": "Cerveza Corona",
-                "publishedPrice": 4000.00,
-                "enabled": true,
-                "imageUrl": "https://cdn.smartcloud.com/images/peya/corona_4x3.jpg",
-                "group": {
-                    "name": "Bebidas Con Alcohol"
-                },
-                "composition": null
+    {
+      "type": "item",
+      "data": {
+        "id": 1181,
+        "priceListId": 912,
+        "item": {
+          "id": 5,
+          "name": "Cerveza Corona",
+          "description": "Cerveza Corona",
+          "forSale": true,
+          "unitForPackage": 24,
+          "unitaryItem": null,
+          "unitaryItemQuantity": 0,
+          "rawMaterialQuantity": 0.0,
+          "bussinessUnit": 0.0,
+          "fractional": false,
+          "generic": null,
+          "composition": null,
+          "group": {
+            "id": 4,
+            "name": "Bebidas Con Alcohol",
+            "description": "Cervezas - Fernet - Vino",
+            "subCategoryId": 3,
+            "subCategoryName": "Bebidas",
+            "categoryId": 1,
+            "categoryName": "Productos de Venta",
+            "isKds": false,
+            "financialModify": 0
+          },
+          "skus": [
+            {
+              "id": 31,
+              "code": "5",
+              "skuType": {
+                "id": 6,
+                "name": "SKU_SmartPedidos",
+                "description": "SKU SmartPedidos"
+              },
+              "itemId": 5
             }
+          ],
+          "defaultImage": null
         },
-        {
-            "type": "item",
-            "data": {
-                "itemId": 165,
-                "name": "Mexicana",
-                "publishedPrice": 14900.00,
-                "enabled": true,
-                "imageUrl": "https://cdn.smartcloud.com/images/peya/mexicana_4x3.jpg",
-                "group": {
-                    "name": "Signature Burgers"
-                },
-                "composition": {
-                    "items": [
-                        {
-                            "id": 16,
-                            "name": "Extra Cheddar",
-                            "price": 1000.00,
-                            "type": "extra"
-                        },
-                        {
-                            "id": 74,
-                            "name": "S.Palta",
-                            "price": 0.00,
-                            "type": "removable"
-                        }
-                    ]
-                }
+        "itemId": 5,
+        "publishedPrice": 250.0,
+        "newPrice": 250.0,
+        "internalTax": 0.0,
+        "ivaCloudId": "3ebc1610-78b4-4a99-a151-d37d625b538d",
+        "enabled": true,
+        "isKds": false,
+        "financialModify": 0,
+        "imageUrl": "https://smartpedidos-catalogimages-weiss.s3.us-east-2.amazonaws.com/CORONA_ok.jpg"
+      }
+    },
+    {
+      "type": "item",
+      "data": {
+        "id": 1180,
+        "priceListId": 912,
+        "item": {
+          "id": 112,
+          "name": "Corona S/Alcohol",
+          "description": "CORONA S/ALC.",
+          "forSale": true,
+          "unitForPackage": 24,
+          "unitaryItem": null,
+          "unitaryItemQuantity": 0,
+          "rawMaterialQuantity": 0.0,
+          "bussinessUnit": 0.0,
+          "fractional": false,
+          "generic": null,
+          "composition": {
+            "id": 179,
+            "items": [],
+            "generic": []
+          },
+          "group": {
+            "id": 4,
+            "name": "Bebidas Con Alcohol",
+            "description": "Cervezas - Fernet - Vino",
+            "subCategoryId": 3,
+            "subCategoryName": "Bebidas",
+            "categoryId": 1,
+            "categoryName": "Productos de Venta",
+            "isKds": false,
+            "financialModify": 0
+          },
+          "skus": [
+            {
+              "id": 103,
+              "code": "112",
+              "skuType": {
+                "id": 6,
+                "name": "SKU_SmartPedidos",
+                "description": "SKU SmartPedidos"
+              },
+              "itemId": 112
             }
-        }
+          ],
+          "defaultImage": null
+        },
+        "itemId": 112,
+        "publishedPrice": 250.0,
+        "newPrice": 250.0,
+        "internalTax": 0.0,
+        "ivaCloudId": "3ebc1610-78b4-4a99-a151-d37d625b538d",
+        "enabled": true,
+        "isKds": false,
+        "financialModify": 0,
+        "imageUrl": "https://smartpedidos-catalogimages-weiss.s3.us-east-2.amazonaws.com/CORONA_ok.jpg"
+      }
+    }
     ],
-    "relations": [
-        {
-            "type": "promo",
-            "data": {
-                "promoId": 3,
-                "sku": "10001",
-                "name": "Combo 1",
-                "description": "Combo 1 (burger, gaseosa y side)",
-                "price": 16900.00,
-                "imageUrl": "https://cdn.smartcloud.com/images/peya/combo1_4x3.jpg",
-                "groups": [
-                    {
-                        "name": "Hamburguesa",
-                        "min": 1,
-                        "max": 1,
-                        "options": [
-                            {
-                                "itemId": 87,
-                                "name": "Bacon A Lo Tomi"
-                            },
-                            {
-                                "itemId": 60,
-                                "name": "Smack"
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
+   "relations": [
+    {
+      "type": "promo",
+      "data": {
+        "id": 14,
+        "cloudCodeId": "274a9ab1-a1f0-45fd-8edd-851f591725a8",
+        "deleted": false,
+        "name": "Combo 1 Smack",
+        "description": "Combo 1 (burger, fernet y side a elección)",
+        "quantity": 0,
+        "imageUrl": null,
+        "validSinceDate": "2025-12-21T00:00:00+00:00",
+        "validToDate": "2025-12-27T00:00:00+00:00",
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "saturday": true,
+        "sunday": true,
+        "holiday": true,
+        "validSinceMinute": 0,
+        "validToMinute": 1440,
+        "groups": [
+          {
+            "name": "Hamburguesa",
+            "id": 318,
+            "amount": 1,
+            "details": [
+              {
+                "id": 1290,
+                "articleId": 60
+              }
+            ],
+            "promotionGroupApply": [
+              {
+                "promotionApplyId": 138,
+                "promotionApply": {
+                  "include": true,
+                  "franchiseId": null,
+                  "franchiseeId": null,
+                  "cityId": null,
+                  "provinceId": null,
+                  "countryId": 235,
+                  "regionId": null,
+                  "priceListId": null
+                },
+                "promotionValue": 820
+              }
+            ],
+            "type": "FixedPrice",
+            "hasAdditionals": false,
+            "defaultArticleId": 60,
+            "multipleSelection": false
+          },
+          {
+            "name": "Side",
+            "id": 319,
+            "amount": 1,
+            "details": [
+              {
+                "id": 1291,
+                "articleId": 12
+              }
+            ],
+            "promotionGroupApply": [
+              {
+                "promotionApplyId": 138,
+                "promotionApply": {
+                  "include": true,
+                  "franchiseId": null,
+                  "franchiseeId": null,
+                  "cityId": null,
+                  "provinceId": null,
+                  "countryId": 235,
+                  "regionId": null,
+                  "priceListId": null
+                },
+                "promotionValue": 0
+              }
+            ],
+            "type": "FixedPrice",
+            "hasAdditionals": false,
+            "defaultArticleId": 12,
+            "multipleSelection": false
+          },
+          {
+            "name": "Bebidas",
+            "id": 320,
+            "amount": 1,
+            "details": [
+              {
+                "id": 1292,
+                "articleId": 133
+              },
+              {
+                "id": 1293,
+                "articleId": 135
+              },
+              {
+                "id": 1294,
+                "articleId": 411
+              },
+              {
+                "id": 1295,
+                "articleId": 134
+              },
+              {
+                "id": 1296,
+                "articleId": 4
+              },
+              {
+                "id": 1297,
+                "articleId": 129
+              },
+              {
+                "id": 1298,
+                "articleId": 19
+              },
+              {
+                "id": 1299,
+                "articleId": 413
+              },
+              {
+                "id": 1300,
+                "articleId": 419
+              },
+              {
+                "id": 1301,
+                "articleId": 414
+              },
+              {
+                "id": 1302,
+                "articleId": 415
+              },
+              {
+                "id": 1303,
+                "articleId": 416
+              },
+              {
+                "id": 1304,
+                "articleId": 417
+              },
+              {
+                "id": 1305,
+                "articleId": 418
+              },
+              {
+                "id": 1306,
+                "articleId": 421
+              }
+            ],
+            "promotionGroupApply": [
+              {
+                "promotionApplyId": 138,
+                "promotionApply": {
+                  "include": true,
+                  "franchiseId": null,
+                  "franchiseeId": null,
+                  "cityId": null,
+                  "provinceId": null,
+                  "countryId": 235,
+                  "regionId": null,
+                  "priceListId": null
+                },
+                "promotionValue": 0
+              }
+            ],
+            "type": "FixedPrice",
+            "hasAdditionals": false,
+            "defaultArticleId": 0,
+            "multipleSelection": false
+          }
+        ],
+        "appliesTo": [
+          {
+            "include": true,
+            "franchiseId": null,
+            "franchiseeId": null,
+            "cityId": null,
+            "provinceId": null,
+            "countryId": 235,
+            "regionId": null,
+            "priceListId": null
+          }
+        ],
+        "franchiseAppliesTo": [],
+        "suscriptions": [],
+        "createdDate": "2025-12-16T18:11:59.5634569+00:00",
+        "activatedDate": "2025-12-20T17:38:41.6831374+00:00",
+        "deactivatedDate": null,
+        "deactivatedNote": null,
+        "mandatoryForAll": true,
+        "promotionType": 1,
+        "relationCodes": []
+      }
+    }
     ]
 }</code></pre>
 
@@ -464,7 +701,7 @@
 
                     <h5>B. Productos Unitarios (catalog)</h5>
                     <p>Array que contiene <strong>únicamente</strong> objetos <code>type: "item"</code>.</p>
-                    <p>Representa el inventario de productos vendibles por sí mismos.</p>
+                    <p>Representa el inventario de productos vendibles.</p>
                     <ul>
                         <li><strong>imageUrl:</strong> Debe venir populado con la URL pública final. SmartCloud
                             <strong>debe haber realizado el filtrado previo</strong> seleccionando la imagen
@@ -610,22 +847,22 @@
                     <p><strong>Ejemplo de Salida JSON (Payload):</strong></p>
                     <p>Para una Lista de Precios configurada como "Plataformas Delivery -> PedidosYa":</p>
 <pre><code class="language-json">{ 
-    "itemId": 18, 
-    "name": "Hamburguesa Doble", 
-    "price": 12000, 
+    "id": 112,
+    "name": "Corona S/Alcohol",
+    "description": "CORONA S/ALC.",
     // Imagen resuelta por SmartCloud filtrando por tag de Sub-Canal "PedidosYa" 
     "imageUrl": "https://cdn.smartcloud.com/images/pedidosya/burger_1440x1080_white_bg.jpg", 
-    "modifications": [...] 
+    "composition": {...} 
 }</code></pre>
 
                     <p>Para una Lista de Precios configurada como "Plataformas Delivery -> Rappi":</p>
 <pre><code class="language-json">{ 
-    "itemId": 18, 
-    "name": "Hamburguesa Doble", 
-    "price": 12000, 
+    "id": 112,
+    "name": "Corona S/Alcohol",
+    "description": "CORONA S/ALC.",
     // Imagen resuelta por SmartCloud filtrando por tag de Sub-Canal "Rappi" 
     "imageUrl": "https://cdn.smartcloud.com/images/rappi/burger_4x3_white_bg.rappi.jpg", 
-    "modifications": [...] 
+    "composition": {...} 
 }</code></pre>
 
                     <p><strong>Caso: PedidosYa</strong></p>
@@ -824,22 +1061,26 @@
     {
       "type": "item",
       "data": {
-        // Campos directos de GetPrices
-        "itemId": 19,
-        "name": "Agua Con Gas",
-        "publishedPrice": 5000.00,
-        "enabled": true,
+        "id": 1181,
+        "priceListId": 912,
+        "item": {
+          "id": 5,
+          "name": "Cerveza Corona",
+          "description": "Cerveza Corona",
+        //etc... -> Demas campos (Copiados Exactamente de GetPrices)
         // Campos Nuevos
         "imageUrl": "https://cdn.smartcloud.com/images/peya/agua_gas_4x3.jpg", // Resuelto por Tag
       },
-      {
+     {
       "type": "item",
       "data": {
-        // Campos directos de GetPrices
-        "itemId": 20,
-        "name": "Agua Sin Gas",
-        "publishedPrice": 5000.00,
-        "enabled": true,
+        "id": 1180,
+        "priceListId": 912,
+        "item": {
+          "id": 112,
+          "name": "Corona S/Alcohol",
+          "description": "CORONA S/ALC.",
+        //etc... -> Demas campos (Copiados Exactamente de GetPrices)    
         // Campos Nuevos
         "imageUrl": "https://cdn.smartcloud.com/images/peya/agua_4x3.jpg", // Resuelto por Tag
       }
