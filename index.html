@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Índice de Documentación de APIs</title>
+	<title>Portal de Documentación SmartPedidos</title>
 	<style>
 		body {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -13,7 +13,7 @@
 			color: #333;
 		}
 		.container {
-			max-width: 800px;
+			max-width: 900px;
 			margin: 0 auto;
 			background-color: #ffffff;
 			padding: 2rem 3rem;
@@ -32,8 +32,6 @@
 			font-size: 1.1em;
 			margin-bottom: 2em;
 		}
-		
-		/* Estilos del Acordeón */
 		.accordion {
 			border-top: 1px solid #d1d9e2;
 		}
@@ -46,10 +44,7 @@
 			align-items: center;
 			padding: 1em 0;
 			cursor: pointer;
-			list-style: none; /* Oculta el marcador de flecha por defecto */
-		}
-		.accordion-header::-webkit-details-marker {
-			display: none; /* Oculta el marcador en navegadores WebKit */
+			list-style: none;
 		}
 		.accordion-header h2 {
 			margin: 0;
@@ -60,10 +55,6 @@
 			font-size: 1.5em;
 			font-weight: bold;
 			color: #007bff;
-			transition: transform 0.2s ease-in-out;
-		}
-		.accordion-item[open] .accordion-icon {
-			transform: rotate(45deg);
 		}
 		.accordion-content {
 			padding: 0 1em 1.5em 1em;
@@ -76,7 +67,6 @@
 			border-radius: 6px;
 			text-decoration: none;
 			color: #333;
-			transition: all 0.2s ease-in-out;
 		}
 		.doc-link:hover {
 			border-color: #007bff;
@@ -85,134 +75,89 @@
 		}
 		.doc-link strong {
 			display: block;
-			font-size: 1.1em;
+			font-size: 1.05em;
 			color: #0056b3;
 		}
 	</style>
 </head>
+
 <body>
-	<div class="container">
-		<h1>Portal de Documentación de APIs</h1>
-		<p>Haz clic en una categoría para expandir y ver los documentos disponibles.</p>
-		
-		<div class="accordion">
-			
-			<!-- =============================================================== -->
-			<!-- CATEGORÍA 1: Documentación General -->
-			<!-- =============================================================== -->
-			<details class="accordion-item" open>
-				<summary class="accordion-header">
-					<h2>Documentación General y Formatos</h2>
-					<span class="accordion-icon">+</span>
-				</summary>
-				<div class="accordion-content">
-					<!-- Se ha añadido la URL absoluta a cada enlace -->
-					<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_comanda_weiss.html" class="doc-link"><strong>Comanda Weiss</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_formato_pedidos.html" class="doc-link"><strong>Formato de Pedidos (Estructura de Datos)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_backoffice_order.detaisl.html" class="doc-link"><strong>Backoffice SmartPedidos order.details</strong></a>
-				</div>
-			</details>
+<div class="container">
+	<h1>Portal de Documentación SmartPedidos - SmartCloud</h1>
+	<p>Acceso centralizado a documentación funcional, técnica y mockups.</p>
 
-			<!-- =============================================================== -->
-			<!-- CATEGORÍA 2: Mockups de Comanda y Cocina -->
-			<!-- =============================================================== -->
-			<details class="accordion-item">
-				<summary class="accordion-header">
-					<h2>Mockups de Comanda, Items y Cocina</h2>
-					<span class="accordion-icon">+</span>
-				</summary>
-				<div class="accordion-content">
-					<!-- Se ha añadido la URL absoluta a cada enlace -->
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_comanda_cocina.html" class="doc-link"><strong>Comanda para la Cocina</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_comanda_pedidos.html" class="doc-link"><strong>Comanda para Pedidos</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_items_orden_de_venta.html" class="doc-link"><strong>Items en Orden de Venta (Versión Original)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_items_orden_de_venta_new.html" class="doc-link"><strong>Items en Orden de Venta (Nueva Versión)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_items_para_cocina.html" class="doc-link"><strong>Vista de Items para la Cocina</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_kds.html" class="doc-link"><strong>Kitchen Display System (KDS)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_seleccion_beeper.html" class="doc-link"><strong>Selección de Beeper (Paginación)</strong></a>
-				</div>
-			</details>
+	<div class="accordion">
 
-			<!-- =============================================================== -->
-			<!-- CATEGORÍA 3: Mockups de Promociones y Configuración (Admin/POS) -->
-			<!-- =============================================================== -->
-			<details class="accordion-item">
-				<summary class="accordion-header">
-					<h2>Mockups de Promociones y Extras (Admin/POS)</h2>
-					<span class="accordion-icon">+</span>
-				</summary>
-				<div class="accordion-content">
-					<!-- Se ha añadido la URL absoluta a cada enlace -->
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_extras_admin.html" class="doc-link"><strong>Administración de Extras (Panel Admin)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_extras_pos.html" class="doc-link"><strong>Selección de Extras (Punto de Venta)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promocion_adaptado.html" class="doc-link"><strong>Promoción Adaptada (Vista de Uso)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promociones_admin.html" class="doc-link"><strong>Administración de Promociones (Panel Admin)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promociones_grupo_admin.html" class="doc-link"><strong>Administración de Grupos de Promociones</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promociones_pos.html" class="doc-link"><strong>Selección de Promociones (Punto de Venta)</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_sobreventa_admin.html" class="doc-link"><strong>Control de Sobreventa (Panel Admin)</strong></a>
-				</div>
-			</details>
-			<!-- =============================================================== -->
-			<!-- CATEGORÍA 4: Mockups Lista de Precios Catalogos -->
-			<!-- =============================================================== -->
-			<details class="accordion-item">
-				<summary class="accordion-header">
-					<h2>Catalog SmartPedidos SmartCloud</h2>
-					<span class="accordion-icon">+</span>
-				</summary>
-				<div class="accordion-content">
-					<!-- Se ha añadido la URL absoluta a cada enlace -->
-					<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_catalog_v1.html" class="doc-link"><strong>v1 Documentacion Catalog SmartCloud</strong></a>
-					
-					<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_catalog_v2.html" class="doc-link"><strong>v2 Documentacion Catalog SmartCloud</strong></a>
-					
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_listadeprecios_manager.html" class="doc-link"><strong>MockUp Lista de Precios Manager</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_listadeprecios_POS.html" class="doc-link"><strong>MockUp Lista de Precios POS</strong></a>
-					<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_item_multimedia.html" class="doc-link"><strong>MockUp Item Multimedia</strong></a>
-					
-				</div>
-			</details>
-		
-		</div>
+		<!-- Weiss -->
+		<details class="accordion-item">
+			<summary class="accordion-header">
+				<h2>Weiss</h2>
+				<span class="accordion-icon">+</span>
+			</summary>
+			<div class="accordion-content">
+				<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_comanda_weiss.html" class="doc-link"><strong>Comanda Weiss</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_canal_punto_de_venta.html" class="doc-link"><strong>Canal Punto de Venta</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_comanda_pedidos.html" class="doc-link"><strong>Comanda de Pedidos</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_items_orden_de_venta.html" class="doc-link"><strong>Items en Orden de Venta (Original)</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_items_orden_de_venta_new.html" class="doc-link"><strong>Items en Orden de Venta (Nueva)</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_seleccion_beeper.html" class="doc-link"><strong>Selección de Beeper</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_ticket_kamban_pedidos.html" class="doc-link"><strong>Ticket / Kanban de Pedidos</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_comanda_cocina.html" class="doc-link"><strong>Comanda Cocina</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_items_para_cocina.html" class="doc-link"><strong>Items para Cocina</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_kds.html" class="doc-link"><strong>Kitchen Display System (KDS)</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_extras_admin.html" class="doc-link"><strong>Extras - Administración</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_extras_pos.html" class="doc-link"><strong>Extras - POS</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promociones_admin.html" class="doc-link"><strong>Promociones - Admin</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promociones_admin_sku.html" class="doc-link"><strong>Promociones por SKU</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promociones_grupo_admin.html" class="doc-link"><strong>Grupos de Promociones</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promociones_pos.html" class="doc-link"><strong>Promociones - POS</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_promocion_adaptado.html" class="doc-link"><strong>Promoción Adaptada</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_sobreventa_admin.html" class="doc-link"><strong>Control de Sobreventa</strong></a>
+			</div>
+		</details>
+
+		<!-- SmartPedidos -->
+		<details class="accordion-item">
+			<summary class="accordion-header">
+				<h2>SmartPedidos</h2>
+				<span class="accordion-icon">+</span>
+			</summary>
+			<div class="accordion-content">
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_backoffice_order.detaisl.html" class="doc-link"><strong>Backoffice - Order Details</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_backoffice_ordertimes.html" class="doc-link"><strong>Backoffice - Order Times</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_formato_pedidos.html" class="doc-link"><strong>Formato de Pedidos (Estructura de Datos)</strong></a>
+			</div>
+		</details>
+
+		<!-- Catálogo -->
+		<details class="accordion-item">
+			<summary class="accordion-header">
+				<h2>Catálogo</h2>
+				<span class="accordion-icon">+</span>
+			</summary>
+			<div class="accordion-content">
+				<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_catalog_v1.html" class="doc-link"><strong>Documentación Catálogo v1</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_catalog_v2.html" class="doc-link"><strong>Documentación Catálogo v2</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_listadeprecios_manager.html" class="doc-link"><strong>Lista de Precios - Manager</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_listadeprecios_POS.html" class="doc-link"><strong>Lista de Precios - POS</strong></a>
+				<a href="https://matiasasmartfram.github.io/spdocumentation/mockup_catalog_item_multimedia.html" class="doc-link"><strong>Item Multimedia</strong></a>
+			</div>
+		</details>
+
+		<!-- SmartCloud -->
+		<details class="accordion-item">
+			<summary class="accordion-header">
+				<h2>SmartPedidos - SmartCloud</h2>
+				<span class="accordion-icon">+</span>
+			</summary>
+			<div class="accordion-content">
+				<a href="https://matiasasmartfram.github.io/spdocumentation/documentacion_colaunica_optimizacionsmartcloud" class="doc-link">
+					<strong>Cola Única & Optimización SmartCloud</strong>
+				</a>
+			</div>
+		</details>
+
 	</div>
-
-	<script>
-		// Este script asegura que los íconos del acordeón cambien correctamente.
-		const accordionItems = document.querySelectorAll('.accordion-item');
-		accordionItems.forEach(item => {
-			const icon = item.querySelector('.accordion-icon');
-			
-			// Función para actualizar el ícono
-			const updateIcon = (isOpen) => {
-				if (isOpen) {
-					icon.textContent = '×';
-					icon.style.transform = 'rotate(45deg)';
-				} else {
-					icon.textContent = '+';
-					icon.style.transform = 'rotate(0deg)';
-				}
-			};
-
-			// Sincronizar el ícono al cargar la página (para el que está 'open' por defecto)
-			updateIcon(item.open);
-
-			// Añadir el listener para los cambios
-			item.addEventListener('toggle', event => {
-				updateIcon(event.target.open);
-			});
-
-			// Asegurar que solo un detalle esté abierto a la vez (comportamiento de acordeón)
-			item.addEventListener('toggle', (event) => {
-				if (event.target.open) {
-					accordionItems.forEach(otherItem => {
-						if (otherItem !== event.target && otherItem.open) {
-							otherItem.open = false;
-						}
-					});
-				}
-			});
-		});
-	</script>
-
+</div>
 </body>
 </html>
