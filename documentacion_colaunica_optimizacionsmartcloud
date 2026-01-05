@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta de Optimización: SmartCloud SQS</title>
+    <style>
+        /* --- VARIABLES Y RESET --- */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #004494;
+            --text-color: #333;
+            --bg-color: #f4f6f8;
+            --sidebar-width: 280px;
+            --code-bg: #1e1e1e;
+            --border-color: #ddd;
+            --success-bg: #e6fffa;
+            --success-border: #38b2ac;
+            --warning-bg: #fffaf0;
+            --warning-border: #ed8936;
+            --danger-bg: #fff5f5;
+            --danger-border: #f56565;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        header {
+            background-color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .main-container {
+            display: flex;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+        }
+
+        /* --- SIDEBAR DE NAVEGACIÓN --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #fff;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            position: fixed;
+            height: 100%;
+            top: 60px;
+        }
+
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin-bottom: 0.5rem; }
+        
+        .sidebar a {
+            text-decoration: none;
+            color: #555;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.6rem 0.8rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #eef5ff;
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .sidebar .sub-item { padding-left: 1.5rem; font-size: 0.85rem; }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .content {
+            margin-left: var(--sidebar-width);
+            padding: 3rem 4rem;
+            width: 100%;
+            overflow-y: auto;
+            background-color: #fff;
+            scroll-behavior: smooth;
+        }
+
+        .section { margin-bottom: 4rem; scroll-margin-top: 80px; }
+
+        h2 { 
+            font-size: 1.8rem; 
+            border-bottom: 2px solid #eee; 
+            padding-bottom: 0.5rem; 
+            margin-bottom: 1.5rem; 
+            color: #111;
+        }
+
+        h3 { 
+            font-size: 1.4rem; 
+            margin-top: 2rem; 
+            margin-bottom: 1rem; 
+            color: #2c3e50; 
+            display: flex;
+            align-items: center;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #444;
+            font-weight: 600;
+        }
+
+        p { margin-bottom: 1rem; text-align: justify; }
+
+        /* --- CARDS & ALERTS --- */
+        .card-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card.pros {
+            background-color: var(--success-bg);
+            border-left: 5px solid var(--success-border);
+        }
+
+        .card.cons {
+            background-color: var(--danger-bg);
+            border-left: 5px solid var(--danger-border);
+        }
+
+        .card h4 { margin-top: 0; }
+        
+        .card ul { padding-left: 20px; }
+        .card li { margin-bottom: 8px; font-size: 0.95rem; }
+
+        /* --- BLOQUES DE CÓDIGO (PSEUDO-CÓDIGO) --- */
+        pre {
+            background-color: var(--code-bg);
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 1.5rem 0;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        /* Syntax Highlighting Classes (Simulated) */
+        .code-keyword { color: #569cd6; }
+        .code-string { color: #ce9178; }
+        .code-comment { color: #6a9955; }
+        .code-function { color: #dcdcaa; }
+        .code-variable { color: #9cdcfe; }
+
+        /* --- UTILS --- */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            background-color: #6c757d;
+            margin-left: 10px;
+        }
+        .badge-low { background-color: #28a745; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .card-container { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .content { margin-left: 0; padding: 2rem; }
+            .main-container { margin-top: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Propuesta de Optimización: SmartCloud</h1>
+    </header>
+
+    <div class="main-container">
+        <!-- SIDEBAR -->
+        <nav class="sidebar">
+            <ul>
+                <li><a href="#problema">1. El Problema</a></li>
+                <li><a href="#solucion">2. La Solución (Centralización)</a></li>
+                <li><a href="#analisis">3. Análisis de Impacto</a></li>
+                <li><a href="#ventajas" class="sub-item">- Ventajas</a></li>
+                <li><a href="#desventajas" class="sub-item">- Desventajas</a></li>
+                <li><a href="#implementacion">4. Implementación</a></li>
+                <li><a href="#esfuerzo" class="sub-item">- Esfuerzo de Desarrollo</a></li>
+                <li><a href="#rollback" class="sub-item">- Estrategia de Rollback</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTENIDO -->
+        <main class="content">
+
+            <!-- SECCIÓN 1 -->
+            <section id="problema" class="section">
+                <h2>1. El Problema</h2>
+                <p>En la actualidad, los POS que operan bajo <strong>SmartCloud</strong> experimentan una demora mayor en la recepción de pedidos comparado con los sistemas OnPremise.</p>
+                
+                <h4>Causa Raíz: Arquitectura de Distribución Actual</h4>
+                <p>Esto se debe a que SmartCloud utiliza un sistema de distribución donde asigna un <em>worker</em> para supervisar un grupo de POS (Ejemplo: 10 tiendas). El mecanismo actual funciona de la siguiente manera:</p>
+                <ul>
+                    <li>Se debe revisar una por una la fila de espera (cola SQS individual) de cada POS en su grupo.</li>
+                    <li><strong>Retraso Acumulativo:</strong> Si llega un pedido para el último POS del grupo, este debe esperar a que el worker termine de revisar las colas de las 9 tiendas anteriores.</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 2 -->
+            <section id="solucion" class="section">
+                <h2>2. La Solución Propuesta (Centralización)</h2>
+                <p><strong>Propuesta:</strong> Implementar una <strong>SQS Unificada</strong> para SmartCloud.</p>
+
+                <h4>Nuevo Flujo de Proceso:</h4>
+                <ol>
+                    <li><strong>Verificación de Origen:</strong> Antes de enviar el pedido, el sistema verifica si el POS destino es SmartCloud.</li>
+                    <li><strong>Encolado Centralizado:</strong> Si es SmartCloud, en lugar de poner el pedido en la fila individual de esa tienda, lo envía a una única fila compartida por todos los POS SmartCloud.</li>
+                    <li><strong>Consumo en Tiempo Real:</strong> Del otro lado, el SmartCloud leerá esta única fila en tiempo real y será el responsable de tomar los mensajes y distribuirlos inmediatamente al POS específico que corresponda.</li>
+                </ol>
+
+                <h4>Consideraciones Técnicas:</h4>
+                <ul>
+                    <li><strong>No FIFO:</strong> Conviene que la SQS <strong>NO sea FIFO</strong> para evitar bloqueos de cabecera.</li>
+                    <li><strong>Escalabilidad:</strong> Se puede evaluar la posibilidad de que sean más SQS divididas por <strong>Regiones</strong> o <strong>Plataformas</strong> si el volumen lo requiere.</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 3 -->
+            <section id="analisis" class="section">
+                <h2>3. Análisis: Ventajas y Desventajas</h2>
+                
+                <div class="card-container">
+                    <!-- VENTAJAS -->
+                    <div id="ventajas" class="card pros">
+                        <h4>✅ Ventajas</h4>
+                        <ul>
+                            <li><strong>Mayor Velocidad:</strong> Reducción drástica en la latencia de lectura de SQS al eliminar la revisión secuencial.</li>
+                            <li><strong>Eficiencia de Recursos:</strong> Menos Workers necesarios en SmartCloud, lo que se traduce en menos uso de memoria y CPU.</li>
+                            <li><strong>Reducción de Costos (Worker):</strong> Menor infraestructura necesaria para mantener los workers activos.</li>
+                            <li><strong>Reducción de Costos (SQS):</strong> Variación mínima a favor por optimización de peticiones.</li>
+                        </ul>
+                    </div>
+
+                    <!-- DESVENTAJAS -->
+                    <div id="desventajas" class="card cons">
+                        <h4>⚠️ Desventajas y Riesgos</h4>
+                        <ul>
+                            <li><strong>Riesgo de Bloqueo General:</strong> Al centralizar todo, si un mensaje corrupto (mal formato) traba la lectura y no se descarta rápido, podría bloquear la entrada de pedidos de <em>todos</em> los POS SmartCloud.
+                                <br><em>Mitigación: Utilizar SQS NO FIFO.</em>
+                            </li>
+                            <li><strong>Single Point of Failure:</strong> Dependencia de una sola SQS y Worker. Si esta cola falla, puede afectar a todos los POS simultáneamente (falla generalizada).</li>
+                            <li><strong>Limpieza Compleja:</strong> Si hay que purgar mensajes erróneos, existe el riesgo de eliminar mensajes válidos al estar todos mezclados.</li>
+                            <li><strong>Dificultad de Diagnóstico:</strong> En el modelo actual, una cola llena indica qué tienda falla. En una cola unificada, los errores se mezclan y no es evidente a simple vista qué tienda causa el conflicto sin análisis profundo del payload.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 4 -->
+            <section id="implementacion" class="section">
+                <h2>4. Implementación: Esfuerzo y Convivencia</h2>
+                
+                <h3 id="esfuerzo">Esfuerzo de Desarrollo (Platforms Service) <span class="badge badge-low">Bajo (< 10 hs)</span></h3>
+                <p>El esfuerzo técnico para esta modificación es bajo.</p>
+                <ul>
+                    <li><strong>Lógica existente:</strong> El sistema ya cuenta con una bandera (flag) que determina si un POS es SmartCloud.</li>
+                    <li><strong>Cambio Requerido:</strong> Se modificará la función de envío para inyectar la lógica de ruteo condicional basada en variables de entorno.</li>
+                </ul>
+
+                <h4>Pseudo-código del Cambio Lógico</h4>
+<pre><code class="js-code">
+<span class="code-function">async function</span> <span class="code-function">dispatchOrder</span>(<span class="code-variable">order</span>, <span class="code-variable">branch</span>) {
+    
+    <span class="code-comment">// Lógica Nueva: Ruteo Centralizado</span>
+    <span class="code-keyword">if</span> (<span class="code-variable">branch</span>.isSmartCloud && <span class="code-variable">process</span>.env.USE_UNIFIED_SQS === <span class="code-string">'true'</span>) {
+        
+        <span class="code-keyword">const</span> <span class="code-variable">queueUrl</span> = <span class="code-variable">process</span>.env.SMARTCLOUD_UNIFIED_SQS_URL;
+        <span class="code-keyword">await</span> <span class="code-function">sendMessageToSQS</span>(<span class="code-variable">queueUrl</span>, <span class="code-variable">order</span>);
+        
+    } <span class="code-keyword">else</span> {
+        
+        <span class="code-comment">// Lógica Legacy: Cola por Sucursal</span>
+        <span class="code-keyword">const</span> <span class="code-variable">queueUrl</span> = <span class="code-function">getBranchSpecificQueue</span>(<span class="code-variable">branch</span>.id);
+        <span class="code-keyword">await</span> <span class="code-function">sendMessageToSQS</span>(<span class="code-variable">queueUrl</span>, <span class="code-variable">order</span>);
+        
+    }
+}
+</code></pre>
+
+                <h3 id="rollback">Estrategia de Rollback y Convivencia</h3>
+                <p>La transición a este nuevo sistema está diseñada para ser totalmente reversible y gradual.</p>
+                
+                <ol>
+                    <li><strong>Persistencia de Infraestructura:</strong> No hace falta eliminar las colas viejas (individuales). Pueden seguir existiendo sin uso mientras se prueba el nuevo sistema. No hay pérdida de datos ni configuración.</li>
+                    <li><strong>Convivencia Híbrida:</strong> Es posible migrar tiendas de a poco (Canary Release). El código podría enviar a la cola unificada para algunas tiendas y a las colas individuales para otras simultáneamente mediante configuración.</li>
+                    <li><strong>Rollback Inmediato:</strong> Si se detecta una falla crítica en la cola unificada, volver atrás significa simplemente apagar la variable de entorno (<code>USE_UNIFIED_SQS=false</code>), redirigiendo el tráfico instantáneamente a las colas individuales.</li>
+                </ol>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- SCRIPT DE AJUSTE VISUAL (Simulación de Highlight) -->
+    <script>
+        // Este script asegura que los estilos de código se apliquen correctamente si el contenido cambia dinámicamente
+        // En este caso estático, sirve para futuros ajustes si se integra un parser real.
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("Documentación cargada correctamente.");
+        });
+    </script>
+</body>
+</html>
