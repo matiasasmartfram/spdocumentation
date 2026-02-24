@@ -1,12 +1,12 @@
-<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartCloud - Multimedia Item</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary-color: #5e35b1;
@@ -18,8 +18,12 @@
             --info-text: #0d47a1;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #fff;
@@ -30,14 +34,54 @@
         }
 
         /* HEADER & NAV */
-        .top-nav { padding: 20px 40px; border-bottom: 1px solid #eee; }
-        .back-link { font-size: 12px; color: #666; text-decoration: none; display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; }
-        .page-title { font-size: 28px; font-weight: bold; color: #333; margin-bottom: 5px; }
-        .page-subtitle { font-size: 14px; color: #777; }
+        .top-nav {
+            padding: 20px 40px;
+            border-bottom: 1px solid #eee;
+        }
 
-        .nav-tabs { display: flex; padding: 0 40px; margin-top: 20px; border-bottom: 1px solid #ddd; }
-        .nav-item { padding: 10px 20px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; text-transform: uppercase; margin-right: 10px; }
-        .nav-item.active { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); }
+        .back-link {
+            font-size: 12px;
+            color: #666;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .nav-tabs {
+            display: flex;
+            padding: 0 40px;
+            margin-top: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-right: 10px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
 
         /* CONTENEDOR PRINCIPAL */
         .main-container {
@@ -67,7 +111,7 @@
             border-radius: 8px;
             padding: 24px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             display: flex;
             gap: 30px;
         }
@@ -79,6 +123,7 @@
             flex-direction: column;
             align-items: center;
         }
+
         .preview-box {
             width: 100%;
             height: 180px;
@@ -92,16 +137,41 @@
             position: relative;
             overflow: hidden;
         }
-        .preview-box img { width: 100%; height: 100%; object-fit: contain; }
-        
-        .upload-form { flex: 1; }
 
-        .form-row { margin-bottom: 20px; }
-        .input-label { display: block; font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500; }
-        .form-control {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none;
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
-        .form-control:focus { border-color: var(--primary-color); }
+
+        .upload-form {
+            flex: 1;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+        }
 
         /* SECCION DE ASIGNACION */
         .assignment-section {
@@ -111,10 +181,21 @@
             padding: 15px;
             margin-top: 15px;
         }
-        .assignment-header { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #444; }
-        
-        .assignment-controls { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 10px; }
-        
+
+        .assignment-header {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .assignment-controls {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+
         .tech-specs-box {
             background-color: var(--info-bg);
             color: var(--info-text);
@@ -131,8 +212,14 @@
         }
 
         /* CHIPS / TAGS */
-        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; min-height: 30px; }
-        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
         .channel-tag {
             display: inline-flex;
             align-items: center;
@@ -143,45 +230,163 @@
             color: #333;
             transition: all 0.2s;
         }
+
         /* Colores por Canal */
-        .channel-tag.minorista { background-color: #e1bee7; color: #6a1b9a; border: 1px solid #ce93d8; }
-        .channel-tag.plataforma { background-color: #ffcc80; color: #e65100; border: 1px solid #ffb74d; }
-        .channel-tag.mayorista { background-color: #b3e5fc; color: #0277bd; border: 1px solid #81d4fa; }
-        
-        .remove-tag { margin-left: 8px; cursor: pointer; font-weight: bold; opacity: 0.6; }
-        .remove-tag:hover { opacity: 1; }
+        .channel-tag.minorista {
+            background-color: #e1bee7;
+            color: #6a1b9a;
+            border: 1px solid #ce93d8;
+        }
+
+        .channel-tag.plataforma {
+            background-color: #ffcc80;
+            color: #e65100;
+            border: 1px solid #ffb74d;
+        }
+
+        .channel-tag.mayorista {
+            background-color: #b3e5fc;
+            color: #0277bd;
+            border: 1px solid #81d4fa;
+        }
+
+        .remove-tag {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.6;
+        }
+
+        .remove-tag:hover {
+            opacity: 1;
+        }
 
         /* BOTONES */
-        .btn { padding: 10px 20px; border-radius: 4px; border: none; cursor: pointer; font-weight: 500; font-size: 13px; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-outline { background-color: transparent; border: 1px solid #ccc; color: #555; margin-right: 10px; }
-        .btn-add-tag { background-color: #4caf50; color: white; height: 38px; display: flex; align-items: center; padding: 0 15px; }
-        .btn-add-tag:hover { background-color: #43a047; }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #ccc;
+            color: #555;
+            margin-right: 10px;
+        }
+
+        .btn-add-tag {
+            background-color: #4caf50;
+            color: white;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .btn-add-tag:hover {
+            background-color: #43a047;
+        }
+
+        .btn-upload {
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
 
         /* TABLA */
-        .resource-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #eee; }
-        .resource-table th { text-align: left; padding: 12px; background: #fafafa; font-size: 12px; color: #666; border-bottom: 1px solid #eee; }
-        .resource-table td { padding: 15px 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
-        .thumb-img { width: 60px; height: 60px; object-fit: contain; border: 1px solid #eee; border-radius: 4px; padding: 2px; }
-        
-        .action-btn { font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; border: none; margin-left: 5px; font-weight: 500; }
-        .btn-delete { background: #ffebee; color: #c62828; }
-        .btn-edit { background: #e3f2fd; color: #1565c0; }
+        .resource-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #eee;
+        }
+
+        .resource-table th {
+            text-align: left;
+            padding: 12px;
+            background: #fafafa;
+            font-size: 12px;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        .resource-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .thumb-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .action-btn {
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            margin-left: 5px;
+            font-weight: 500;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-edit {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
 
         /* FOOTER */
         .footer-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
-            padding: 15px 40px; border-top: 1px solid #ddd; display: flex; justify-content: flex-end;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 15px 40px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
             z-index: 100;
         }
     </style>
 </head>
+
 <body>
 
     <!-- HEADER -->
     <div class="top-nav">
-        <div class="back-link"><i class="material-icons" style="font-size: 16px; margin-right: 5px;">arrow_back</i> Volver a Items</div>
+        <div class="back-link"><i class="material-icons" style="font-size: 16px; margin-right: 5px;">arrow_back</i>
+            Volver a Items</div>
         <div class="page-title">Açaí 200ml Con Granola</div>
         <div class="page-subtitle">Agregue o modifique un ítem al catalogo.</div>
     </div>
@@ -197,40 +402,37 @@
 
     <!-- CONTENIDO -->
     <div class="main-container">
-        
+
         <div class="legal-text">
             <i class="material-icons" style="font-size: 14px; vertical-align: middle;">lightbulb</i>
-            <strong>Gestión de Multimedia:</strong> Carga una imagen y asígnala a múltiples canales. El sistema validará los requisitos técnicos de cada plataforma automáticamente.
+            <strong>Gestión de Multimedia:</strong> Carga una imagen y asígnala a múltiples canales. El sistema validará
+            los requisitos técnicos de cada plataforma automáticamente.
         </div>
 
         <!-- FORMULARIO DE CARGA -->
         <div class="upload-card">
             <!-- Preview -->
             <div class="upload-preview">
-                <div class="preview-box">
-                    <img src="https://via.placeholder.com/150?text=Açaí+Bowl" alt="Preview">
+                <div class="preview-box" id="previewContainer">
+                    <img src="https://via.placeholder.com/150?text=Subir+Imagen" id="previewImg" alt="Preview">
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <label style="font-size: 12px; display: flex; align-items: center; cursor: pointer;">
-                        <input type="radio" name="sourceType" checked> Archivo
-                    </label>
-                    <label style="font-size: 12px; display: flex; align-items: center; cursor: pointer;">
-                        <input type="radio" name="sourceType"> Link
-                    </label>
-                </div>
+                <input type="file" id="fileInput" style="display: none;" accept="image/*">
+                <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">
+                    <i class="material-icons" style="font-size: 18px;">cloud_upload</i> CARGAR ARCHIVO
+                </button>
             </div>
 
             <!-- Formulario -->
             <div class="upload-form">
                 <div class="form-row">
                     <label class="input-label">Nombre o descripción corta*</label>
-                    <input type="text" class="form-control" value="Açaí Bowl - Foto Producto">
+                    <input type="text" id="imageName" class="form-control" placeholder="Ej: Açaí Bowl - Foto Producto">
                 </div>
 
                 <!-- ZONA DE ASIGNACIÓN -->
                 <div class="assignment-section">
                     <div class="assignment-header">Asignar a Canales y Plataformas</div>
-                    
+
                     <div class="assignment-controls">
                         <div style="flex: 1;">
                             <label class="input-label">Canal</label>
@@ -260,23 +462,20 @@
 
                     <!-- Tags Agregados -->
                     <div class="tags-container" id="tagsList">
-                        <!-- Ejemplo inicial -->
-                        <div class="channel-tag minorista" data-value="Salón">
-                            Minorista - Salón <span class="remove-tag" onclick="removeTag(this)">×</span>
-                        </div>
+                        <!-- Los tags se agregan aquí dinámicamente -->
                     </div>
                 </div>
 
                 <div style="margin-top: 20px; text-align: right;">
-                    <button class="btn btn-outline">LIMPIAR</button>
-                    <button class="btn btn-primary">AGREGAR IMAGEN</button>
+                    <button class="btn btn-outline" onclick="clearForm()">LIMPIAR</button>
+                    <button class="btn btn-primary" id="saveButton" onclick="saveImage()">AGREGAR IMAGEN</button>
                 </div>
             </div>
         </div>
 
         <!-- LISTADO -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 style="font-size: 16px; color: #333;">Imágenes Cargadas (2/10)</h3>
+            <h3 style="font-size: 16px; color: #333;" id="tableCounter">Imágenes Cargadas (0/10)</h3>
         </div>
 
         <table class="resource-table">
@@ -288,38 +487,8 @@
                     <th style="text-align: right;">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Item 1 -->
-                <tr>
-                    <td><img src="https://via.placeholder.com/60/5e35b1/ffffff?text=SF" class="thumb-img"></td>
-                    <td>Açaí Bowl - Foto Producto - Minorista</td>
-                    <td>
-                        <div class="tags-container" style="margin-top: 0; gap: 4px; min-height: auto;">
-                            <span class="channel-tag minorista" style="font-size: 10px; padding: 2px 8px;">Minorista - Salón</span>
-                            <span class="channel-tag minorista" style="font-size: 10px; padding: 2px 8px;">Minorista - Ambulante</span>
-                        </div>
-                    </td>
-                    <td style="text-align: right;">
-                        <button class="action-btn btn-edit">MODIFICAR</button>
-                        <button class="action-btn btn-delete">ELIMINAR</button>
-                    </td>
-                </tr>
-                <!-- Item 2 -->
-                <tr>
-                    <td><img src="https://via.placeholder.com/60/ff6f00/ffffff?text=Bowl" class="thumb-img"></td>
-                    <td>Açaí Bowl - Foto Producto - Delivery</td>
-                    <td>
-                        <div class="tags-container" style="margin-top: 0; gap: 4px; min-height: auto;">
-                            <span class="channel-tag plataforma" style="font-size: 10px; padding: 2px 8px;">Plataformas - PedidosYa</span>
-                            <span class="channel-tag plataforma" style="font-size: 10px; padding: 2px 8px;">Plataformas - Rappi</span>
-                            <span class="channel-tag mayorista" style="font-size: 10px; padding: 2px 8px;">Mayorista - Food Truck</span>
-                        </div>
-                    </td>
-                    <td style="text-align: right;">
-                        <button class="action-btn btn-edit">MODIFICAR</button>
-                        <button class="action-btn btn-delete">ELIMINAR</button>
-                    </td>
-                </tr>
+            <tbody id="multimediaTableBody">
+                <!-- Los items se cargan aquí -->
             </tbody>
         </table>
 
@@ -338,7 +507,6 @@
             'Mayorista': ['Gastronómico', 'Corner', 'Store', 'Food Truck']
         };
 
-        // --- 2. ESPECIFICACIONES TÉCNICAS (SIMULADAS) ---
         const specs = {
             'Salón': 'Formato libre. Recomendado 800x800px.',
             'Ambulante': 'Optimizado para móvil. Máx 500KB.',
@@ -351,18 +519,58 @@
             'Food Truck': 'Optimizado para pantallas digitales.'
         };
 
-        // --- 3. FUNCIONES DE LÓGICA ---
+        // --- 2. ESTADO DE LA APP ---
+        let currentImages = [
+            {
+                id: 1,
+                name: "Açaí Bowl - Foto Producto - Minorista",
+                url: "https://via.placeholder.com/60/5e35b1/ffffff?text=SF",
+                tags: [
+                    { canal: 'Minorista', sub: 'Salón' },
+                    { canal: 'Minorista', sub: 'Ambulante' }
+                ]
+            },
+            {
+                id: 2,
+                name: "Açaí Bowl - Foto Producto - Delivery",
+                url: "https://via.placeholder.com/60/ff6f00/ffffff?text=Bowl",
+                tags: [
+                    { canal: 'Plataformas Delivery', sub: 'PedidosYa' },
+                    { canal: 'Plataformas Delivery', sub: 'Rappi' },
+                    { canal: 'Mayorista', sub: 'Food Truck' }
+                ]
+            }
+        ];
+
+        let editingId = null;
+
+        // --- 3. FUNCIONES DE UI ---
+
+        function init() {
+            renderTable();
+
+            // Listener para el input de archivo
+            document.getElementById('fileInput').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        document.getElementById('previewImg').src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
 
         function updateSubChannels() {
             const canal = document.getElementById('channelSelect').value;
             const subSelect = document.getElementById('subChannelSelect');
             const specsBox = document.getElementById('specsBox');
-            
-            // Reset
+
             subSelect.innerHTML = '<option value="">Seleccione...</option>';
             specsBox.style.display = 'none';
 
-            if(canal && channelData[canal]) {
+            if (canal && channelData[canal]) {
                 channelData[canal].forEach(sub => {
                     const opt = document.createElement('option');
                     opt.value = sub;
@@ -377,7 +585,7 @@
             const specsBox = document.getElementById('specsBox');
             const specsText = document.getElementById('specsText');
 
-            if(sub && specs[sub]) {
+            if (sub && specs[sub]) {
                 specsText.textContent = `Requisitos para ${sub}: ${specs[sub]}`;
                 specsBox.style.display = 'flex';
             } else {
@@ -385,43 +593,142 @@
             }
         }
 
-        function addTag() {
-            const canal = document.getElementById('channelSelect').value;
-            const sub = document.getElementById('subChannelSelect').value;
+        function addTag(canalOverride, subOverride) {
+            const canal = canalOverride || document.getElementById('channelSelect').value;
+            const sub = subOverride || document.getElementById('subChannelSelect').value;
             const container = document.getElementById('tagsList');
 
-            if(!canal || !sub) return;
+            if (!canal || !sub) return;
 
-            // VALIDACIÓN: Evitar duplicados
-            // Buscamos si ya existe un tag con el mismo valor (subcanal)
-            const existingTags = Array.from(container.children).map(tag => tag.dataset.value);
-            if(existingTags.includes(sub)) {
-                alert(`El canal ${sub} ya ha sido asignado a esta imagen.`);
+            const existingTags = Array.from(container.children).map(tag => tag.dataset.sub);
+            if (existingTags.includes(sub)) {
+                if (!canalOverride) alert(`El canal ${sub} ya ha sido asignado.`);
                 return;
             }
 
-            // DETERMINAR ESTILO SEGÚN CANAL
             let cssClass = 'minorista';
-            if(canal === 'Plataformas Delivery') cssClass = 'plataforma';
-            if(canal === 'Mayorista') cssClass = 'mayorista';
+            if (canal === 'Plataformas Delivery') cssClass = 'plataforma';
+            if (canal === 'Mayorista') cssClass = 'mayorista';
 
-            // CREAR ELEMENTO
             const tag = document.createElement('div');
             tag.className = `channel-tag ${cssClass}`;
-            tag.dataset.value = sub; // Guardamos el valor para validación
+            tag.dataset.canal = canal;
+            tag.dataset.sub = sub;
             tag.innerHTML = `${canal} - ${sub} <span class="remove-tag" onclick="removeTag(this)">×</span>`;
-            
+
             container.appendChild(tag);
 
-            // RESETEAR INPUTS PARA SEGUIR AGREGANDO
-            document.getElementById('subChannelSelect').value = '';
-            document.getElementById('specsBox').style.display = 'none';
+            if (!canalOverride) {
+                document.getElementById('subChannelSelect').value = '';
+                document.getElementById('specsBox').style.display = 'none';
+            }
         }
 
         function removeTag(element) {
-            // El elemento es el span 'x', su padre es el div del tag
             element.parentElement.remove();
         }
+
+        function clearForm() {
+            editingId = null;
+            document.getElementById('imageName').value = '';
+            document.getElementById('previewImg').src = "https://via.placeholder.com/150?text=Subir+Imagen";
+            document.getElementById('tagsList').innerHTML = '';
+            document.getElementById('saveButton').textContent = 'AGREGAR IMAGEN';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('channelSelect').value = '';
+            updateSubChannels();
+        }
+
+        // --- 4. CRUD LÓGICA ---
+
+        function saveImage() {
+            const name = document.getElementById('imageName').value;
+            const url = document.getElementById('previewImg').src;
+            const tagsList = document.getElementById('tagsList');
+            const tags = Array.from(tagsList.children).map(t => ({
+                canal: t.dataset.canal,
+                sub: t.dataset.sub
+            }));
+
+            if (!name) { alert("Por favor, ingrese un nombre."); return; }
+            if (tags.length === 0) { alert("Asigne al menos un canal."); return; }
+
+            if (editingId) {
+                // UPDATE
+                const index = currentImages.findIndex(img => img.id === editingId);
+                currentImages[index] = { id: editingId, name, url, tags };
+            } else {
+                // CREATE
+                const newId = currentImages.length > 0 ? Math.max(...currentImages.map(i => i.id)) + 1 : 1;
+                currentImages.push({ id: newId, name, url, tags });
+            }
+
+            renderTable();
+            clearForm();
+        }
+
+        function editItem(id) {
+            const item = currentImages.find(img => img.id === id);
+            if (!item) return;
+
+            editingId = id;
+            document.getElementById('imageName').value = item.name;
+            document.getElementById('previewImg').src = item.url;
+            document.getElementById('saveButton').textContent = 'GUARDAR CAMBIOS';
+
+            // Cargar Tags
+            const container = document.getElementById('tagsList');
+            container.innerHTML = '';
+            item.tags.forEach(t => addTag(t.canal, t.sub));
+
+            // Hacer scroll al formulario
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteItem(id) {
+            if (confirm("¿Está seguro de eliminar esta imagen?")) {
+                currentImages = currentImages.filter(img => img.id !== id);
+                renderTable();
+                if (editingId === id) clearForm();
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('multimediaTableBody');
+            tbody.innerHTML = '';
+
+            document.getElementById('tableCounter').textContent = `Imágenes Cargadas (${currentImages.length}/10)`;
+
+            currentImages.forEach(img => {
+                const tr = document.createElement('tr');
+
+                let tagsHtml = '<div class="tags-container" style="margin-top: 0; gap: 4px; min-height: auto;">';
+                img.tags.forEach(t => {
+                    let css = 'minorista';
+                    if (t.canal === 'Plataformas Delivery') css = 'plataforma';
+                    if (t.canal === 'Mayorista') css = 'mayorista';
+                    tagsHtml += `<span class="channel-tag ${css}" style="font-size: 10px; padding: 2px 8px;">${t.canal} - ${t.sub}</span>`;
+                });
+                tagsHtml += '</div>';
+
+                tr.innerHTML = `
+                    <td><img src="${img.url}" class="thumb-img"></td>
+                    <td>${img.name}</td>
+                    <td>${tagsHtml}</td>
+                    <td style="text-align: right;">
+                        <button class="action-btn btn-edit" onclick="editItem(${img.id})">MODIFICAR</button>
+                        <button class="action-btn btn-delete" onclick="deleteItem(${img.id})">ELIMINAR</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Ejecutar init
+        init();
     </script>
+
+
 </body>
+
 </html>
