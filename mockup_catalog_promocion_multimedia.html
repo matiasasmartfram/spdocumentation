@@ -1,0 +1,741 @@
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCloud - Multimedia Promociones</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #5e35b1;
+            --primary-light: #7c43bd;
+            --bg-color: #f4f6f8;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --info-bg: #e3f2fd;
+            --info-text: #0d47a1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fff;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER & NAV */
+        .top-nav {
+            padding: 20px 40px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .back-link {
+            font-size: 12px;
+            color: #666;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .nav-tabs {
+            display: flex;
+            padding: 0 40px;
+            margin-top: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            padding-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-right: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item.active {
+            color: #000;
+            border-bottom: 3px solid #1a237e;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            width: 100%;
+            padding-bottom: 100px;
+            overflow-y: auto;
+        }
+
+        .legal-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            background: #fff3e0;
+            padding: 10px;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        /* AREA DE CARGA */
+        .upload-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 30px;
+        }
+
+        .upload-preview {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-box {
+            width: 100%;
+            height: 180px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fafafa;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .upload-form {
+            flex: 1;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* SECCION DE ASIGNACION */
+        .assignment-section {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .assignment-header {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .assignment-controls {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .tech-specs-box {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #1976d2;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        /* CHIPS / TAGS */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        .channel-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        /* Colores por Canal */
+        .channel-tag.minorista {
+            background-color: #e1bee7;
+            color: #6a1b9a;
+            border: 1px solid #ce93d8;
+        }
+
+        .channel-tag.plataforma {
+            background-color: #ffcc80;
+            color: #e65100;
+            border: 1px solid #ffb74d;
+        }
+
+        .channel-tag.mayorista {
+            background-color: #b3e5fc;
+            color: #0277bd;
+            border: 1px solid #81d4fa;
+        }
+
+        .remove-tag {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.6;
+        }
+
+        .remove-tag:hover {
+            opacity: 1;
+        }
+
+        /* BOTONES */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #ccc;
+            color: #555;
+            margin-right: 10px;
+        }
+
+        .btn-add-tag {
+            background-color: #4caf50;
+            color: white;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .btn-add-tag:hover {
+            background-color: #43a047;
+        }
+
+        .btn-upload {
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        /* TABLA */
+        .resource-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #eee;
+        }
+
+        .resource-table th {
+            text-align: left;
+            padding: 12px;
+            background: #fafafa;
+            font-size: 12px;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        .resource-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .thumb-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .action-btn {
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            margin-left: 5px;
+            font-weight: 500;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-edit {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* FOOTER */
+        .footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 15px 40px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="top-nav">
+        <div class="back-link"><i class="material-icons" style="font-size: 16px; margin-right: 5px;">arrow_back</i>
+            Volver a Promociones/Combos</div>
+        <div class="page-title">Editar Combo</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="nav-tabs">
+        <div class="nav-item">DATOS PROMOCIÓN</div>
+        <div class="nav-item active">MULTIMEDIA</div>
+        <div class="nav-item">SKU</div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="main-container">
+
+        <div class="legal-text">
+            <i class="material-icons" style="font-size: 14px; vertical-align: middle;">lightbulb</i>
+            <strong>Multimedia de Promociones:</strong> Cargue banners o fotos del combo y asígnelas a los canales
+            correspondientes.
+        </div>
+
+        <!-- FORMULARIO DE CARGA -->
+        <div class="upload-card">
+            <!-- Preview -->
+            <div class="upload-preview">
+                <div class="preview-box" id="previewContainer">
+                    <img src="https://via.placeholder.com/150?text=Imagen+Combo" id="previewImg" alt="Preview">
+                </div>
+                <input type="file" id="fileInput" style="display: none;" accept="image/*">
+                <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">
+                    <i class="material-icons" style="font-size: 18px;">cloud_upload</i> CARGAR ARCHIVO
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <div class="upload-form">
+                <div class="form-row">
+                    <label class="input-label">Nombre de la Imagen Promocional*</label>
+                    <input type="text" id="imageName" class="form-control" placeholder="Ej: Banner Web - Black Friday">
+                </div>
+
+                <!-- ZONA DE ASIGNACIÓN -->
+                <div class="assignment-section">
+                    <div class="assignment-header">Asignar a Canales y Plataformas</div>
+
+                    <div class="assignment-controls">
+                        <div style="flex: 1;">
+                            <label class="input-label">Canal</label>
+                            <select class="form-control" id="channelSelect" onchange="updateSubChannels()">
+                                <option value="">Seleccione...</option>
+                                <option value="Minorista">Minorista</option>
+                                <option value="Plataformas Delivery">Plataformas Delivery</option>
+                                <option value="Mayorista">Mayorista</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label class="input-label">Plataforma / Sub-Canal</label>
+                            <select class="form-control" id="subChannelSelect" onchange="showSpecs()">
+                                <option value="">-</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-add-tag" id="assignBtn" onclick="addTag()" disabled
+                            style="opacity: 0.5; cursor: not-allowed;">
+                            <i class="material-icons" style="font-size: 16px; margin-right: 5px;">add_circle</i> ASIGNAR
+                        </button>
+                    </div>
+
+                    <!-- Feedback Técnico -->
+                    <div id="specsBox" class="tech-specs-box">
+                        <i class="material-icons">info</i>
+                        <span id="specsText">Seleccione una plataforma para ver los requisitos.</span>
+                    </div>
+
+                    <!-- Tags Agregados -->
+                    <div class="tags-container" id="tagsList">
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn btn-outline" onclick="clearForm()">LIMPIAR</button>
+                    <button class="btn btn-primary" id="saveButton" onclick="saveImage()">AGREGAR IMAGEN</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTADO -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="font-size: 16px; color: #333;" id="tableCounter">Imágenes de Promoción (0/5)</h3>
+        </div>
+
+        <table class="resource-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Vista</th>
+                    <th>Nombre</th>
+                    <th>Asignaciones</th>
+                    <th style="width: 80px; text-align: center;">Principal</th>
+                    <th style="text-align: right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="multimediaTableBody">
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <script>
+        const channelData = {
+            'Minorista': ['Salón', 'Ambulante'],
+            'Plataformas Delivery': ['PedidosYa', 'Rappi', 'UberEats'],
+            'Mayorista': ['Gastronómico', 'Corner', 'Store', 'Food Truck']
+        };
+
+        const specs = {
+            'Salón': 'Formato libre. Recomendado 1200x600px para promociones.',
+            'Ambulante': 'Optimizado para móvil. Máx 500KB.',
+            'PedidosYa': 'JPEG/JPG/PNG, Res 1440x1080px (Combo Principal).',
+            'Rappi': 'Banner promocional horizontal. 1200x400px.',
+            'UberEats': 'Folleto digital en 16:9.',
+            'Gastronómico': 'Alta resolución para impresión.',
+            'Corner': 'Banner vertical para tótems.',
+            'Store': 'Banner Web Principal.',
+            'Food Truck': 'Gráfica digital para cartelería.'
+        };
+
+        let currentImages = [
+            {
+                id: 1,
+                name: "Banner Principal - Combo Familiar",
+                url: "https://via.placeholder.com/60/1a237e/ffffff?text=Combo",
+                isPrincipal: true,
+                tags: [
+                    { canal: 'Minorista', sub: 'Salón' },
+                    { canal: 'Plataformas Delivery', sub: 'PedidosYa' }
+                ]
+            }
+        ];
+
+        let editingId = null;
+
+        function init() {
+            renderTable();
+            document.getElementById('fileInput').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        document.getElementById('previewImg').src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function updateSubChannels() {
+            const canal = document.getElementById('channelSelect').value;
+            const subSelect = document.getElementById('subChannelSelect');
+            const specsBox = document.getElementById('specsBox');
+            subSelect.innerHTML = '<option value="">Seleccione...</option>';
+            specsBox.style.display = 'none';
+            if (canal && channelData[canal]) {
+                channelData[canal].forEach(sub => {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.textContent = sub;
+                    subSelect.appendChild(opt);
+                });
+            }
+            validateAssignBtn();
+        }
+
+        function validateAssignBtn() {
+            const sub = document.getElementById('subChannelSelect').value;
+            const btn = document.getElementById('assignBtn');
+            const container = document.getElementById('tagsList');
+
+            // Tags en el formulario actual
+            const formTags = Array.from(container.children).map(tag => tag.dataset.sub);
+
+            // Tags ya asignados a OTRAS imágenes en la tabla
+            const otherImagesTags = [];
+            currentImages.forEach(img => {
+                if (img.id !== editingId) {
+                    img.tags.forEach(t => otherImagesTags.push(t.sub));
+                }
+            });
+
+            if (!sub || formTags.includes(sub) || otherImagesTags.includes(sub)) {
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
+                btn.style.cursor = "not-allowed";
+
+                if (!sub) {
+                    btn.title = "Seleccione un sub-canal";
+                } else if (formTags.includes(sub)) {
+                    btn.title = "Este sub-canal ya está en la lista actual";
+                } else {
+                    btn.title = "Este sub-canal ya está asignado a otra imagen de esta promoción";
+                }
+            } else {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.style.cursor = "pointer";
+                btn.title = "";
+            }
+        }
+
+        function showSpecs() {
+            const sub = document.getElementById('subChannelSelect').value;
+            const specsBox = document.getElementById('specsBox');
+            const specsText = document.getElementById('specsText');
+
+            validateAssignBtn();
+
+            if (sub && specs[sub]) {
+                specsText.textContent = `Requisitos para ${sub}: ${specs[sub]}`;
+                specsBox.style.display = 'flex';
+            } else {
+                specsBox.style.display = 'none';
+            }
+        }
+
+        function addTag(canalOverride, subOverride) {
+            const canal = canalOverride || document.getElementById('channelSelect').value;
+            const sub = subOverride || document.getElementById('subChannelSelect').value;
+            const container = document.getElementById('tagsList');
+            if (!canal || !sub) return;
+            const existingTags = Array.from(container.children).map(tag => tag.dataset.sub);
+            if (existingTags.includes(sub)) {
+                if (!canalOverride) alert(`El destino ${sub} ya está asignado.`);
+                return;
+            }
+            let cssClass = 'minorista';
+            if (canal === 'Plataformas Delivery') cssClass = 'plataforma';
+            if (canal === 'Mayorista') cssClass = 'mayorista';
+            const tag = document.createElement('div');
+            tag.className = `channel-tag ${cssClass}`;
+            tag.dataset.canal = canal;
+            tag.dataset.sub = sub;
+            tag.innerHTML = `${canal} - ${sub} <span class="remove-tag" onclick="removeTag(this)">×</span>`;
+            container.appendChild(tag);
+            if (!canalOverride) {
+                document.getElementById('subChannelSelect').value = '';
+                document.getElementById('specsBox').style.display = 'none';
+                validateAssignBtn();
+            }
+        }
+
+        function removeTag(element) {
+            element.parentElement.remove();
+            validateAssignBtn();
+        }
+
+        function clearForm() {
+            editingId = null;
+            document.getElementById('imageName').value = '';
+            document.getElementById('previewImg').src = "https://via.placeholder.com/150?text=Imagen+Combo";
+            document.getElementById('tagsList').innerHTML = '';
+            document.getElementById('saveButton').textContent = 'AGREGAR IMAGEN';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('channelSelect').value = '';
+            updateSubChannels();
+            validateAssignBtn();
+        }
+
+        function saveImage() {
+            const name = document.getElementById('imageName').value;
+            const url = document.getElementById('previewImg').src;
+            const tagsList = document.getElementById('tagsList');
+            const tags = Array.from(tagsList.children).map(t => ({ canal: t.dataset.canal, sub: t.dataset.sub }));
+            if (!name) { alert("Ingrese un nombre promocional."); return; }
+            if (tags.length === 0) { alert("Seleccione al menos un destino."); return; }
+            if (editingId) {
+                const index = currentImages.findIndex(img => img.id === editingId);
+                const wasPrincipal = currentImages[index].isPrincipal;
+                currentImages[index] = { id: editingId, name, url, tags, isPrincipal: wasPrincipal };
+            } else {
+                const newId = currentImages.length > 0 ? Math.max(...currentImages.map(i => i.id)) + 1 : 1;
+                const isPrincipal = currentImages.length === 0;
+                currentImages.push({ id: newId, name, url, tags, isPrincipal });
+            }
+            renderTable();
+            clearForm();
+        }
+
+        function editItem(id) {
+            const item = currentImages.find(img => img.id === id);
+            if (!item) return;
+            editingId = id;
+            document.getElementById('imageName').value = item.name;
+            document.getElementById('previewImg').src = item.url;
+            document.getElementById('saveButton').textContent = 'GUARDAR MODIFICACIONES';
+            const container = document.getElementById('tagsList');
+            container.innerHTML = '';
+            item.tags.forEach(t => addTag(t.canal, t.sub));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteItem(id) {
+            if (confirm("¿Eliminar esta imagen promocional?")) {
+                const wasPrincipal = currentImages.find(img => img.id === id)?.isPrincipal;
+                currentImages = currentImages.filter(img => img.id !== id);
+                if (wasPrincipal && currentImages.length > 0) {
+                    currentImages[0].isPrincipal = true;
+                }
+                renderTable();
+                if (editingId === id) clearForm();
+            }
+        }
+
+        function setPrincipal(id) {
+            currentImages.forEach(img => {
+                img.isPrincipal = (img.id === id);
+            });
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('multimediaTableBody');
+            tbody.innerHTML = '';
+            document.getElementById('tableCounter').textContent = `Imágenes de Promoción (${currentImages.length}/5)`;
+            currentImages.forEach(img => {
+                const tr = document.createElement('tr');
+                let tagsHtml = '<div class="tags-container" style="margin-top: 0; gap: 4px; min-height: auto;">';
+                img.tags.forEach(t => {
+                    let css = 'minorista';
+                    if (t.canal === 'Plataformas Delivery') css = 'plataforma';
+                    if (t.canal === 'Mayorista') css = 'mayorista';
+                    tagsHtml += `<span class="channel-tag ${css}" style="font-size: 10px; padding: 2px 8px;">${t.sub}</span>`;
+                });
+                tagsHtml += '</div>';
+                tr.innerHTML = `
+                    <td><img src="${img.url}" class="thumb-img"></td>
+                    <td>${img.name}</td>
+                    <td>${tagsHtml}</td>
+                    <td style="text-align: center;">
+                        <input type="checkbox" ${img.isPrincipal ? 'checked' : ''} onchange="setPrincipal(${img.id})">
+                    </td>
+                    <td style="text-align: right;">
+                        <button class="action-btn btn-edit" onclick="editItem(${img.id})">MODIFICAR</button>
+                        <button class="action-btn btn-delete" onclick="deleteItem(${img.id})">ELIMINAR</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        init();
+    </script>
+</body>
+
+</html>
