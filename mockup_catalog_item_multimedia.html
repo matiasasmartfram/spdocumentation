@@ -449,7 +449,8 @@
                                 <option value="">-</option>
                             </select>
                         </div>
-                        <button class="btn btn-add-tag" onclick="addTag()">
+                        <button class="btn btn-add-tag" id="assignBtn" onclick="addTag()" disabled
+                            style="opacity: 0.5; cursor: not-allowed;">
                             <i class="material-icons" style="font-size: 16px; margin-right: 5px;">add_circle</i> ASIGNAR
                         </button>
                     </div>
@@ -484,6 +485,7 @@
                     <th style="width: 80px;">Vista</th>
                     <th>Nombre</th>
                     <th>Asignaciones (Canales)</th>
+                    <th style="width: 80px; text-align: center;">Principal</th>
                     <th style="text-align: right;">Acciones</th>
                 </tr>
             </thead>
@@ -525,6 +527,7 @@
                 id: 1,
                 name: "Açaí Bowl - Foto Producto - Minorista",
                 url: "https://via.placeholder.com/60/5e35b1/ffffff?text=SF",
+                isPrincipal: true,
                 tags: [
                     { canal: 'Minorista', sub: 'Salón' },
                     { canal: 'Minorista', sub: 'Ambulante' }
@@ -534,6 +537,7 @@
                 id: 2,
                 name: "Açaí Bowl - Foto Producto - Delivery",
                 url: "https://via.placeholder.com/60/ff6f00/ffffff?text=Bowl",
+                isPrincipal: false,
                 tags: [
                     { canal: 'Plataformas Delivery', sub: 'PedidosYa' },
                     { canal: 'Plataformas Delivery', sub: 'Rappi' },
@@ -578,12 +582,51 @@
                     subSelect.appendChild(opt);
                 });
             }
+            validateAssignBtn();
+        }
+
+        function validateAssignBtn() {
+            const sub = document.getElementById('subChannelSelect').value;
+            const btn = document.getElementById('assignBtn');
+            const container = document.getElementById('tagsList');
+
+            // Tags en el formulario actual
+            const formTags = Array.from(container.children).map(tag => tag.dataset.sub);
+
+            // Tags ya asignados a OTRAS imágenes en la tabla
+            const otherImagesTags = [];
+            currentImages.forEach(img => {
+                if (img.id !== editingId) {
+                    img.tags.forEach(t => otherImagesTags.push(t.sub));
+                }
+            });
+
+            if (!sub || formTags.includes(sub) || otherImagesTags.includes(sub)) {
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
+                btn.style.cursor = "not-allowed";
+
+                if (!sub) {
+                    btn.title = "Seleccione un sub-canal";
+                } else if (formTags.includes(sub)) {
+                    btn.title = "Este sub-canal ya está en la lista actual";
+                } else {
+                    btn.title = "Este sub-canal ya está asignado a otra imagen de este producto";
+                }
+            } else {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.style.cursor = "pointer";
+                btn.title = "";
+            }
         }
 
         function showSpecs() {
             const sub = document.getElementById('subChannelSelect').value;
             const specsBox = document.getElementById('specsBox');
             const specsText = document.getElementById('specsText');
+
+            validateAssignBtn();
 
             if (sub && specs[sub]) {
                 specsText.textContent = `Requisitos para ${sub}: ${specs[sub]}`;
@@ -621,11 +664,13 @@
             if (!canalOverride) {
                 document.getElementById('subChannelSelect').value = '';
                 document.getElementById('specsBox').style.display = 'none';
+                validateAssignBtn();
             }
         }
 
         function removeTag(element) {
             element.parentElement.remove();
+            validateAssignBtn();
         }
 
         function clearForm() {
@@ -637,6 +682,7 @@
             document.getElementById('fileInput').value = '';
             document.getElementById('channelSelect').value = '';
             updateSubChannels();
+            validateAssignBtn();
         }
 
         // --- 4. CRUD LÓGICA ---
@@ -656,11 +702,14 @@
             if (editingId) {
                 // UPDATE
                 const index = currentImages.findIndex(img => img.id === editingId);
-                currentImages[index] = { id: editingId, name, url, tags };
+                const wasPrincipal = currentImages[index].isPrincipal;
+                currentImages[index] = { id: editingId, name, url, tags, isPrincipal: wasPrincipal };
             } else {
                 // CREATE
                 const newId = currentImages.length > 0 ? Math.max(...currentImages.map(i => i.id)) + 1 : 1;
-                currentImages.push({ id: newId, name, url, tags });
+                // Si es la primera imagen, marcarla como principal por defecto
+                const isPrincipal = currentImages.length === 0;
+                currentImages.push({ id: newId, name, url, tags, isPrincipal });
             }
 
             renderTable();
@@ -687,10 +736,24 @@
 
         function deleteItem(id) {
             if (confirm("¿Está seguro de eliminar esta imagen?")) {
+                const wasPrincipal = currentImages.find(img => img.id === id)?.isPrincipal;
                 currentImages = currentImages.filter(img => img.id !== id);
+
+                // Si eliminamos la principal y quedan más, marcar la primera como principal
+                if (wasPrincipal && currentImages.length > 0) {
+                    currentImages[0].isPrincipal = true;
+                }
+
                 renderTable();
                 if (editingId === id) clearForm();
             }
+        }
+
+        function setPrincipal(id) {
+            currentImages.forEach(img => {
+                img.isPrincipal = (img.id === id);
+            });
+            renderTable();
         }
 
         function renderTable() {
@@ -715,6 +778,9 @@
                     <td><img src="${img.url}" class="thumb-img"></td>
                     <td>${img.name}</td>
                     <td>${tagsHtml}</td>
+                    <td style="text-align: center;">
+                        <input type="checkbox" ${img.isPrincipal ? 'checked' : ''} onchange="setPrincipal(${img.id})">
+                    </td>
                     <td style="text-align: right;">
                         <button class="action-btn btn-edit" onclick="editItem(${img.id})">MODIFICAR</button>
                         <button class="action-btn btn-delete" onclick="deleteItem(${img.id})">ELIMINAR</button>
