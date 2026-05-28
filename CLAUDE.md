@@ -72,6 +72,16 @@ Cada módulo (segundo segmento del nombre de archivo) se mapea a una sección de
 Si se agrega un módulo nuevo no listado acá, crear una sección nueva siguiendo el patrón
 `Mockups [Nombre del Módulo Capitalizado]` e insertarla en orden alfabético.
 
+### Excepciones: Simuladores
+
+Los archivos que son simuladores interactivos (no prototipos visuales) usan el prefijo
+`simulador_` y se clasifican en su propia sección **"Simulador de [Nombre]"** en el index,
+separada de las secciones MockUps.
+
+| Prefijo de archivo | Nombre de sección en index |
+|--------------------|---------------------------|
+| `simulador_` | Simulador de [Nombre] |
+
 ---
 
 ## Reglas para actualizar index.html
@@ -169,3 +179,6 @@ Las secciones (`<details>`) se ordenan **alfabéticamente** de arriba a abajo.
 
 ### MockUps Sobreventa
 - `mockup_sobreventa_admin.html` → Admin
+
+### Simulador de Pedidos
+- `simulador_de_pedidos.html` → Simulador de Pedidos

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Pedido – Smartfran Demo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Source+Code+Pro:wght@400&display=swap');
+
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --background-color: #f4f6f8;
+            --container-bg-color: #ffffff;
+            --text-color: #333;
+            --border-color: #d1d9e2;
+            --code-bg-color: #2d3436;
+            --code-text-color: #dfe6e9;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            margin: 2rem;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            padding: 2rem 2.5rem;
+            background-color: var(--container-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: #555;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 0.8rem 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary-color);
+            color: #fff;
+            transition: background-color 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: var(--primary-hover-color);
+        }
+
+        button:disabled {
+            background-color: #9dbfe8;
+            cursor: not-allowed;
+        }
+
+        .response-container {
+            margin-top: 2rem;
+        }
+
+        .response-container h3 {
+            font-size: 1.1em;
+            color: #34495e;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            background-color: var(--code-bg-color);
+            color: var(--code-text-color);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            overflow: auto;
+            font-family: 'Source Code Pro', monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <form id="pedidoForm">
+            <h2>Crear Pedido</h2>
+
+            <div class="form-group">
+                <label for="branch">Branch ID</label>
+                <input type="number" id="branch" value="" required>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Nombre</label>
+                <input type="text" id="name" value="" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Apellido</label>
+                <input type="text" id="lastName" value="" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tenant">Tenant</label>
+                <select id="tenant" required>
+                    <option value="grido">Grido</option>
+                    <option value="weiss">Weiss</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="platform">Plataforma</label>
+                <select id="platform" required>
+                    <option value="pedigrido">Pedigrido</option>
+                    <option value="pedidosya">PedidosYa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="environment">Ambiente</label>
+                <select id="environment" required>
+                    <option value="S">S</option>
+                    <option value="P">P</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitButton">Crear Pedido</button>
+        </form>
+
+        <div id="responseContainer" class="response-container" hidden>
+            <h3>Respuesta del Servidor</h3>
+            <pre id="respuesta"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Para producción:
+        const WORKER_URL = 'https://smartfran.matiasa.workers.dev/';
+        // Para pruebas locales (Wrangler):
+        // const WORKER_URL = 'http://localhost:8787/';
+
+        // --- Lógica de Dependencia Tenant/Plataforma (Bloqueo Visual) ---
+        const tenantSelect = document.getElementById('tenant');
+        const platformSelect = document.getElementById('platform');
+        const pedigridoOption = platformSelect.querySelector('option[value="pedigrido"]');
+
+        const updatePlatformOptions = () => {
+            if (tenantSelect.value === 'weiss') {
+                // Si es Weiss, ocultamos y deshabilitamos Pedigrido
+                pedigridoOption.hidden = true;
+                pedigridoOption.disabled = true;
+                if (platformSelect.value === 'pedigrido') {
+                    platformSelect.value = 'pedidosya';
+                }
+            } else {
+                // Si es Grido, mostramos y habilitamos todo
+                pedigridoOption.hidden = false;
+                pedigridoOption.disabled = false;
+            }
+        };
+
+        // Ejecutar al cambiar y al cargar la página
+        tenantSelect.addEventListener('change', updatePlatformOptions);
+        window.addEventListener('DOMContentLoaded', updatePlatformOptions);
+
+        document.getElementById('pedidoForm').addEventListener('submit', async e => {
+            e.preventDefault();
+
+            const branch = document.getElementById('branch').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const tenant = tenantSelect.value;
+            const platform = platformSelect.value;
+            const environment = document.getElementById('environment').value;
+
+            const responseContainer = document.getElementById('responseContainer');
+            const out = document.getElementById('respuesta');
+            const button = document.getElementById('submitButton');
+
+            // --- UX Mejorada: Feedback al usuario ---
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+            responseContainer.hidden = false;
+            out.textContent = 'Procesando la solicitud...';
+
+            // Construcción del nuevo payload
+            const payload = {
+                context: {
+                    tenant: tenant,
+                    platform: platform,
+                    environment: environment
+                },
+                auth: {
+                    user: {
+                        name: name,
+                        lastName: lastName
+                    }
+                },
+                data: {
+                    branchId: Number(branch),
+                    scenario: "default"
+                }
+            };
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const text = await res.text();
+                let pretty;
+                try {
+                    // Intenta formatear la respuesta como JSON
+                    pretty = JSON.stringify(JSON.parse(text), null, 2);
+                } catch {
+                    // Si no es JSON, muestra el texto plano
+                    pretty = text;
+                }
+
+                out.textContent = `Status: ${res.status} ${res.statusText}\n\n${pretty}`;
+
+            } catch (err) {
+                out.textContent = 'Error de red: ' + err.message;
+            } finally {
+                // --- UX Mejorada: Restaurar el botón ---
+                button.disabled = false;
+                button.textContent = 'Crear Pedido';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
