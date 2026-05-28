@@ -33,7 +33,7 @@ Son consumidos por desarrolladores y analistas internos para entender el diseño
 funcionalidades antes de su implementación.
 
 El archivo `index.html` es el portal de entrada. Los links apuntan a la versión publicada en
-GitHub Pages (`https://matiasasmartfram.github.io/spdocumentation/`).
+GitHub Pages (`https://matiasasmartfram.github.io/spMockup/`).
 
 ---
 
@@ -104,7 +104,7 @@ Las secciones (`<details>`) se ordenan **alfabéticamente** de arriba a abajo.
 
 ### 5. Estructura HTML del link
 ```html
-<a href="https://matiasasmartfram.github.io/spdocumentation/nombre-del-archivo.html" class="doc-link">
+<a href="https://matiasasmartfram.github.io/spMockup/nombre-del-archivo.html" class="doc-link">
   <strong>Nombre Legible</strong>
 </a>
 ```
