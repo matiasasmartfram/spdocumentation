@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  MOCKUP (estático, sin backend) — Shell real del BackOffice + vista de
+  plataforma + NUEVA sección "Horarios de Check-in" (subdocumento
+  checkInSchedule del ticket ANALISIS-checkInSchedules.md).
+
+  - Reproduce el shell real: sidebar (pages.component.html/.css) + navbar +
+    menú (pages.component.ts) + versión (configuration.ts).
+  - Reproduce el form SDK de platform.component.html (igual al screenshot).
+  - NO levanta platform ni el Concentrador. Datos mockeados en el <script>.
+  - Bootstrap 4.3 + FontAwesome 5 + SweetAlert2 por CDN (mismas libs reales).
+
+  Acciones del mockup -> contrato REST del ticket (§5):
+    Switch maestro       -> PATCH /api/checkInSchedule/:platformId/toggle
+    Agregar horario      -> POST  /api/checkInSchedule/:platformId/times
+    Guardar edición      -> PUT   /api/checkInSchedule/:platformId/times/:timeId
+    Toggle de horario    -> PATCH /api/checkInSchedule/:platformId/times/:timeId/toggle
+    Eliminar horario     -> DELETE/api/checkInSchedule/:platformId/times/:timeId
+    Recargar scheduler   -> POST  /api/checkInSchedule/reload
+  ============================================================================
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BackOffice — Plataformas · Horarios de Check-in (mockup)</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    /* ===== Shell real (copiado de pages.component.css) ===== */
+    body { font-size: .9rem; color: #212529; }
+    .wrapper { display: flex; width: 100%; align-items: stretch; min-height: 100vh; }
+
+    #sidebar { min-width: 182px; max-width: 182px; background: #fff; color: #000;
+               border-right: 1px solid lightgray; }
+    #sidebar .sidebar-header { padding: 16px; }
+    #logo { width: 149px; height: 149px; position: relative; }
+    #logo .brand { font-weight: 800; letter-spacing: -1px; line-height: .95; color: #b5179e; }
+    #logo .brand .br { color: #7209b7; }
+    #logo strong { position: absolute; bottom: 0; right: 0; color: blue; font-size: smaller; }
+
+    #sidebar-menu { margin: 5px; }
+    #sidebar-menu h6 { font-weight: 700; margin-top: .6rem; }
+    #sidebar-menu ul { padding-left: 10px; margin-bottom: .4rem; }
+    #sidebar-menu ul li { list-style: none; }
+    #sidebar-menu ul a { text-decoration: none; color: #000; cursor: pointer; }
+    #sidebar-menu ul a:hover { color: #007bff; }
+    .link-active { font-weight: 700; }
+
+    #content { width: 100%; min-height: 100vh; background: #fff; }
+    #navbar > div { background: #fff; height: 70px; border-bottom: 1px solid lightgray; }
+
+    /* ===== Form / componentes ===== */
+    input[type="checkbox"] { width: 18px; height: 18px; accent-color: #007bff; }
+    .resp-checks label { font-weight: 400; }
+
+    /* ===== Sección Check-in ===== */
+    .badge-time { font-size: .95rem; padding: .4em .6em; font-variant-numeric: tabular-nums; }
+    .muted-row { opacity: .5; }
+    .section-help { background: #eef1ff; border-left: 4px solid #3f51b5;
+                    padding: .6rem .9rem; border-radius: 4px; font-size: .82rem; color: #3b3f51; }
+    .master-off-banner { display: none; }
+    body.master-off .master-off-banner { display: block; }
+    .custom-switch .custom-control-label::before { width: 2.25rem; height: 1.25rem; border-radius: 1rem; }
+    .custom-switch .custom-control-label::after  { width: calc(1.25rem - 4px); height: calc(1.25rem - 4px); border-radius: 1rem; }
+    .custom-switch .custom-control-input:checked ~ .custom-control-label::after { transform: translateX(1rem); }
+    .api-map { font-family: Consolas, monospace; font-size: .78rem; }
+    .logo-py { width: 100px; height: 100px; background: #e60023; color: #fff; font-weight: 800;
+               font-size: 3rem; display: flex; align-items: center; justify-content: center;
+               border: 1px solid grey; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- ============================ SIDEBAR ============================ -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <div id="logo">
+          <img src="../../../../assets/smartfran_log2o.png" alt="SmartFran" width="149" height="149"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <div class="brand" style="display:none;font-size:1.9rem">
+            <span class="br">[</span>smart<br>fran<span class="br">]</span>
+          </div>
+          <strong>V7.0.1</strong>
+        </div>
+      </div>
+      <div class="px-3">
+        <div id="sidebar-menu">
+          <div>
+            <h6>Gestión</h6>
+            <ul>
+              <li><a>Usuarios</a></li>
+              <li><a class="link-active">Plataformas</a></li>
+              <li><a>Courier</a></li>
+              <li><a>Cadenas</a></li>
+              <li><a>Clientes</a></li>
+              <li><a>Sucursales</a></li>
+              <li><a>Regiones</a></li>
+              <li><a>Países</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>Dashboard</h6>
+            <ul>
+              <li><a>Status</a></li>
+              <li><a>Reporting</a></li>
+              <li><a>Releases</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>Swagger</h6>
+            <ul>
+              <li><a>Platform</a></li>
+              <li><a>Concentrador</a></li>
+            </ul>
+          </div>
+          <div>
+            <h6>Monitorización</h6>
+            <ul>
+              <li><a>DeadLetter</a></li>
+              <li><a>Latencias</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ============================ CONTENT ============================ -->
+    <div id="content" style="min-width:360px;">
+
+      <!-- Navbar -->
+      <nav id="navbar">
+        <div class="d-flex justify-content-between align-items-center px-3">
+          <div class="d-flex align-items-center">
+            <button type="button" class="btn btn-info rounded-circle"><i class="fa fa-arrow-left"></i></button>
+            <h5 class="m-0 ml-3">Plataformas</h5>
+          </div>
+          <div class="dropdown">
+            <a class="btn dropdown-toggle">Hola Matias!</a>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container-fluid my-3">
+
+        <!-- =========================================================== -->
+        <!-- VISTA 1: FORM DE LA PLATAFORMA (SDK, igual al screenshot)    -->
+        <!-- =========================================================== -->
+        <section id="view-form">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h5 class="mb-0">Alta Plataforma</h5>
+              <span class="text-muted">(Los campos marcados con * son obligatorios)</span>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <button class="btn btn-primary mr-2" onclick="showView('times')">Tiempos y motivos</button>
+              <!-- ★ NUEVO BOTÓN (el agregado de este ticket) ★ -->
+              <button class="btn btn-success" onclick="showView('checkin')">
+                <i class="fas fa-sync-alt mr-1"></i>Horarios de Check-in
+              </button>
+            </div>
+          </div>
+          <hr />
+
+          <div class="row">
+            <!-- Columna izquierda -->
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                <label><strong>Nombre Plataforma *</strong></label>
+                <input type="text" class="form-control form-control-sm" value="PedidosYa" />
+              </div>
+              <div class="form-group">
+                <label><strong>Dominio</strong></label>
+                <input type="text" class="form-control form-control-sm" placeholder="Dominio" />
+              </div>
+              <div class="form-group">
+                <label><strong>Contacto</strong></label>
+                <input type="text" class="form-control form-control-sm" placeholder="Contacto" />
+              </div>
+              <div class="form-group">
+                <label><strong>Comentarios</strong></label>
+                <textarea class="form-control form-control-sm" rows="5" style="resize:none"></textarea>
+              </div>
+
+              <label><strong>Metodos Que Responde</strong></label>
+              <div class="row resp-checks">
+                <div class="col-auto form-group"><label class="d-block">Recibida</label><input type="checkbox" checked></div>
+                <div class="col-auto form-group"><label class="d-block">Vista</label><input type="checkbox" checked></div>
+                <div class="col-auto form-group"><label class="d-block">Confirmada</label><input type="checkbox" checked></div>
+                <div class="col-auto form-group"><label class="d-block">Lista</label><input type="checkbox" checked></div>
+                <div class="col-auto form-group"><label class="d-block">Despachada</label><input type="checkbox" checked></div>
+                <div class="col-auto form-group"><label class="d-block">Entregada</label><input type="checkbox" checked></div>
+                <div class="col-auto form-group"><label class="d-block">Rechazada</label><input type="checkbox" checked></div>
+              </div>
+
+              <label><strong>Busqueda de Datos</strong></label>
+              <div class="row resp-checks">
+                <div class="col-auto form-group"><label class="d-block">Mensajes de Rechazado</label><input type="checkbox"></div>
+                <div class="col-auto form-group"><label class="d-block">Tiempos de Entrega</label><input type="checkbox" checked></div>
+              </div>
+            </div>
+
+            <!-- Columna derecha (SDK) -->
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                <label><strong>Metodología de Intercambio</strong></label>
+                <select class="form-control form-control-sm">
+                  <option selected>SDK</option><option>PUSH</option><option>PULL</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label><strong>Client Id *</strong></label>
+                <input type="text" class="form-control form-control-sm" value="integration_smartfran" />
+              </div>
+              <div class="form-group">
+                <label><strong>Client Secret *</strong></label>
+                <input type="text" class="form-control form-control-sm" value="a223e0a5b2" />
+              </div>
+              <div class="form-group">
+                <label><strong>Enviroment *</strong></label>
+                <select class="form-control form-control-sm">
+                  <option>DEVELOPMENT</option><option>STAGING</option><option selected>PRODUCTION</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label><strong>Base Url *</strong></label>
+                <input type="text" class="form-control form-control-sm" value="https://integration-middleware.us.restaurant-partners.com" />
+              </div>
+              <div class="form-group">
+                <label><strong>Internal Code *</strong></label>
+                <input type="text" class="form-control form-control-sm" value="1" />
+              </div>
+              <div class="form-group">
+                <label class="d-block"><strong>Respuestas Automaticas</strong></label>
+                <input type="checkbox">
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <div>
+                  <label class="d-block"><strong>Logotipo</strong></label>
+                  <div class="d-flex">
+                    <div class="logo-py">P</div>
+                    <div class="d-flex flex-column-reverse px-1 justify-content-between">
+                      <button type="button" class="btn btn-sm btn-outline-danger">Eliminar Foto</button>
+                      <label class="btn btn-sm btn-outline-primary mb-0">Subir Foto</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-3 text-right">
+            <button type="button" class="btn btn-sm btn-secondary px-4">Cancelar</button>
+            <button type="button" class="btn btn-sm btn-primary px-4 ml-2">Guardar</button>
+          </div>
+        </section>
+
+        <!-- =========================================================== -->
+        <!-- VISTA 2: Tiempos y motivos (existente, resumida)            -->
+        <!-- =========================================================== -->
+        <section id="view-times" class="d-none">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Plataforma: <span class="platform-name">PedidosYa</span></h3>
+            <button class="btn btn-secondary" onclick="showView('form')">Volver</button>
+          </div>
+          <div class="pt-3 row">
+            <div class="col-12 col-md-6">
+              <h5>Tiempos de entrega:</h5>
+              <table class="table table-bordered table-hover table-striped">
+                <thead><tr><th>Id</th><th class="text-center">Tiempos de entrega</th><th class="text-center">Activo</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td class="text-right">15–25 min</td><td class="text-center"><span class="spinner-grow text-success"></span></td></tr>
+                  <tr><td>2</td><td class="text-right">25–40 min</td><td class="text-center"><span class="spinner-grow text-success"></span></td></tr>
+                  <tr><td>3</td><td class="text-right">40–60 min</td><td class="text-center"><span class="spinner-grow text-danger"></span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-12 col-md-6">
+              <h5>Motivos de rechazo:</h5>
+              <table class="table table-bordered table-hover table-striped">
+                <thead><tr><th>Id</th><th class="text-center">Motivos de rechazo</th><th class="text-center">Activo</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td class="text-right">Sin stock</td><td class="text-center"><span class="spinner-grow text-success"></span></td></tr>
+                  <tr><td>2</td><td class="text-right">Local cerrado</td><td class="text-center"><span class="spinner-grow text-success"></span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================== -->
+        <!-- VISTA 3: HORARIOS DE CHECK-IN  (★ EL AGREGADO ★)            -->
+        <!-- =========================================================== -->
+        <section id="view-checkin" class="d-none">
+
+          <div class="row align-items-center">
+            <div class="col">
+              <h5 class="mb-0">Horarios de Check-in <span class="platform-name">PedidosYa</span></h5>
+              <span class="text-muted">Sincronización forzada de estado abierto/cerrado contra la plataforma · Internal Code <strong id="ci-internal">1</strong></span>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-secondary" onclick="showView('form')">Volver</button>
+            </div>
+          </div>
+          <hr />
+
+          <!-- Switch maestro + selector de plataforma (demo) -->
+          <div class="row align-items-end">
+            <div class="col-12 col-md-auto mb-2">
+              <label class="small text-muted mb-1 d-block">Plataforma (demo del mockup)</label>
+              <select id="ci-platform" class="form-control form-control-sm" onchange="loadPlatform(this.value)" style="min-width:230px"></select>
+            </div>
+            <div class="col d-flex justify-content-md-end mb-2">
+              <div class="custom-control custom-switch mt-2">
+                <input type="checkbox" class="custom-control-input" id="ci-master" onchange="toggleMaster(this.checked)">
+                <label class="custom-control-label" for="ci-master">Check-in habilitado para esta plataforma</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-warning master-off-banner py-2">
+            <i class="fas fa-exclamation-triangle mr-1"></i>
+            Check-in <strong>pausado</strong> para esta plataforma: ningún horario dispara aunque sigan
+            habilitados individualmente (el switch maestro no borra los horarios).
+          </div>
+
+          <div class="row mt-2">
+            <!-- lista + alta/edición -->
+            <div class="col-12">
+              <h5 class="d-flex justify-content-between align-items-center">
+                <span>Horarios locales</span>
+                <span class="badge badge-secondary" id="ci-count">0</span>
+              </h5>
+              <div class="section-help mb-2">
+                Horarios <strong>globales por plataforma</strong>: la misma hora local se aplica a
+                <strong>todos los países</strong>; el offset (<code>tzo</code>) de cada país se aplica en
+                runtime al registrar los crons.
+              </div>
+
+              <table class="table table-bordered table-hover table-striped">
+                <thead class="thead-light">
+                  <tr>
+                    <th style="width:60px">#</th>
+                    <th class="text-center">Hora local</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-right" style="width:160px">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="ci-tbody"></tbody>
+              </table>
+
+              <!-- Form de alta / edición -->
+              <div class="card bg-light">
+                <div class="card-body py-2">
+                  <div class="form-row align-items-end">
+                    <div class="col-auto"><label class="small mb-1" id="ci-form-title">Agregar horario</label></div>
+                    <div class="w-100"></div>
+                    <div class="col">
+                      <label class="small mb-1">Hora</label>
+                      <select id="ci-hour" class="form-control form-control-sm"></select>
+                    </div>
+                    <div class="col">
+                      <label class="small mb-1">Minuto</label>
+                      <select id="ci-min" class="form-control form-control-sm"></select>
+                    </div>
+                    <div class="col-auto">
+                      <div class="custom-control custom-checkbox mb-2">
+                        <input type="checkbox" class="custom-control-input" id="ci-enabled" checked style="width:auto;height:auto">
+                        <label class="custom-control-label small" for="ci-enabled">Habilitado</label>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <button id="ci-save-btn" class="btn btn-success btn-sm" onclick="saveTime()"><i class="fas fa-plus mr-1"></i>Agregar</button>
+                      <button id="ci-cancel-btn" class="btn btn-outline-secondary btn-sm d-none" onclick="cancelEdit()">Cancelar</button>
+                    </div>
+                  </div>
+                  <small class="text-muted">Hora 0–23, minuto 0–59. No se permiten duplicados (hora, minuto).</small>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <button class="btn btn-primary btn-sm" onclick="reloadScheduler()">
+                  <i class="fas fa-save mr-1"></i>Guardar
+                </button>
+                <small class="text-muted ml-1">Aplica los cambios en caliente, sin reiniciar el servicio.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mapeo a endpoints (colapsable, para el dev) -->
+          <details class="mt-3">
+            <summary class="text-muted small" style="cursor:pointer">Ver mapeo a endpoints (contrato API §5)</summary>
+            <div class="api-map text-muted mt-2 pl-3">
+              Switch maestro → <code>PATCH /api/checkInSchedule/:platformId/toggle</code><br>
+              Agregar → <code>POST /api/checkInSchedule/:platformId/times</code><br>
+              Editar → <code>PUT /api/checkInSchedule/:platformId/times/:timeId</code><br>
+              Toggle horario → <code>PATCH /api/checkInSchedule/:platformId/times/:timeId/toggle</code><br>
+              Eliminar → <code>DELETE /api/checkInSchedule/:platformId/times/:timeId</code><br>
+              Recargar → <code>POST /api/checkInSchedule/reload</code>
+            </div>
+          </details>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ================= DATOS MOCK (sustituyen a la API) ================= */
+    let nextId = 1000;
+    const newId = () => 'oid' + (nextId++);
+    const t = (hour, minute, enabled = true) => ({ _id: newId(), hour, minute, enabled });
+
+    // "colección platforms" con checkInSchedule embebido. PY replica los hardcodeados de branch.js.
+    const PLATFORMS = {
+      1: { name: 'PedidosYa',   internalCode: 1, checkInSchedule: { enabled: true,  times: [t(10,1),t(10,31),t(11,1),t(11,31),t(12,1),t(17,1),t(23,1)] } },
+      2: { name: 'Rappi',       internalCode: 2, checkInSchedule: { enabled: true,  times: [t(11,16),t(17,16)] } },
+      3: { name: 'MercadoPago', internalCode: 3, checkInSchedule: { enabled: true,  times: [t(10,11),t(12,11),t(19,11)] } },
+      4: { name: 'UberEats',    internalCode: 4, checkInSchedule: { enabled: true,  times: [t(12,16),t(16,46)] } },
+      5: { name: 'Grido',       internalCode: 5, checkInSchedule: { enabled: false, times: [t(11,16,false)] } }, // hoy deshabilitado (§7.5)
+    };
+
+    /* ================= ESTADO ================= */
+    let currentPlatformId = 1, editingTimeId = null;
+    const sched = () => PLATFORMS[currentPlatformId].checkInSchedule;
+    const pad = (n) => String(n).padStart(2, '0');
+    const hhmm = (x) => pad(x.hour) + ':' + pad(x.minute);
+
+    /* ================= VISTAS ================= */
+    function showView(which) {
+      document.getElementById('view-form').classList.toggle('d-none', which !== 'form');
+      document.getElementById('view-times').classList.toggle('d-none', which !== 'times');
+      document.getElementById('view-checkin').classList.toggle('d-none', which !== 'checkin');
+    }
+
+    /* ================= RENDER ================= */
+    function loadPlatform(id) { currentPlatformId = Number(id); editingTimeId = null; renderAll(); }
+
+    function renderAll() {
+      const p = PLATFORMS[currentPlatformId];
+      document.querySelectorAll('.platform-name').forEach(el => el.textContent = p.name);
+      document.getElementById('ci-internal').textContent = p.internalCode;
+      document.getElementById('ci-master').checked = p.checkInSchedule.enabled;
+      document.body.classList.toggle('master-off', !p.checkInSchedule.enabled);
+      renderTimes();
+      cancelEdit();
+    }
+
+    function renderTimes() {
+      const times = sched().times.slice().sort((a,b) => (a.hour-b.hour) || (a.minute-b.minute));
+      document.getElementById('ci-count').textContent = times.length;
+      const tbody = document.getElementById('ci-tbody');
+      if (!times.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted"><i class="fa fa-exclamation-circle"></i> Sin horarios…</td></tr>';
+        return;
+      }
+      tbody.innerHTML = times.map((x,i) => `
+        <tr class="${x.enabled ? '' : 'muted-row'}">
+          <td>${i+1}</td>
+          <td class="text-center"><span class="badge badge-${x.enabled ? 'primary':'secondary'} badge-time">${hhmm(x)}</span></td>
+          <td class="text-center">${x.enabled ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-secondary">Inactivo</span>'}</td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-${x.enabled ? 'success':'secondary'}" title="${x.enabled ? 'Desactivar':'Activar'}" onclick="toggleTime('${x._id}')"><i class="fas fa-${x.enabled ? 'toggle-on':'toggle-off'}"></i></button>
+              <button class="btn btn-sm btn-outline-primary" title="Editar" onclick="startEdit('${x._id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="deleteTime('${x._id}')"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          </td>
+        </tr>`).join('');
+    }
+
+    /* ================= ACCIONES ================= */
+    function toggleMaster(checked) {
+      sched().enabled = checked;
+      document.body.classList.toggle('master-off', !checked);
+      toast(checked ? 'Check-in habilitado para la plataforma' : 'Check-in pausado para la plataforma');
+    }
+
+    function saveTime() {
+      const hour = Number(document.getElementById('ci-hour').value);
+      const minute = Number(document.getElementById('ci-min').value);
+      const enabled = document.getElementById('ci-enabled').checked;
+      if (!Number.isInteger(hour) || hour<0 || hour>23 || !Number.isInteger(minute) || minute<0 || minute>59)
+        return Swal.fire('Error!', 'Hora (0–23) o minuto (0–59) fuera de rango.', 'error');
+      const dup = sched().times.some(x => x.hour===hour && x.minute===minute && x._id!==editingTimeId);
+      if (dup) return Swal.fire('Duplicado (409)', `Ya existe el horario ${pad(hour)}:${pad(minute)} en esta plataforma.`, 'warning');
+
+      if (editingTimeId) {
+        const x = sched().times.find(x => x._id===editingTimeId);
+        x.hour=hour; x.minute=minute; x.enabled=enabled; toast('Horario actualizado');
+      } else {
+        sched().times.push({ _id:newId(), hour, minute, enabled }); toast('Horario agregado');
+      }
+      cancelEdit(); renderTimes();
+    }
+
+    function toggleTime(id) { const x = sched().times.find(x=>x._id===id); x.enabled=!x.enabled; renderTimes(); }
+
+    function startEdit(id) {
+      const x = sched().times.find(x=>x._id===id);
+      editingTimeId = id;
+      document.getElementById('ci-hour').value = x.hour;
+      document.getElementById('ci-min').value = x.minute;
+      document.getElementById('ci-enabled').checked = x.enabled;
+      document.getElementById('ci-form-title').textContent = `Editando horario ${hhmm(x)}`;
+      const btn = document.getElementById('ci-save-btn');
+      btn.innerHTML = '<i class="fas fa-save mr-1"></i>Guardar';
+      btn.classList.replace('btn-success','btn-primary');
+      document.getElementById('ci-cancel-btn').classList.remove('d-none');
+    }
+
+    function cancelEdit() {
+      editingTimeId = null;
+      document.getElementById('ci-form-title').textContent = 'Agregar horario';
+      const btn = document.getElementById('ci-save-btn');
+      btn.innerHTML = '<i class="fas fa-plus mr-1"></i>Agregar';
+      btn.classList.replace('btn-primary','btn-success');
+      document.getElementById('ci-cancel-btn').classList.add('d-none');
+      document.getElementById('ci-enabled').checked = true;
+    }
+
+    function deleteTime(id) {
+      const x = sched().times.find(x=>x._id===id);
+      Swal.fire({
+        title:'Atención!',
+        html:`¿Eliminar el horario <strong>${hhmm(x)}</strong>?<br><small class="text-muted">Sugerencia: usá "Desactivar" para conservar el historial.</small>`,
+        icon:'question', showCancelButton:true, confirmButtonText:'Eliminar', cancelButtonText:'Cancelar', confirmButtonColor:'#dc3545'
+      }).then(r => { if(!r.value) return; sched().times = sched().times.filter(x=>x._id!==id); renderTimes(); toast('Horario eliminado'); });
+    }
+
+    function reloadScheduler() {
+      Swal.fire({ title:'Horarios CheckIn Actualizados', text:'Comenzaran a funcionar desde Ahora', icon:'success' });
+    }
+
+    /* ================= HELPERS ================= */
+    function toast(msg) {
+      Swal.fire({ toast:true, position:'top-end', icon:'success', title:msg, showConfirmButton:false, timer:1600, timerProgressBar:true });
+    }
+
+    /* ================= INIT ================= */
+    (function init() {
+      const hSel = document.getElementById('ci-hour'), mSel = document.getElementById('ci-min');
+      for (let h=0; h<24; h++) hSel.add(new Option(pad(h), h));
+      for (let m=0; m<60; m++) mSel.add(new Option(pad(m), m));
+      const pSel = document.getElementById('ci-platform');
+      for (const k in PLATFORMS) pSel.add(new Option(`${PLATFORMS[k].name} (code ${PLATFORMS[k].internalCode})`, k));
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
